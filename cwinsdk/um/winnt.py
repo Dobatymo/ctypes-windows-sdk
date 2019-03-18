@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, sizeof, POINTER, CFUNCTYPE
+from ctypes import Structure, Union, sizeof, POINTER, CFUNCTYPE, c_char
 from ctypes.wintypes import BYTE, WORD, DWORD, LONG, WCHAR
 from enum import IntEnum
 
@@ -179,8 +179,13 @@ class SID(Structure):
 		("IdentifierAuthority", SID_IDENTIFIER_AUTHORITY),
 		("SubAuthority", DWORD*ANYSIZE_ARRAY),
 	]
+PSID = POINTER(SID)
 
 # /moved
+
+CCHAR = c_char
+LCID = DWORD
+LANGID = WORD
 
 ALL_PROCESSOR_GROUPS = 0xffff
 
@@ -1703,6 +1708,7 @@ class GENERIC_MAPPING(Structure):
 		("GenericExecute", ACCESS_MASK),
 		("GenericAll", ACCESS_MASK),
 	]
+PGENERIC_MAPPING = POINTER(GENERIC_MAPPING)
 
 class LUID_AND_ATTRIBUTES(Structure):
 	_fields_ = [
@@ -2179,13 +2185,18 @@ ACL_REVISION2 = 2
 ACL_REVISION3 = 3
 ACL_REVISION4 = 4
 MAX_ACL_REVISION ACL_REVISION4
-
+'''
 class ACL(Structure):
- BYTE AclRevision
- BYTE Sbz1
- WORD AclSize
- WORD AceCount
- WORD Sbz2
+	_fields_ = [
+		("AclRevision", BYTE),
+		("Sbz1", BYTE),
+		("AclSize", WORD),
+		("AceCount", WORD),
+		("Sbz2", WORD),
+	]
+PACL = POINTER(ACL)
+
+'''
 typedef struct _ACE_HEADER {
  BYTE AceType
  BYTE AceFlags
@@ -2443,8 +2454,9 @@ SECURITY_DESCRIPTOR_REVISION = 1
 SECURITY_DESCRIPTOR_REVISION1 = 1
 
 SECURITY_DESCRIPTOR_MIN_LENGTH = sizeof(SECURITY_DESCRIPTOR)
+'''
 
-typedef WORD SECURITY_DESCRIPTOR_CONTROL, *PSECURITY_DESCRIPTOR_CONTROL
+SECURITY_DESCRIPTOR_CONTROL = WORD
 
 SE_OWNER_DEFAULTED = 0x0001
 SE_GROUP_DEFAULTED = 0x0002
@@ -2461,48 +2473,52 @@ SE_SACL_PROTECTED = 0x2000
 SE_RM_CONTROL_VALID = 0x4000
 SE_SELF_RELATIVE = 0x8000
 
-typedef struct _SECURITY_DESCRIPTOR_RELATIVE {
- BYTE Revision
- BYTE Sbz1
- SECURITY_DESCRIPTOR_CONTROL Control
- DWORD Owner
- DWORD Group
- DWORD Sacl
- DWORD Dacl
- } SECURITY_DESCRIPTOR_RELATIVE, *PISECURITY_DESCRIPTOR_RELATIVE
+class SECURITY_DESCRIPTOR_RELATIVE(Structure):
+	_fields_ = [
+		("Revision", BYTE),
+		("Sbz1", BYTE),
+		("Control", SECURITY_DESCRIPTOR_CONTROL),
+		("Owner", DWORD),
+		("Group", DWORD),
+		("Sacl", DWORD),
+		("Dacl", DWORD),
+	]
 
-typedef struct _SECURITY_DESCRIPTOR {
- BYTE Revision
- BYTE Sbz1
- SECURITY_DESCRIPTOR_CONTROL Control
- PSID Owner
- PSID Group
- PACL Sacl
- PACL Dacl
+class SECURITY_DESCRIPTOR(Structure):
+	_fields_ = [
+		("Revision", BYTE),
+		("Sbz1", BYTE),
+		("Control", SECURITY_DESCRIPTOR_CONTROL),
+		("Owner", PSID),
+		("Group", PSID),
+		("Sacl", PACL),
+		("Dacl", PACL),
+	]
+PSECURITY_DESCRIPTOR = POINTER(SECURITY_DESCRIPTOR)
 
- } SECURITY_DESCRIPTOR, *PISECURITY_DESCRIPTOR
-typedef struct _SECURITY_OBJECT_AI_PARAMS {
- DWORD Size
- DWORD ConstraintMask
-} SECURITY_OBJECT_AI_PARAMS, *PSECURITY_OBJECT_AI_PARAMS
+class SECURITY_OBJECT_AI_PARAMS(Structure):
+	_fields_ = [
+		("Size", DWORD),
+		("ConstraintMask", DWORD),
+	]
 
-typedef struct _OBJECT_TYPE_LIST {
- WORD Level
- WORD Sbz
- GUID *ObjectType
-} OBJECT_TYPE_LIST, *POBJECT_TYPE_LIST
+class OBJECT_TYPE_LIST(Structure):
+	_fields_ = [
+		("Level", WORD),
+		("Sbz", WORD),
+		("ObjectType", POINTER(GUID)),
+	]
+POBJECT_TYPE_LIST = POINTER(OBJECT_TYPE_LIST)
 
-ACCESS_OBJECT_GUID 0
-ACCESS_PROPERTY_SET_GUID 1
-ACCESS_PROPERTY_GUID 2
+ACCESS_OBJECT_GUID = 0
+ACCESS_PROPERTY_SET_GUID = 1
+ACCESS_PROPERTY_GUID = 2
+ACCESS_MAX_LEVEL = 4
 
-ACCESS_MAX_LEVEL 4
+class AUDIT_EVENT_TYPE(IntEnum):
+	AuditEventObjectAccess = 0
+	AuditEventDirectoryServiceAccess = 1
 
-typedef enum _AUDIT_EVENT_TYPE {
- AuditEventObjectAccess,
- AuditEventDirectoryServiceAccess
-} AUDIT_EVENT_TYPE, *PAUDIT_EVENT_TYPE
-'''
 AUDIT_ALLOW_NO_PRIVILEGE = 0x1
 
 ACCESS_DS_SOURCE_A = b"DS"
@@ -2517,19 +2533,22 @@ SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000
 SE_PRIVILEGE_VALID_ATTRIBUTES = SE_PRIVILEGE_ENABLED_BY_DEFAULT | SE_PRIVILEGE_ENABLED | SE_PRIVILEGE_REMOVED | SE_PRIVILEGE_USED_FOR_ACCESS
 
 PRIVILEGE_SET_ALL_NECESSARY = 1
+
+class PRIVILEGE_SET(Structure):
+	_fields_ = [
+		("PrivilegeCount", DWORD),
+		("Control", DWORD),
+		("Privilege", LUID_AND_ATTRIBUTES*ANYSIZE_ARRAY),
+	]
+PPRIVILEGE_SET = POINTER(PRIVILEGE_SET)
+
+ACCESS_REASON_TYPE_MASK = 0x00ff0000
+ACCESS_REASON_DATA_MASK = 0x0000ffff
+
+ACCESS_REASON_STAGING_MASK = 0x80000000
+ACCESS_REASON_EXDATA_MASK = 0x7f000000
+
 '''
-typedef struct _PRIVILEGE_SET {
- DWORD PrivilegeCount
- DWORD Control
- LUID_AND_ATTRIBUTES Privilege[ANYSIZE_ARRAY]
- } PRIVILEGE_SET, * PPRIVILEGE_SET
-
-ACCESS_REASON_TYPE_MASK 0x00ff0000
-ACCESS_REASON_DATA_MASK 0x0000ffff
-
-ACCESS_REASON_STAGING_MASK 0x80000000
-ACCESS_REASON_EXDATA_MASK 0x7f000000
-
 typedef enum _ACCESS_REASON_TYPE{
 
  AccessReasonNone = 0x00000000,
@@ -2791,12 +2810,15 @@ class TOKEN_PRIVILEGES(Structure):
 		("PrivilegeCount", DWORD),
 		("Privileges", LUID_AND_ATTRIBUTES * ANYSIZE_ARRAY)
 	]
+PTOKEN_PRIVILEGES = POINTER(TOKEN_PRIVILEGES)
+
+class TOKEN_OWNER(Structure):
+	_fields_ = [
+		("Owner", PSID),
+	]
+PTOKEN_OWNER = POINTER(TOKEN_OWNER)
 
 '''
-typedef struct _TOKEN_OWNER {
- PSID Owner
-} TOKEN_OWNER, *PTOKEN_OWNER
-
 #ifndef MIDL_PASS
 TOKEN_OWNER_MAX_SIZE = sizeof(TOKEN_OWNER) + SECURITY_MAX_SID_SIZE
 #endif

@@ -1,15 +1,18 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, c_char
-from ctypes.wintypes import WORD, DWORD, CHAR, WCHAR, BYTE, ULONG
+from ctypes import windll, POINTER, Structure, Union, c_char
+from ctypes.wintypes import BOOL, LPVOID, WORD, DWORD, WCHAR, BYTE, ULONG # CHAR not in py2
+from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 from ctypes import c_int as ENUM_TYPE
 from enum import IntEnum
 
+from .minwinbase import *
 from .fileapi import *
 from .handleapi import *
 
 from .winnt import *
 from ..win32types import ATOM
+from ..shared.ntdef import CHAR
 from ..shared.basetsd import SIZE_T, ULONG64
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 
@@ -624,3 +627,39 @@ class FILE_ID_DESCRIPTOR(Structure):
 		("Type", ENUM_TYPE), # FILE_ID_TYPE
 		("u", FILE_ID_DESCRIPTOR_UNION),
 	]
+
+# advapi32 functions
+
+LookupPrivilegeNameA = windll.advapi32.LookupPrivilegeNameA
+LookupPrivilegeNameA.argtypes = [LPCSTR, POINTER(LUID), LPSTR, POINTER(DWORD)]
+LookupPrivilegeNameA.restype = BOOL
+
+LookupPrivilegeNameW = windll.advapi32.LookupPrivilegeNameW
+LookupPrivilegeNameW.argtypes = [LPCWSTR, POINTER(LUID), LPWSTR, POINTER(DWORD)]
+LookupPrivilegeNameW.restype = BOOL
+
+LookupPrivilegeValueA = windll.advapi32.LookupPrivilegeValueA
+LookupPrivilegeValueA.argtypes = [LPCSTR, LPCSTR, POINTER(LUID)]
+LookupPrivilegeValueA.restype = BOOL
+
+LookupPrivilegeValueW = windll.advapi32.LookupPrivilegeValueW
+LookupPrivilegeValueW.argtypes = [LPCWSTR, LPCWSTR, POINTER(LUID)]
+LookupPrivilegeValueW.restype = BOOL
+
+# kernel32 functions
+
+GetFileInformationByHandleEx = windll.kernel32.GetFileInformationByHandleEx
+GetFileInformationByHandleEx.argtypes = [HANDLE, ENUM_TYPE, LPVOID, DWORD] # FILE_INFO_BY_HANDLE_CLASS
+GetFileInformationByHandleEx.restype = BOOL
+
+MoveFileExA = windll.kernel32.MoveFileExA
+MoveFileExA.argtypes = [LPCSTR, LPCSTR, DWORD]
+MoveFileExA.restype = BOOL
+
+MoveFileExW = windll.kernel32.MoveFileExW
+MoveFileExW.argtypes = [LPCWSTR, LPCWSTR, DWORD]
+MoveFileExW.restype = BOOL
+
+OpenFileById = windll.kernel32.OpenFileById
+OpenFileById.argtypes = [HANDLE, POINTER(FILE_ID_DESCRIPTOR), DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD]
+OpenFileById.restype = HANDLE

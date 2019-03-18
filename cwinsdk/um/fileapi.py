@@ -1,9 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure
-from ctypes.wintypes import DWORD
+from ctypes import Structure, windll, POINTER
+from ctypes.wintypes import BOOL, DWORD, LONG, HANDLE, ULARGE_INTEGER
+from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
+from .minwinbase import LPSECURITY_ATTRIBUTES
 from ..shared.ntdef import ULONGLONG
+from ..shared.minwindef import FILETIME
 
 CREATE_NEW = 1
 CREATE_ALWAYS = 2
@@ -31,3 +34,41 @@ class DISK_SPACE_INFORMATION(Structure):
 		("SectorsPerAllocationUnit", DWORD),
 		("BytesPerSector", DWORD),
 	]
+
+# functions
+
+AreFileApisANSI = windll.kernel32.AreFileApisANSI
+AreFileApisANSI.argtypes = []
+AreFileApisANSI.restype = BOOL
+
+CompareFileTime = windll.kernel32.CompareFileTime
+CompareFileTime.argtypes = [POINTER(FILETIME), POINTER(FILETIME)]
+CompareFileTime.restype = LONG
+
+CreateDirectoryA = windll.kernel32.CreateDirectoryA
+CreateDirectoryA.argtypes = [LPCSTR, LPSECURITY_ATTRIBUTES]
+CreateDirectoryA.restype = BOOL
+
+CreateDirectoryW = windll.kernel32.CreateDirectoryW
+CreateDirectoryW.argtypes = [LPCWSTR, LPSECURITY_ATTRIBUTES]
+CreateDirectoryW.restype = BOOL
+
+CreateFileA = windll.kernel32.CreateFileA
+CreateFileA.argtypes = [LPCSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE]
+CreateFileA.restype = HANDLE
+
+CreateFileW = windll.kernel32.CreateFileW
+CreateFileW.argtypes = [LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE]
+CreateFileW.restype = HANDLE
+
+GetDiskFreeSpaceExW = windll.kernel32.GetDiskFreeSpaceExW
+GetDiskFreeSpaceExW.argtypes = [LPCWSTR, POINTER(ULARGE_INTEGER), POINTER(ULARGE_INTEGER), POINTER(ULARGE_INTEGER)]
+GetDiskFreeSpaceExW.restype = BOOL
+
+GetFileAttributesW = windll.kernel32.GetFileAttributesW
+GetFileAttributesW.argtypes = [LPCWSTR]
+GetFileAttributesW.restype = DWORD
+
+GetVolumeInformationW = windll.kernel32.GetVolumeInformationW
+GetVolumeInformationW.argtypes = [LPCWSTR, LPWSTR, DWORD, POINTER(DWORD), POINTER(DWORD), POINTER(DWORD), LPWSTR, DWORD]
+GetVolumeInformationW.restype = BOOL

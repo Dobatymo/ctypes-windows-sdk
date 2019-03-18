@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union
+from ctypes import Structure, POINTER, Union
 from ctypes.wintypes import DWORD, LPVOID, BOOL, HANDLE
 from enum import IntEnum
 
@@ -13,6 +13,7 @@ class SECURITY_ATTRIBUTES(Structure):
 		("lpSecurityDescriptor", LPVOID),
 		("bInheritHandle", BOOL),
 	]
+LPSECURITY_ATTRIBUTES = POINTER(SECURITY_ATTRIBUTES)
 
 class OVERLAPPED_STRUCT(Structure):
 	_fields_ = [

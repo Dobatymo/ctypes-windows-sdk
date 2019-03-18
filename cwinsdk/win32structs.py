@@ -8,38 +8,6 @@ from .win32types import BYTE
 from .shared.basetsd import ULONG_PTR
 from .shared.ntdef import UCHAR, PVOID
 
-# wincon.h
-
-class COORD(Structure):
-	__slots__ = ()
-	# no pack
-	_fields_ = [
-		("X", SHORT),
-		("Y", SHORT)
-	]
-
-class SMALL_RECT(Structure):
-	__slots__ = ()
-	# no pack
-	_fields_ = [
-		("Left", SHORT),
-		("Top", SHORT),
-		("Right", SHORT),
-		("Bottom", SHORT)
-	]
-
-class CONSOLE_SCREEN_BUFFER_INFO(Structure):
-	__slots__ = ()
-	# no pack
-	_fields_ = [
-		("dwSize", COORD),
-		("dwCursorPosition", COORD),
-		("wAttributes", WORD),
-		("srWindow", SMALL_RECT),
-		("dwMaximumWindowSize", COORD)
-	]
-
-
 # ntdddisk.h
 
 class GETVERSIONINPARAMS(Structure):
