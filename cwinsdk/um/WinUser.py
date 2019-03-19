@@ -1,5 +1,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from ctypes import windll
+from ctypes.wintypes import BOOL, UINT, DWORD
+
 SB_HORZ = 0
 SB_VERT = 1
 SB_CTL = 2
@@ -444,3 +447,9 @@ EWX_QUICKRESOLVE = 0x00000020
 EWX_RESTARTAPPS = 0x00000040
 EWX_HYBRID_SHUTDOWN = 0x00400000
 EWX_BOOTOPTIONS = 0x01000000
+
+# functions
+
+ExitWindowsEx = windll.user32.ExitWindowsEx
+ExitWindowsEx.argtypes = [UINT, DWORD]
+ExitWindowsEx.restype = BOOL

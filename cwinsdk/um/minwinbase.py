@@ -2,8 +2,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from ctypes import Structure, POINTER, Union
 from ctypes.wintypes import DWORD, LPVOID, BOOL, HANDLE
-from enum import IntEnum
 
+from cwinsdk import CEnum
 from ..shared.ntdef import PVOID
 from ..shared.basetsd import ULONG_PTR
 
@@ -36,8 +36,18 @@ class OVERLAPPED(Structure):
 		("u", OVERLAPPED_UNION),
 		("hEvent", HANDLE),
 	]
+LPOVERLAPPED = POINTER(OVERLAPPED)
 
-class FILE_INFO_BY_HANDLE_CLASS(IntEnum):
+class OVERLAPPED_ENTRY(Structure):
+	_fields_ = [
+		("lpCompletionKey", ULONG_PTR),
+		("lpOverlapped", LPOVERLAPPED),
+		("dwNumberOfBytesTransferred", ULONG_PTR),
+		("hEvent", DWORD),
+	]
+LPOVERLAPPED_ENTRY = POINTER(OVERLAPPED_ENTRY)
+
+class FILE_INFO_BY_HANDLE_CLASS(CEnum):
 	FileBasicInfo = 0
 	FileStandardInfo = 1
 	FileNameInfo = 2

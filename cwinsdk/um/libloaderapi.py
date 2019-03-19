@@ -8,6 +8,8 @@ from ..shared.minwindef import HMODULE, HRSRC, HGLOBAL
 from ..shared.basetsd import LONG_PTR
 from .winnt import LANGID
 
+FARPROC = LPVOID # todo: where does this come from?
+
 ENUMRESTYPEPROCW = CFUNCTYPE(BOOL, HMODULE, LPWSTR, LONG_PTR)
 ENUMRESTYPEPROCA = CFUNCTYPE(BOOL, HMODULE, LPSTR, LONG_PTR)
 ENUMRESNAMEPROCW = CFUNCTYPE(BOOL, HMODULE, LPCWSTR, LPWSTR, LONG_PTR)
@@ -50,3 +52,7 @@ EnumResourceLanguagesExW.restype = BOOL
 EnumResourceLanguagesExA = windll.kernel32.EnumResourceLanguagesExA
 EnumResourceLanguagesExA.argtypes = [HMODULE, LPCSTR, LPCSTR, ENUMRESLANGPROCA, LONG_PTR, DWORD, LANGID]
 EnumResourceLanguagesExA.restype = BOOL
+
+GetProcAddress = windll.kernel32.GetProcAddress
+GetProcAddress.argtypes = [HMODULE, LPCSTR]
+GetProcAddress.restype = FARPROC

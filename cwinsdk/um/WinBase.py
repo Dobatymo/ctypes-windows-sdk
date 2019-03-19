@@ -3,17 +3,17 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from ctypes import windll, POINTER, Structure, Union, c_char
 from ctypes.wintypes import BOOL, LPVOID, WORD, DWORD, WCHAR, BYTE, ULONG # CHAR not in py2
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
-from ctypes import c_int as ENUM_TYPE
-from enum import IntEnum
+
+from cwinsdk import CEnum
 
 from .minwinbase import *
 from .fileapi import *
 from .handleapi import *
 
 from .winnt import *
-from ..win32types import ATOM
-from ..shared.ntdef import CHAR
 from ..shared.basetsd import SIZE_T, ULONG64
+from ..shared.minwindef import ATOM
+from ..shared.ntdef import CHAR
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 
 FILE_BEGIN = 0
@@ -607,7 +607,7 @@ class FILE_ID_EXTD_DIR_INFO(Structure):
 		("FileName", WCHAR*1),
 	]
 
-class FILE_ID_TYPE(IntEnum):
+class FILE_ID_TYPE(CEnum):
 	FileIdType = 0
 	ObjectIdType = 1
 	ExtendedFileIdType = 2
@@ -624,7 +624,7 @@ class FILE_ID_DESCRIPTOR(Structure):
 	_anonymous_ = ("u", )
 	_fields_ = [
 		("dwSize", DWORD),
-		("Type", ENUM_TYPE), # FILE_ID_TYPE
+		("Type", FILE_ID_TYPE),
 		("u", FILE_ID_DESCRIPTOR_UNION),
 	]
 
@@ -649,7 +649,7 @@ LookupPrivilegeValueW.restype = BOOL
 # kernel32 functions
 
 GetFileInformationByHandleEx = windll.kernel32.GetFileInformationByHandleEx
-GetFileInformationByHandleEx.argtypes = [HANDLE, ENUM_TYPE, LPVOID, DWORD] # FILE_INFO_BY_HANDLE_CLASS
+GetFileInformationByHandleEx.argtypes = [HANDLE, FILE_INFO_BY_HANDLE_CLASS, LPVOID, DWORD]
 GetFileInformationByHandleEx.restype = BOOL
 
 MoveFileExA = windll.kernel32.MoveFileExA

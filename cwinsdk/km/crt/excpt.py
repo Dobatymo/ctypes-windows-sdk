@@ -1,8 +1,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from enum import IntEnum
+from cwinsdk import CEnum
 
-class EXCEPTION_DISPOSITION(IntEnum):
+class EXCEPTION_DISPOSITION(CEnum):
 	ExceptionContinueExecution = 0
 	ExceptionContinueSearch = 1
 	ExceptionNestedException = 2
