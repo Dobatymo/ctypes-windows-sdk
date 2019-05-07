@@ -72,3 +72,11 @@ GetFileAttributesW.restype = DWORD
 GetVolumeInformationW = windll.kernel32.GetVolumeInformationW
 GetVolumeInformationW.argtypes = [LPCWSTR, LPWSTR, DWORD, POINTER(DWORD), POINTER(DWORD), POINTER(DWORD), LPWSTR, DWORD]
 GetVolumeInformationW.restype = BOOL
+
+LockFile = windll.kernel32.LockFile
+LockFile.argtypes = [HANDLE, DWORD, DWORD, DWORD, DWORD]
+LockFile.restype = BOOL
+
+UnlockFile = windll.kernel32.UnlockFile
+UnlockFile.argtypes = [HANDLE, DWORD, DWORD, DWORD, DWORD]
+UnlockFile.restype = BOOL
