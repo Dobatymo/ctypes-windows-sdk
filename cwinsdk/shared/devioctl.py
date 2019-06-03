@@ -90,8 +90,8 @@ FILE_DEVICE_HOLOGRAPHIC = 0x0000005b
 FILE_DEVICE_SDFXHCI = 0x0000005c
 FILE_DEVICE_UCMUCSI = 0x0000005d
 
-def CTL_CODE( DeviceType, Function, Method, Access ):
-	(DeviceType << 16) | (Access << 14) | (Function << 2) | Method
+def CTL_CODE(DeviceType, Function, Method, Access):
+	return (DeviceType << 16) | (Access << 14) | (Function << 2) | Method
 
 METHOD_BUFFERED = 0
 METHOD_IN_DIRECT = 1

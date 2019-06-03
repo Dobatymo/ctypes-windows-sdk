@@ -1,11 +1,14 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import windll, Structure, POINTER
-from ctypes.wintypes import BOOL, WORD, HANDLE, ULONG, DWORD
+from ctypes.wintypes import BOOL, WORD, ULONG, DWORD, WCHAR, HANDLE, LPVOID
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
 from .wincontypes import COORD, SMALL_RECT, INPUT_RECORD, CHAR_INFO
+from .minwinbase import SECURITY_ATTRIBUTES
 from ..shared.windef import COLORREF
+from ..shared.minwindef import UINT, LPDWORD
+from ..shared.ntdef import CHAR
 
 FOREGROUND_BLUE = 0x0001
 FOREGROUND_GREEN = 0x0002
@@ -34,6 +37,8 @@ class CONSOLE_SCREEN_BUFFER_INFO(Structure):
 		("dwMaximumWindowSize", COORD)
 	]
 
+LP_CONSOLE_SCREEN_BUFFER_INFO = POINTER(CONSOLE_SCREEN_BUFFER_INFO)
+
 class CONSOLE_SCREEN_BUFFER_INFOEX(Structure):
 	# no pack
 	_fields_ = [
@@ -48,6 +53,8 @@ class CONSOLE_SCREEN_BUFFER_INFOEX(Structure):
 		("ColorTable", COLORREF*16),
 	]
 
+LP_CONSOLE_SCREEN_BUFFER_INFOEX = POINTER(CONSOLE_SCREEN_BUFFER_INFOEX)
+
 class CONSOLE_CURSOR_INFO(Structure):
 	# no pack
 	_fields_ = [
@@ -55,129 +62,62 @@ class CONSOLE_CURSOR_INFO(Structure):
 		("bVisible", BOOL),
 	]
 
-'''
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-BOOL
- _In_ HANDLE hConsoleOutput,
- _In_ CHAR cCharacter,
- _In_ DWORD nLength,
- _In_ COORD dwWriteCoord,
- _Out_ LPDWORD lpNumberOfCharsWritten
- );
-
-
-BOOL
+PCONSOLE_CURSOR_INFO = POINTER(CONSOLE_CURSOR_INFO)
 
 FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-FillConsoleOutputCharacterW(
- _In_ HANDLE hConsoleOutput,
- _In_ WCHAR cCharacter,
- _In_ DWORD nLength,
- _In_ COORD dwWriteCoord,
- _Out_ LPDWORD lpNumberOfCharsWritten
- );
+FillConsoleOutputCharacterA.argtypes = [HANDLE, CHAR, DWORD, COORD, LPDWORD]
+FillConsoleOutputCharacterA.restype = BOOL
 
+FillConsoleOutputCharacterW = windll.kernel32.FillConsoleOutputCharacterW
+FillConsoleOutputCharacterW.argtypes = [HANDLE, WCHAR, DWORD, COORD, LPDWORD]
+FillConsoleOutputCharacterW.restype = BOOL
 
+FillConsoleOutputAttribute = windll.kernel32.FillConsoleOutputAttribute
+FillConsoleOutputAttribute.argtypes = [HANDLE, WORD, DWORD, COORD, LPDWORD]
+FillConsoleOutputAttribute.restype = BOOL
 
-BOOL
+GenerateConsoleCtrlEvent = windll.kernel32.GenerateConsoleCtrlEvent
+GenerateConsoleCtrlEvent.argtypes = [DWORD, DWORD]
+GenerateConsoleCtrlEvent.restype = BOOL
 
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-FillConsoleOutputAttribute(
- _In_ HANDLE hConsoleOutput,
- _In_ WORD wAttribute,
- _In_ DWORD nLength,
- _In_ COORD dwWriteCoord,
- _Out_ LPDWORD lpNumberOfAttrsWritten
- );
+CreateConsoleScreenBuffer = windll.kernel32.CreateConsoleScreenBuffer
+CreateConsoleScreenBuffer.argtypes = [DWORD, DWORD, POINTER(SECURITY_ATTRIBUTES), DWORD, LPVOID]
+CreateConsoleScreenBuffer.restype = HANDLE
 
+SetConsoleActiveScreenBuffer = windll.kernel32.SetConsoleActiveScreenBuffer
+SetConsoleActiveScreenBuffer.argtypes = [HANDLE]
+SetConsoleActiveScreenBuffer.restype = BOOL
 
+FlushConsoleInputBuffer = windll.kernel32.FlushConsoleInputBuffer
+FlushConsoleInputBuffer.argtypes = [HANDLE]
+FlushConsoleInputBuffer.restype = BOOL
 
-BOOL
+SetConsoleCP = windll.kernel32.SetConsoleCP
+SetConsoleCP.argtypes = [UINT]
+SetConsoleCP.restype = BOOL
 
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-GenerateConsoleCtrlEvent(
- _In_ DWORD dwCtrlEvent,
- _In_ DWORD dwProcessGroupId
- );
+SetConsoleOutputCP = windll.kernel32.SetConsoleOutputCP
+SetConsoleOutputCP.argtypes = [UINT]
+SetConsoleOutputCP.restype = BOOL
 
+GetConsoleCursorInfo = windll.kernel32.GetConsoleCursorInfo
+GetConsoleCursorInfo.argtypes = [HANDLE, PCONSOLE_CURSOR_INFO]
+GetConsoleCursorInfo.restype = BOOL
 
+SetConsoleCursorInfo = windll.kernel32.SetConsoleCursorInfo
+SetConsoleCursorInfo.argtypes = [HANDLE, POINTER(CONSOLE_CURSOR_INFO)]
+SetConsoleCursorInfo.restype = BOOL
 
-HANDLE
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-CreateConsoleScreenBuffer(
- _In_ DWORD dwDesiredAccess,
- _In_ DWORD dwShareMode,
- _In_opt_ CONST SECURITY_ATTRIBUTES* lpSecurityAttributes,
- _In_ DWORD dwFlags,
- _Reserved_ LPVOID lpScreenBufferData
- );
-
-
-
-BOOL
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-SetConsoleActiveScreenBuffer(
- _In_ HANDLE hConsoleOutput
- );
-
-
-
-BOOL
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-FlushConsoleInputBuffer(
- _In_ HANDLE hConsoleInput
- );
-
-
-
-BOOL
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-SetConsoleCP(
- _In_ UINT wCodePageID
- );
-
-
-
-BOOL
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-SetConsoleOutputCP(
- _In_ UINT wCodePageID
- );
-
-
-BOOL
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-GetConsoleCursorInfo(
- _In_ HANDLE hConsoleOutput,
- _Out_ PCONSOLE_CURSOR_INFO lpConsoleCursorInfo
- );
-
-
-
-BOOL
-
-FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
-SetConsoleCursorInfo(
- _In_ HANDLE hConsoleOutput,
- _In_ CONST CONSOLE_CURSOR_INFO* lpConsoleCursorInfo
- );
-'''
 GetConsoleScreenBufferInfo = windll.kernel32.GetConsoleScreenBufferInfo
-GetConsoleScreenBufferInfo.argtypes = [HANDLE, POINTER(CONSOLE_SCREEN_BUFFER_INFO)]
+GetConsoleScreenBufferInfo.argtypes = [HANDLE, LP_CONSOLE_SCREEN_BUFFER_INFO]
 GetConsoleScreenBufferInfo.restype = BOOL
 
 GetConsoleScreenBufferInfoEx = windll.kernel32.GetConsoleScreenBufferInfoEx
-GetConsoleScreenBufferInfoEx.argtypes = [HANDLE, POINTER(CONSOLE_SCREEN_BUFFER_INFOEX)]
+GetConsoleScreenBufferInfoEx.argtypes = [HANDLE, LP_CONSOLE_SCREEN_BUFFER_INFOEX]
 GetConsoleScreenBufferInfoEx.restype = BOOL
 
 SetConsoleScreenBufferInfoEx = windll.kernel32.SetConsoleScreenBufferInfoEx
-SetConsoleScreenBufferInfoEx.argtypes = [HANDLE, POINTER(CONSOLE_SCREEN_BUFFER_INFOEX)]
+SetConsoleScreenBufferInfoEx.argtypes = [HANDLE, LP_CONSOLE_SCREEN_BUFFER_INFOEX]
 SetConsoleScreenBufferInfoEx.restype = BOOL
 
 SetConsoleScreenBufferSize = windll.kernel32.SetConsoleScreenBufferSize
