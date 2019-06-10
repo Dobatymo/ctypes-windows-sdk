@@ -28,7 +28,6 @@ COMMON_LVB_UNDERSCORE = 0x8000
 COMMON_LVB_SBCSDBCS = 0x0300
 
 class CONSOLE_SCREEN_BUFFER_INFO(Structure):
-	# no pack
 	_fields_ = [
 		("dwSize", COORD),
 		("dwCursorPosition", COORD),

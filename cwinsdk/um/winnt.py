@@ -29,6 +29,9 @@ PCCH = CPOINTER(CHAR)
 
 PHANDLE = POINTER(HANDLE)
 
+PLONGLONG = POINTER(LONGLONG)
+PULONGLONG = POINTER(ULONGLONG)
+
 # moved
 
 class _IMAGE_RUNTIME_FUNCTION_ENTRY_UNION(Union):
@@ -259,6 +262,9 @@ class LUID(Structure):
 		("LowPart", DWORD),
 		("HighPart", LONG),
 	]
+
+DWORDLONG = ULONGLONG
+PDWORDLONG = POINTER(DWORDLONG)
 
 class OBJECTID(Structure):
 	_fields_ = [
@@ -1133,7 +1139,7 @@ class KNONVOLATILE_CONTEXT_POINTERS(Structure):
 	]
 
 class SCOPE_TABLE_ARM(Structure):
-	_fields = [
+	_fields_ = [
 		("Count", DWORD),
 		("ScopeRecord", _SCOPE_RECORD*1),
 	]
@@ -4054,100 +4060,126 @@ TIME_ZONE_ID_UNKNOWN 0
 TIME_ZONE_ID_STANDARD 1
 TIME_ZONE_ID_DAYLIGHT 2
 
-typedef enum _LOGICAL_PROCESSOR_RELATIONSHIP {
- RelationProcessorCore,
- RelationNumaNode,
- RelationCache,
- RelationProcessorPackage,
- RelationGroup,
- RelationAll = 0xffff
-} LOGICAL_PROCESSOR_RELATIONSHIP
+'''
+class LOGICAL_PROCESSOR_RELATIONSHIP(CEnum):
+	RelationProcessorCore = 0
+	RelationNumaNode = 1
+	RelationCache = 2
+	RelationProcessorPackage = 3
+	RelationGroup = 4
+	RelationAll = 0xffff
 
-LTP_PC_SMT 0x1
+LTP_PC_SMT = 0x1
 
-typedef enum _PROCESSOR_CACHE_TYPE {
- CacheUnified,
- CacheInstruction,
- CacheData,
- CacheTrace
-} PROCESSOR_CACHE_TYPE
+class PROCESSOR_CACHE_TYPE(CEnum):
+	CacheUnified = 0
+	CacheInstruction = 1
+	CacheData = 2
+	CacheTrace = 3
 
-CACHE_FULLY_ASSOCIATIVE 0xFF
+CACHE_FULLY_ASSOCIATIVE = 0xFF
 
-typedef struct _CACHE_DESCRIPTOR {
- BYTE Level
- BYTE Associativity
- WORD LineSize
- DWORD Size
- PROCESSOR_CACHE_TYPE Type
-} CACHE_DESCRIPTOR, *PCACHE_DESCRIPTOR
+class CACHE_DESCRIPTOR(Structure):
+	_fields_ = [
+		("Level", BYTE),
+		("Associativity", BYTE),
+		("LineSize", WORD),
+		("Size", DWORD),
+		("Type", PROCESSOR_CACHE_TYPE),
+	]
+PCACHE_DESCRIPTOR = POINTER(CACHE_DESCRIPTOR)
 
-typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION {
- ULONG_PTR ProcessorMask
- LOGICAL_PROCESSOR_RELATIONSHIP Relationship
- union {
- struct {
- BYTE Flags
- } ProcessorCore
- struct {
- DWORD NodeNumber
- } NumaNode
- CACHE_DESCRIPTOR Cache
- ULONGLONG Reserved[2]
- } DUMMYUNIONNAME
-} SYSTEM_LOGICAL_PROCESSOR_INFORMATION, *PSYSTEM_LOGICAL_PROCESSOR_INFORMATION
+class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_PROCESSORCORE(Structure):
+	_fields_ = [
+		("Flags", BYTE),
+	]
 
-typedef struct _PROCESSOR_RELATIONSHIP {
- BYTE Flags
- BYTE EfficiencyClass
- BYTE Reserved[20]
- WORD GroupCount
- _Field_size_(GroupCount) GROUP_AFFINITY GroupMask[ANYSIZE_ARRAY]
-} PROCESSOR_RELATIONSHIP, *PPROCESSOR_RELATIONSHIP
+class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_NUMANODE(Structure):
+	_fields_ = [
+		("NodeNumber", DWORD),
+	]
 
-typedef struct _NUMA_NODE_RELATIONSHIP {
- DWORD NodeNumber
- BYTE Reserved[20]
- GROUP_AFFINITY GroupMask
-} NUMA_NODE_RELATIONSHIP, *PNUMA_NODE_RELATIONSHIP
+class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_DUMMYUNIONNAME(Union):
+	_fields_ = [
+		("ProcessorCore", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_PROCESSORCORE),
+		("NumaNode", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_NUMANODE),
+		("Cache", CACHE_DESCRIPTOR),
+		("Reserved", ULONGLONG*2),
+	]
 
-typedef struct _CACHE_RELATIONSHIP {
- BYTE Level
- BYTE Associativity
- WORD LineSize
- DWORD CacheSize
- PROCESSOR_CACHE_TYPE Type
- BYTE Reserved[20]
- GROUP_AFFINITY GroupMask
-} CACHE_RELATIONSHIP, *PCACHE_RELATIONSHIP
+class SYSTEM_LOGICAL_PROCESSOR_INFORMATION(Structure):
+	_anonymous_ = ["Dummy"]
+	_fields_ = [
+		("ProcessorMask", ULONG_PTR),
+		("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
+		("Dummy", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_DUMMYUNIONNAME),
+	]
+PSYSTEM_LOGICAL_PROCESSOR_INFORMATION = POINTER(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)
 
-typedef struct _PROCESSOR_GROUP_INFO {
- BYTE MaximumProcessorCount
- BYTE ActiveProcessorCount
- BYTE Reserved[38]
- KAFFINITY ActiveProcessorMask
-} PROCESSOR_GROUP_INFO, *PPROCESSOR_GROUP_INFO
+class PROCESSOR_RELATIONSHIP(Structure):
+	_fields_ = [
+		("EfficiencyClass", BYTE),
+		("Reserved", BYTE*20),
+		("GroupCount", WORD),
+		("GroupMask", GROUP_AFFINITY*ANYSIZE_ARRAY),
+	]
+PPROCESSOR_RELATIONSHIP = POINTER(PROCESSOR_RELATIONSHIP)
 
-typedef struct _GROUP_RELATIONSHIP {
- WORD MaximumGroupCount
- WORD ActiveGroupCount
- BYTE Reserved[20]
- PROCESSOR_GROUP_INFO GroupInfo[ANYSIZE_ARRAY]
-} GROUP_RELATIONSHIP, *PGROUP_RELATIONSHIP
+class NUMA_NODE_RELATIONSHIP(Structure):
+	_fields_ = [
+		("NodeNumber", DWORD),
+		("Reserved", BYTE*20),
+		("GroupMask", GROUP_AFFINITY),
+	]
+PNUMA_NODE_RELATIONSHIP = POINTER(NUMA_NODE_RELATIONSHIP)
 
-_Struct_size_bytes_(Size) struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
- LOGICAL_PROCESSOR_RELATIONSHIP Relationship
- DWORD Size
- union {
- PROCESSOR_RELATIONSHIP Processor
- NUMA_NODE_RELATIONSHIP NumaNode
- CACHE_RELATIONSHIP Cache
- GROUP_RELATIONSHIP Group
- } DUMMYUNIONNAME
-}
+class CACHE_RELATIONSHIP(Structure):
+	_fields_ = [
+		("Level", BYTE),
+		("Associativity", BYTE),
+		("LineSize", WORD),
+		("CacheSize", DWORD),
+		("Type", PROCESSOR_CACHE_TYPE),
+		("Reserved", BYTE*20),
+		("GroupMask", GROUP_AFFINITY),
+	]
+PCACHE_RELATIONSHIP = POINTER(CACHE_RELATIONSHIP)
 
-typedef struct _SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, *PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+class PROCESSOR_GROUP_INFO(Structure):
+	_fields_ = [
+		("MaximumProcessorCount", BYTE),
+		("ActiveProcessorCount", BYTE*38),
+		("ActiveProcessorMask", KAFFINITY),
+	]
+PPROCESSOR_GROUP_INFO = POINTER(PROCESSOR_GROUP_INFO)
 
+class GROUP_RELATIONSHIP(Structure):
+	_fields_ = [
+		("MaximumGroupCount", WORD),
+		("ActiveGroupCount", WORD),
+		("Reserved", BYTE*20),
+		("GroupInfo", PROCESSOR_GROUP_INFO*ANYSIZE_ARRAY),
+	]
+PGROUP_RELATIONSHIP = POINTER(GROUP_RELATIONSHIP)
+
+class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX_DUMMYUNIONNAME(Union):
+	_fields_ = [
+		("Processor", PROCESSOR_RELATIONSHIP),
+		("NumaNode", NUMA_NODE_RELATIONSHIP),
+		("Cache", CACHE_RELATIONSHIP),
+		("Group", GROUP_RELATIONSHIP),
+	]
+
+class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Structure):
+	_anonymous_ = ["Dummy"]
+	_fields_ = [
+		("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
+		("Size", DWORD),
+		("Dummy", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX_DUMMYUNIONNAME),
+	]
+PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX = POINTER(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX)
+
+'''
 typedef enum _CPU_SET_INFORMATION_TYPE {
  CpuSetInformation
 } CPU_SET_INFORMATION_TYPE, *PCPU_SET_INFORMATION_TYPE
@@ -4192,11 +4224,15 @@ SYSTEM_CPU_SET_INFORMATION_REALTIME 0x8
 }
 
 typedef struct _SYSTEM_CPU_SET_INFORMATION SYSTEM_CPU_SET_INFORMATION, *PSYSTEM_CPU_SET_INFORMATION
+'''
 
-typedef struct _SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION {
- DWORD64 CycleTime
-} SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION, *PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION
+class SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION(Structure):
+	_fields_ = [
+		("CycleTime", DWORD64),
+	]
+PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION = POINTER(SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION)
 
+'''
 PROCESSOR_INTEL_386 386
 PROCESSOR_INTEL_486 486
 PROCESSOR_INTEL_PENTIUM 586
@@ -8527,25 +8563,30 @@ typedef struct _MESSAGE_RESOURCE_DATA {
  DWORD NumberOfBlocks
  MESSAGE_RESOURCE_BLOCK Blocks[ 1 ]
 } MESSAGE_RESOURCE_DATA, *PMESSAGE_RESOURCE_DATA
+'''
+class OSVERSIONINFOA(Structure):
+	_fields_ = [
+		("dwOSVersionInfoSize", DWORD),
+		("dwMajorVersion", DWORD),
+		("dwMinorVersion", DWORD),
+		("dwBuildNumber", DWORD),
+		("dwPlatformId", DWORD),
+		("szCSDVersion", CHAR*128),
+	]
+LPOSVERSIONINFOA = POINTER(OSVERSIONINFOA)
 
-typedef struct _OSVERSIONINFOA {
- DWORD dwOSVersionInfoSize
- DWORD dwMajorVersion
- DWORD dwMinorVersion
- DWORD dwBuildNumber
- DWORD dwPlatformId
- CHAR szCSDVersion[ 128 ]
-} OSVERSIONINFOA, *POSVERSIONINFOA, *LPOSVERSIONINFOA
+class OSVERSIONINFOW(Structure):
+	_fields_ = [
+		("dwOSVersionInfoSize", DWORD),
+		("dwMajorVersion", DWORD),
+		("dwMinorVersion", DWORD),
+		("dwBuildNumber", DWORD),
+		("dwPlatformId", DWORD),
+		("szCSDVersion", WCHAR*128),
+	]
+LPOSVERSIONINFOW = POINTER(OSVERSIONINFOW)
 
-typedef struct _OSVERSIONINFOW {
- DWORD dwOSVersionInfoSize
- DWORD dwMajorVersion
- DWORD dwMinorVersion
- DWORD dwBuildNumber
- DWORD dwPlatformId
- WCHAR szCSDVersion[ 128 ]
-} OSVERSIONINFOW, *POSVERSIONINFOW, *LPOSVERSIONINFOW, RTL_OSVERSIONINFOW, *PRTL_OSVERSIONINFOW
-
+'''
 typedef struct _OSVERSIONINFOEXA {
  DWORD dwOSVersionInfoSize
  DWORD dwMajorVersion

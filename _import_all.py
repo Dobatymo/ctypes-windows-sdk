@@ -22,6 +22,7 @@ import cwinsdk.um.minwinbase
 import cwinsdk.um.processenv
 import cwinsdk.um.processthreadsapi
 import cwinsdk.um.securitybaseapi
+import cwinsdk.um.sysinfoapi
 import cwinsdk.um.WinBase
 import cwinsdk.um.wincontypes
 import cwinsdk.um.winioctl

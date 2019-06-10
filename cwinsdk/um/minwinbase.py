@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import Structure, POINTER, Union
-from ctypes.wintypes import DWORD, LPVOID, BOOL, HANDLE
+from ctypes.wintypes import DWORD, LPVOID, BOOL, HANDLE, WORD
 
 from cwinsdk import CEnum
 from ..shared.ntdef import PVOID
@@ -46,6 +46,26 @@ class OVERLAPPED_ENTRY(Structure):
 		("hEvent", DWORD),
 	]
 LPOVERLAPPED_ENTRY = POINTER(OVERLAPPED_ENTRY)
+
+class FILETIME(Structure):
+	_fields_ = [
+		("dwLowDateTime", DWORD),
+		("dwHighDateTime", DWORD),
+	]
+LPFILETIME = POINTER(FILETIME)
+
+class SYSTEMTIME(Structure):
+	_fields_ = [
+		("wYear", WORD),
+		("wMonth", WORD),
+		("wDayOfWeek", WORD),
+		("wDay", WORD),
+		("wHour", WORD),
+		("wMinute", WORD),
+		("wSecond", WORD),
+		("wMilliseconds", WORD),
+	]
+LPSYSTEMTIME = POINTER(SYSTEMTIME)
 
 class FILE_INFO_BY_HANDLE_CLASS(CEnum):
 	FileBasicInfo = 0

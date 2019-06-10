@@ -21,6 +21,7 @@ from .um.processenv import *
 from .um.processthreadsapi import *
 from .um.reason import *
 from .um.securitybaseapi import *
+from .um.sysinfoapi import *
 from .um.WinBase import *
 from .um.wincontypes import *
 from .um.winioctl import *
