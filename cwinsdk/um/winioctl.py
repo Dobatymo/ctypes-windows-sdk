@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from ctypes import Structure
 from ctypes.wintypes import BOOLEAN, BYTE, DWORD
 
-from cwinsdk import CEnum
+from .. import CEnum, windll
 from ..shared.ntddstor import STORAGE_BUS_TYPE
 
 def CTL_CODE(DeviceType, Function, Method, Access):

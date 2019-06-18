@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from ctypes import Structure, POINTER, Union
 from ctypes.wintypes import DWORD, LPVOID, BOOL, HANDLE, WORD
 
-from cwinsdk import CEnum
+from .. import CEnum, windll
 from ..shared.ntdef import PVOID
 from ..shared.basetsd import ULONG_PTR
 

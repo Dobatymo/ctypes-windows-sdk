@@ -1,5 +1,17 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+from .ntdef import HRESULT
+
+S_OK = 0
+S_FALSE = 1
+
+E_ACCESSDENIED = 0x80070005
+E_FAIL = 0x80004005
+E_INVALIDARG = 0x80070057
+E_OUTOFMEMORY = 0x8007000E
+E_POINTER = 0x80004003
+E_UNEXPECTED = 0x8000FFFF
+
 FACILITY_NULL = 0
 FACILITY_RPC = 1
 FACILITY_DISPATCH = 2

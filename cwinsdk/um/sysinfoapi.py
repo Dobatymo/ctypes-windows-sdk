@@ -1,9 +1,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, POINTER, Structure, Union, c_double
+from ctypes import POINTER, Structure, Union, c_double
 from ctypes.wintypes import WORD, BOOL, UINT, DWORD, LPVOID, LPSTR, LPWSTR, LPCWSTR, ULONG, HANDLE, USHORT, LPCSTR
 
-from cwinsdk import CEnum
+from .. import CEnum, windll
 from .winnt import DWORDLONG, LPOSVERSIONINFOA, LPOSVERSIONINFOW, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, LOGICAL_PROCESSOR_RELATIONSHIP, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, PULONGLONG, PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION
 from .minwinbase import SYSTEMTIME, LPSYSTEMTIME, LPFILETIME
 from ..shared.basetsd import DWORD_PTR

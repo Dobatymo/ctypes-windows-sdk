@@ -1,7 +1,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll
 from ctypes.wintypes import BOOL, UINT, DWORD
+
+from .. import windll
 
 SB_HORZ = 0
 SB_VERT = 1

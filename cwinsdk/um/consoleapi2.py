@@ -1,9 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, Structure, POINTER
+from ctypes import Structure, POINTER
 from ctypes.wintypes import BOOL, WORD, ULONG, DWORD, WCHAR, HANDLE, LPVOID
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
+from .. import windll
 from .wincontypes import COORD, SMALL_RECT, INPUT_RECORD, CHAR_INFO
 from .minwinbase import SECURITY_ATTRIBUTES
 from ..shared.windef import COLORREF

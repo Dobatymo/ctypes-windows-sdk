@@ -1,8 +1,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, POINTER
+from ctypes import POINTER
 from ctypes.wintypes import LPVOID, BOOL, HANDLE, DWORD, ULONG
 
+from .. import windll
 from ..shared.basetsd import ULONG_PTR, PULONG_PTR
 from ..shared.minwindef import PULONG, LPDWORD
 from .minwinbase import LPOVERLAPPED, LPOVERLAPPED_ENTRY

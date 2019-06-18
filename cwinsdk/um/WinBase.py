@@ -1,11 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, POINTER, Structure, Union, c_char
+from ctypes import POINTER, Structure, Union, c_char
 from ctypes.wintypes import BOOL, LPVOID, WORD, DWORD, WCHAR, BYTE, ULONG # CHAR not in py2
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
-from cwinsdk import CEnum
-
+from .. import CEnum, windll
 from .minwinbase import *
 from .fileapi import *
 from .handleapi import *

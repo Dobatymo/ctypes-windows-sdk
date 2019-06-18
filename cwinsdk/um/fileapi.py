@@ -1,9 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, windll, POINTER
+from ctypes import Structure, POINTER
 from ctypes.wintypes import BOOL, DWORD, LONG, HANDLE, ULARGE_INTEGER
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
+from .. import windll
 from .minwinbase import LPSECURITY_ATTRIBUTES
 from ..shared.ntdef import ULONGLONG
 from ..shared.minwindef import FILETIME

@@ -1,9 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import CFUNCTYPE, windll
+from ctypes import CFUNCTYPE
 from ctypes.wintypes import BOOL, WORD, DWORD, LPVOID
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
+from .. import windll
 from ..shared.minwindef import HMODULE, HRSRC, HGLOBAL
 from ..shared.basetsd import LONG_PTR
 from .winnt import LANGID

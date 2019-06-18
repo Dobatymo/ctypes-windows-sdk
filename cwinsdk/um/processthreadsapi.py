@@ -1,7 +1,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, POINTER
+from ctypes import POINTER
 from ctypes.wintypes import BOOL, HANDLE, DWORD
+
+from .. import windll
 
 OpenProcessToken = windll.advapi32.OpenProcessToken
 OpenProcessToken.argtypes = [HANDLE, DWORD, POINTER(HANDLE)]

@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from cwinsdk import CEnum
+from .. import CEnum
 
 class STORAGE_BUS_TYPE(CEnum):
 	BusTypeUnknown = 0x00

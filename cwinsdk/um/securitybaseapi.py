@@ -1,8 +1,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, POINTER
+from ctypes import POINTER
 from ctypes.wintypes import HANDLE, DWORD, BOOL, LPCWSTR, LPVOID, LPWSTR
 
+from .. import windll
 from ..shared.minwindef import PDWORD, LPDWORD, LPBOOL
 from .winnt import PTOKEN_PRIVILEGES, PSECURITY_DESCRIPTOR, PGENERIC_MAPPING, PPRIVILEGE_SET, PSID, POBJECT_TYPE_LIST
 

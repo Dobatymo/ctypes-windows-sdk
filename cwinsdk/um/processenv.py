@@ -1,9 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import windll, POINTER
+from ctypes import POINTER
 from ctypes.wintypes import BOOL, HANDLE, DWORD
 from ctypes.wintypes import LPSTR, LPCSTR, LPWSTR, LPCWSTR
 
+from .. import windll
 from .winnt import LPWCH, LPCH, PHANDLE
 
 SetEnvironmentStringsW = windll.kernel32.SetEnvironmentStringsW

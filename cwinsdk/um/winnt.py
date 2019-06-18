@@ -1,13 +1,18 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, sizeof, POINTER, CFUNCTYPE, c_char
-from ctypes.wintypes import BYTE, WORD, DWORD, LONG, WCHAR, HANDLE
+from ctypes import Structure, Union, sizeof, POINTER, CFUNCTYPE
+from ctypes import c_char, c_short, c_long
+from ctypes.wintypes import BYTE, WORD, DWORD, WCHAR, HANDLE
 
-from cwinsdk import CEnum
+from .. import CEnum, windll
 from ..shared.guiddef import GUID
 from ..shared.basetsd import KAFFINITY, DWORD64, PDWORD64, ULONG_PTR
 from ..shared.ntdef import CHAR, PVOID64, PVOID, LONGLONG, ULONGLONG
 from ..km.crt.excpt import EXCEPTION_DISPOSITION
+
+CHAR = c_char
+SHORT = c_short
+LONG = c_long
 
 CPOINTER = POINTER
 
@@ -16,6 +21,13 @@ ANYSIZE_ARRAY = 1
 PWCHAR = POINTER(WCHAR)
 LPWCH = POINTER(WCHAR)
 PWCH = POINTER(WCHAR)
+
+LPCWCH = POINTER(WCHAR) # const
+PCWCH = POINTER(WCHAR) # const
+
+NWPSTR = POINTER(WCHAR)
+LPWSTR = POINTER(WCHAR)
+PWSTR = POINTER(WCHAR)
 
 LPCWCH = CPOINTER(WCHAR)
 PCWCH = CPOINTER(WCHAR)
@@ -28,6 +40,8 @@ LPCCH = CPOINTER(CHAR)
 PCCH = CPOINTER(CHAR)
 
 PHANDLE = POINTER(HANDLE)
+
+HRESULT = LONG
 
 PLONGLONG = POINTER(LONGLONG)
 PULONGLONG = POINTER(ULONGLONG)
