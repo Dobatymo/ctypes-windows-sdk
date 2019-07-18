@@ -28,9 +28,3 @@ import cwinsdk.um.wincontypes
 import cwinsdk.um.winioctl
 import cwinsdk.um.winnt
 import cwinsdk.um.WinUser
-
-import cwinsdk.win32constants
-import cwinsdk.win32enums
-import cwinsdk.win32functions
-import cwinsdk.win32structs
-import cwinsdk.win32types

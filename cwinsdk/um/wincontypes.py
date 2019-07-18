@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union
+from ctypes import Structure, Union, POINTER
 from ctypes.wintypes import BOOL, WORD, SHORT, WCHAR, DWORD, UINT
 
 from ..shared.ntdef import CHAR
@@ -108,6 +108,7 @@ class INPUT_RECORD(Structure):
 		("bSetFocus", BOOL),
 		("bSetFocus", BOOL),
 	]
+PINPUT_RECORD = POINTER(INPUT_RECORD)
 
 KEY_EVENT = 0x0001 # Event contains key event record
 MOUSE_EVENT = 0x0002 # Event contains mouse event record

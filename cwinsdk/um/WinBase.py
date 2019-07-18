@@ -662,3 +662,7 @@ MoveFileExW.restype = BOOL
 OpenFileById = windll.kernel32.OpenFileById
 OpenFileById.argtypes = [HANDLE, POINTER(FILE_ID_DESCRIPTOR), DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD]
 OpenFileById.restype = HANDLE
+
+ReOpenFile = windll.kernel32.ReOpenFile
+ReOpenFile.argtypes = [HANDLE, DWORD, DWORD, DWORD]
+ReOpenFile.restype = HANDLE

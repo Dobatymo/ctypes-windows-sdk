@@ -4,8 +4,8 @@ from ctypes import Structure, POINTER
 from ctypes.wintypes import BOOL, DWORD, LONG, HANDLE, ULARGE_INTEGER
 from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
 
-from .. import windll
-from .minwinbase import LPSECURITY_ATTRIBUTES
+from .. import windll, nonzero
+from .minwinbase import LPSECURITY_ATTRIBUTES, LPOVERLAPPED
 from ..shared.ntdef import ULONGLONG
 from ..shared.minwindef import FILETIME
 
@@ -73,11 +73,22 @@ GetFileAttributesW.restype = DWORD
 GetVolumeInformationW = windll.kernel32.GetVolumeInformationW
 GetVolumeInformationW.argtypes = [LPCWSTR, LPWSTR, DWORD, POINTER(DWORD), POINTER(DWORD), POINTER(DWORD), LPWSTR, DWORD]
 GetVolumeInformationW.restype = BOOL
+GetVolumeInformationW.errcheck = nonzero
 
 LockFile = windll.kernel32.LockFile
 LockFile.argtypes = [HANDLE, DWORD, DWORD, DWORD, DWORD]
 LockFile.restype = BOOL
 
+LockFileEx = windll.kernel32.LockFileEx
+LockFileEx.argtypes = [HANDLE, DWORD, DWORD, DWORD, DWORD, LPOVERLAPPED]
+LockFileEx.restype = BOOL
+LockFileEx.errcheck = nonzero
+
 UnlockFile = windll.kernel32.UnlockFile
 UnlockFile.argtypes = [HANDLE, DWORD, DWORD, DWORD, DWORD]
 UnlockFile.restype = BOOL
+
+UnlockFileEx = windll.kernel32.UnlockFileEx
+UnlockFileEx.argtypes = [HANDLE, DWORD, DWORD, DWORD, LPOVERLAPPED]
+UnlockFileEx.restype = BOOL
+UnlockFileEx.errcheck = nonzero

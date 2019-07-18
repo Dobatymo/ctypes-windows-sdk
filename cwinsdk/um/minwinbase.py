@@ -92,3 +92,6 @@ class FILE_INFO_BY_HANDLE_CLASS(CEnum):
 	FileDispositionInfoEx = 21
 	FileRenameInfoEx = 22
 	MaximumFileInfoByHandleClass = 23
+
+LOCKFILE_FAIL_IMMEDIATELY = 0x00000001
+LOCKFILE_EXCLUSIVE_LOCK = 0x00000002

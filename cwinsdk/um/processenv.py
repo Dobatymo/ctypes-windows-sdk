@@ -4,7 +4,7 @@ from ctypes import POINTER
 from ctypes.wintypes import BOOL, HANDLE, DWORD
 from ctypes.wintypes import LPSTR, LPCSTR, LPWSTR, LPCWSTR
 
-from .. import windll
+from .. import windll, validhandle, nonzero
 from .winnt import LPWCH, LPCH, PHANDLE
 
 SetEnvironmentStringsW = windll.kernel32.SetEnvironmentStringsW
@@ -14,10 +14,12 @@ SetEnvironmentStringsW.restype = BOOL
 GetStdHandle = windll.kernel32.GetStdHandle
 GetStdHandle.argtypes = [DWORD]
 GetStdHandle.restype = HANDLE
+GetStdHandle.errcheck = validhandle
 
 SetStdHandle = windll.kernel32.SetStdHandle
 SetStdHandle.argtypes = [DWORD, HANDLE]
 SetStdHandle.restype = BOOL
+SetStdHandle.errcheck = nonzero
 
 SetStdHandleEx = windll.kernel32.SetStdHandleEx
 SetStdHandleEx.argtypes = [DWORD, HANDLE, PHANDLE]
