@@ -1,0 +1,23 @@
+name: Python package
+
+on: [push]
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+    - name: Build dists
+      run: |
+        pip install wheel
+        python setup.py sdist bdist_wheel
+    - name: Publish a Python distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
