@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, POINTER
+from ctypes import Structure, Union, POINTER, c_void_p
 from ctypes.wintypes import BOOL, WORD, SHORT, WCHAR, DWORD, UINT
 
 from ..shared.ntdef import CHAR
@@ -128,11 +128,12 @@ class CHAR_INFO(Structure):
 		("Attributes", WORD),
 	]
 
-'''
-typedef struct _CONSOLE_FONT_INFO {
- DWORD nFont;
- COORD dwFontSize;
-} CONSOLE_FONT_INFO, *PCONSOLE_FONT_INFO;
+class CONSOLE_FONT_INFO(Structure):
+	_fields_ = [
+		("nFont", DWORD),
+		("dwFontSize", COORD),
+	]
 
-typedef VOID* HPCON;
-'''
+PCONSOLE_FONT_INFO = POINTER(CONSOLE_FONT_INFO)
+
+HPCON = c_void_p

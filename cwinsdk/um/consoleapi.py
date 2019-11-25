@@ -5,7 +5,8 @@ from ctypes.wintypes import BOOL, DWORD, ULONG, UINT, HANDLE, LPVOID
 
 from .. import windll, nonzero
 from ..shared.minwindef import LPDWORD
-from .wincontypes import COORD, PINPUT_RECORD
+from ..shared.ntdef import HRESULT
+from .wincontypes import COORD, PINPUT_RECORD, HPCON
 
 # defines
 
