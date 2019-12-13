@@ -62,6 +62,14 @@ CreateFileW = windll.kernel32.CreateFileW
 CreateFileW.argtypes = [LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE]
 CreateFileW.restype = HANDLE
 
+GetCompressedFileSizeA = windll.kernel32.GetCompressedFileSizeA
+GetCompressedFileSizeA.argtypes = [LPCSTR, POINTER(DWORD)]
+GetCompressedFileSizeA.restype = DWORD
+
+GetCompressedFileSizeW = windll.kernel32.CreateFileW
+GetCompressedFileSizeW.argtypes = [LPCWSTR, POINTER(DWORD)]
+GetCompressedFileSizeW.restype = DWORD
+
 GetDiskFreeSpaceExW = windll.kernel32.GetDiskFreeSpaceExW
 GetDiskFreeSpaceExW.argtypes = [LPCWSTR, POINTER(ULARGE_INTEGER), POINTER(ULARGE_INTEGER), POINTER(ULARGE_INTEGER)]
 GetDiskFreeSpaceExW.restype = BOOL
