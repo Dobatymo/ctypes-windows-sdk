@@ -66,7 +66,7 @@ GetCompressedFileSizeA = windll.kernel32.GetCompressedFileSizeA
 GetCompressedFileSizeA.argtypes = [LPCSTR, POINTER(DWORD)]
 GetCompressedFileSizeA.restype = DWORD
 
-GetCompressedFileSizeW = windll.kernel32.CreateFileW
+GetCompressedFileSizeW = windll.kernel32.GetCompressedFileSizeW
 GetCompressedFileSizeW.argtypes = [LPCWSTR, POINTER(DWORD)]
 GetCompressedFileSizeW.restype = DWORD
 

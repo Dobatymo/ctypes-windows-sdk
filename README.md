@@ -1,6 +1,6 @@
 # ctypes-windows-sdk
 
-A totally incomplete and random port of the C Windows SDK for Python ctypes.
+A totally incomplete and random port of the C Windows SDK for Python ctypes. No dependencies besides the Python standard library.
 
 ## Install
 
