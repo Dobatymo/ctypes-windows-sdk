@@ -23,7 +23,7 @@ def _struct2pairs(struct):
 		if hasattr(value, "_fields_"):
 			value = dict(_struct2pairs(value))
 		elif hasattr(value, "_length_"):
-			value = list(value)
+			value = list(dict(_struct2pairs(v)) for v in value)
 		elif hasattr(value, "value"):
 			value = value.value
 
