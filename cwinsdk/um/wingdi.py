@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import POINTER, c_int, Structure
-from ctypes.wintypes import LPCSTR, HANDLE, LPCWSTR, DWORD, BOOL, UINT, LPVOID, WORD, LONG, BYTE
+from ctypes import POINTER, Structure, c_int
+from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPVOID, UINT, WORD
 
 from .. import windll
 
@@ -16,6 +16,7 @@ SRCCOPY = 0x00CC0020
 CAPTUREBLT = 0x40000000
 
 from warnings import warn
+
 warn("Don't use last parameter of `CreateDCA` or `CreateDCW`, as `DEVMODEA` and `DEVMODEW` are not defined correctly.")
 DEVMODEA = c_int
 DEVMODEW = c_int

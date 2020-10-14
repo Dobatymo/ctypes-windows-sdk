@@ -1,14 +1,24 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import POINTER, Structure, Union, c_double
-from ctypes.wintypes import WORD, BOOL, UINT, DWORD, LPVOID, LPSTR, LPWSTR, LPCWSTR, ULONG, HANDLE, USHORT, LPCSTR
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, UINT, ULONG, USHORT, WORD
 
 from .. import CEnum, windll
-from .winnt import DWORDLONG, LPOSVERSIONINFOA, LPOSVERSIONINFOW, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, LOGICAL_PROCESSOR_RELATIONSHIP, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, PULONGLONG, PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION
-from .minwinbase import SYSTEMTIME, LPSYSTEMTIME, LPFILETIME
 from ..shared.basetsd import DWORD_PTR
-from ..shared.ntdef import ULONGLONG, PVOID
-from ..shared.minwindef import PDWORD, PBOOL, LPDWORD, UCHAR
+from ..shared.minwindef import LPDWORD, PBOOL, PDWORD, UCHAR
+from ..shared.ntdef import PVOID, ULONGLONG
+from .minwinbase import LPFILETIME, LPSYSTEMTIME, SYSTEMTIME
+from .winnt import (
+    DWORDLONG,
+    LOGICAL_PROCESSOR_RELATIONSHIP,
+    LPOSVERSIONINFOA,
+    LPOSVERSIONINFOW,
+    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
+    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX,
+    PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION,
+    PULONGLONG,
+)
+
 
 class SYSTEM_INFO_DUMMYSTRUCTNAME(Structure):
 	_fields_ = [

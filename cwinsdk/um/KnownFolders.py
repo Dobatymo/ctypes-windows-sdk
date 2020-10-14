@@ -2,6 +2,7 @@ from ctypes import c_ubyte
 
 from ..shared.guiddef import GUID
 
+
 def DEFINE_KNOWN_FOLDER(l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8):
 	return GUID(l, w1, w2, (c_ubyte*8)(b1, b2, b3, b4, b5, b6, b7, b8))
 

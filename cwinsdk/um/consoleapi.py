@@ -1,12 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, POINTER, CFUNCTYPE
-from ctypes.wintypes import BOOL, DWORD, ULONG, UINT, HANDLE, LPVOID
+from ctypes import CFUNCTYPE, POINTER, Structure
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, UINT, ULONG
 
-from .. import windll, nonzero
+from .. import nonzero, windll
 from ..shared.minwindef import LPDWORD
 from ..shared.ntdef import HRESULT
-from .wincontypes import COORD, PINPUT_RECORD, HPCON
+from .wincontypes import COORD, HPCON, PINPUT_RECORD
 
 # defines
 

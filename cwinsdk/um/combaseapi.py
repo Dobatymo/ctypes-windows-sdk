@@ -1,11 +1,11 @@
-from ctypes.wintypes import LPVOID, DWORD
+from ctypes.wintypes import DWORD, LPVOID
 
 from .. import windll
-from .Unknwn import LPUNKNOWN
 from ..shared.basetsd import SIZE_T
-from ..shared.guiddef import REFCLSID, REFIID, LPIID
+from ..shared.guiddef import LPIID, REFCLSID, REFIID
 from ..shared.ntdef import HRESULT
 from ..shared.WTypesbase import LPCOLESTR
+from .Unknwn import LPUNKNOWN
 
 CoCreateInstance = windll.ole32.CoCreateInstance
 CoCreateInstance.argtypes = [REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID]

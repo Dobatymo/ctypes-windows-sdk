@@ -1,15 +1,14 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, POINTER
-from ctypes.wintypes import BOOL, WORD, ULONG, DWORD, WCHAR, HANDLE, LPVOID
-from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
+from ctypes import POINTER, Structure
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WCHAR, WORD
 
 from .. import windll
-from .wincontypes import COORD, SMALL_RECT, INPUT_RECORD, CHAR_INFO
-from .minwinbase import SECURITY_ATTRIBUTES
-from ..shared.windef import COLORREF
-from ..shared.minwindef import UINT, LPDWORD
+from ..shared.minwindef import LPDWORD, UINT
 from ..shared.ntdef import CHAR
+from ..shared.windef import COLORREF
+from .minwinbase import SECURITY_ATTRIBUTES
+from .wincontypes import CHAR_INFO, COORD, INPUT_RECORD, SMALL_RECT
 
 FOREGROUND_BLUE = 0x0001
 FOREGROUND_GREEN = 0x0002

@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from cwinsdk import CEnum
 
+
 class EXCEPTION_DISPOSITION(CEnum):
 	ExceptionContinueExecution = 0
 	ExceptionContinueSearch = 1

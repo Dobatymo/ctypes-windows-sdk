@@ -1,6 +1,6 @@
-from setuptools import setup
-
 from io import open
+
+from setuptools import setup
 
 with open("README.md", "r", encoding="utf-8") as fr:
 	long_description = fr.read()

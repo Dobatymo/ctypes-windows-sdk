@@ -1,11 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import POINTER
-from ctypes.wintypes import HANDLE, DWORD, BOOL, LPCWSTR, LPVOID, LPWSTR
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCWSTR, LPVOID, LPWSTR
 
 from .. import windll
-from ..shared.minwindef import PDWORD, LPDWORD, LPBOOL
-from .winnt import PTOKEN_PRIVILEGES, PSECURITY_DESCRIPTOR, PGENERIC_MAPPING, PPRIVILEGE_SET, PSID, POBJECT_TYPE_LIST
+from ..shared.minwindef import LPBOOL, LPDWORD, PDWORD
+from .winnt import PGENERIC_MAPPING, POBJECT_TYPE_LIST, PPRIVILEGE_SET, PSECURITY_DESCRIPTOR, PSID, PTOKEN_PRIVILEGES
 
 AccessCheck = windll.advapi32.AccessCheck
 AccessCheck.argtypes = [PSECURITY_DESCRIPTOR, HANDLE, DWORD, PGENERIC_MAPPING, PPRIVILEGE_SET, LPDWORD, LPDWORD, LPBOOL]

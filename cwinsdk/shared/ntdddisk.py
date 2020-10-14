@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from ctypes import Structure
 from ctypes.wintypes import ULONG
 
+from .devioctl import CTL_CODE, FILE_DEVICE_DISK, FILE_READ_ACCESS, FILE_WRITE_ACCESS, METHOD_BUFFERED
 from .ntdef import UCHAR
-from .devioctl import CTL_CODE, FILE_DEVICE_DISK, METHOD_BUFFERED, FILE_READ_ACCESS, FILE_WRITE_ACCESS
 
 IOCTL_DISK_BASE = FILE_DEVICE_DISK
 SMART_GET_VERSION = CTL_CODE(IOCTL_DISK_BASE, 0x0020, METHOD_BUFFERED, FILE_READ_ACCESS)

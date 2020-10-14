@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, POINTER
-from ctypes import c_ulong, c_ushort, c_ubyte
+from ctypes import POINTER, Structure, Union, c_ubyte, c_ulong, c_ushort
+
 
 class GUID(Structure):
 	_fields_ = [

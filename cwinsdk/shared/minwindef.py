@@ -1,10 +1,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, POINTER
-from ctypes import c_ulong, c_int, c_ubyte, c_ushort, c_float, c_uint, c_long, c_void_p
+from ctypes import POINTER, Structure, c_float, c_int, c_long, c_ubyte, c_uint, c_ulong, c_ushort, c_void_p
 from ctypes.wintypes import HANDLE
 
-from .basetsd import UINT_PTR, LONG_PTR
+from .basetsd import LONG_PTR, UINT_PTR
 
 CPOINTER = POINTER
 

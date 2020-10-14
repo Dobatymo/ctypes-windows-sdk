@@ -10,7 +10,6 @@ from .shared.ntdef import *
 from .shared.secext import *
 from .shared.windef import *
 from .shared.winerror import *
-
 from .um.consoleapi2 import *
 from .um.fileapi import *
 from .um.handleapi import *

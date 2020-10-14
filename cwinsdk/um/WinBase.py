@@ -1,19 +1,29 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import POINTER, Structure, Union, c_char
-from ctypes.wintypes import BOOL, LPVOID, WORD, DWORD, WCHAR, BYTE, ULONG # CHAR not in py2
-from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
+from ctypes.wintypes import (  # CHAR not in py2
+    BOOL,
+    BYTE,
+    DWORD,
+    LPCSTR,
+    LPCWSTR,
+    LPSTR,
+    LPVOID,
+    LPWSTR,
+    ULONG,
+    WCHAR,
+    WORD,
+)
 
 from .. import CEnum, windll
-from .minwinbase import *
-from .fileapi import *
-from .handleapi import *
-
-from .winnt import *
+from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 from ..shared.basetsd import SIZE_T, ULONG64
 from ..shared.minwindef import ATOM
 from ..shared.ntdef import CHAR
-from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
+from .fileapi import *
+from .handleapi import *
+from .minwinbase import *
+from .winnt import *
 
 FILE_BEGIN = 0
 FILE_CURRENT = 1

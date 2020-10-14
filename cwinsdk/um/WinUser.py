@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import c_int
-from ctypes.wintypes import BOOL, UINT, DWORD
+from ctypes.wintypes import BOOL, DWORD, UINT
 
 from .. import windll
 

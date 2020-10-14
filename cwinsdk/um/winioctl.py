@@ -4,10 +4,11 @@ from ctypes import Structure, Union
 from ctypes.wintypes import BOOLEAN, BYTE, DWORD, LARGE_INTEGER, WCHAR
 
 from .. import CEnum, windll
-from ..shared.ntddstor import STORAGE_BUS_TYPE
-from ..shared.guiddef import GUID
 from ..shared.basetsd import DWORD64
+from ..shared.guiddef import GUID
+from ..shared.ntddstor import STORAGE_BUS_TYPE
 from .winnt import FILE_READ_DATA, FILE_WRITE_DATA
+
 
 def CTL_CODE(DeviceType, Function, Method, Access):
 	return (DeviceType << 16) | (Access << 14) | (Function << 2) | Method

@@ -1,14 +1,13 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, sizeof, POINTER, CFUNCTYPE
-from ctypes import c_char, c_short, c_long
-from ctypes.wintypes import BYTE, WORD, DWORD, WCHAR, HANDLE
+from ctypes import CFUNCTYPE, POINTER, Structure, Union, c_char, c_long, c_short, sizeof
+from ctypes.wintypes import BYTE, DWORD, HANDLE, WCHAR, WORD
 
 from .. import CEnum, windll
-from ..shared.guiddef import GUID
-from ..shared.basetsd import KAFFINITY, DWORD64, PDWORD64, ULONG_PTR
-from ..shared.ntdef import CHAR, PVOID64, PVOID, LONGLONG, ULONGLONG
 from ..km.crt.excpt import EXCEPTION_DISPOSITION
+from ..shared.basetsd import DWORD64, KAFFINITY, PDWORD64, ULONG_PTR
+from ..shared.guiddef import GUID
+from ..shared.ntdef import CHAR, LONGLONG, PVOID, PVOID64, ULONGLONG
 
 CHAR = c_char
 SHORT = c_short

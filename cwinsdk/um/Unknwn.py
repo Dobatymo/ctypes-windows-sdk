@@ -1,4 +1,5 @@
-from ctypes import Structure, POINTER
+from ctypes import POINTER, Structure
+
 
 class IUnknown(Structure):
 	pass

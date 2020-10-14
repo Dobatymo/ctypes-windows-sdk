@@ -1,8 +1,8 @@
-from ctypes.wintypes import BOOLEAN
-from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
+from ctypes.wintypes import BOOLEAN, LPCSTR, LPCWSTR, LPSTR, LPWSTR
 
 from .. import CEnum, windll
 from .minwindef import PULONG
+
 
 class EXTENDED_NAME_FORMAT(CEnum):
 	NameUnknown = 0

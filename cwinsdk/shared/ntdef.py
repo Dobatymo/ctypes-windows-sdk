@@ -1,7 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import POINTER
-from ctypes import c_void_p, c_char, c_short, c_long, c_double, c_ubyte, c_ushort, c_ulong, c_int64, c_uint64
+from ctypes import POINTER, c_char, c_double, c_int64, c_long, c_short, c_ubyte, c_uint64, c_ulong, c_ushort, c_void_p
 from ctypes.wintypes import WCHAR
 
 PWCHAR = POINTER(WCHAR)

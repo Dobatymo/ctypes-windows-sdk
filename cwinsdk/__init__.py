@@ -1,13 +1,13 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import platform
-from ctypes import c_int, LibraryLoader, WinDLL, WinError
+from ctypes import LibraryLoader, WinDLL, WinError, c_int
 from ctypes.wintypes import HANDLE
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-	from typing import Iterable, Iterator
 	from ctypes import Structure
+	from typing import Iterable, Iterator
 
 windll = LibraryLoader(WinDLL)
 

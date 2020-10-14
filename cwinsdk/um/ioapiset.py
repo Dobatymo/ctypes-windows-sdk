@@ -1,11 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import POINTER
-from ctypes.wintypes import LPVOID, BOOL, HANDLE, DWORD, ULONG
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, ULONG
 
-from .. import windll, _not_available
-from ..shared.basetsd import ULONG_PTR, PULONG_PTR
-from ..shared.minwindef import PULONG, LPDWORD
+from .. import _not_available, windll
+from ..shared.basetsd import PULONG_PTR, ULONG_PTR
+from ..shared.minwindef import LPDWORD, PULONG
 from .minwinbase import LPOVERLAPPED, LPOVERLAPPED_ENTRY
 
 CreateIoCompletionPort = windll.kernel32.CreateIoCompletionPort

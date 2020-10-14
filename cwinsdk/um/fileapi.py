@@ -1,13 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, POINTER
-from ctypes.wintypes import BOOL, DWORD, LONG, HANDLE, ULARGE_INTEGER
-from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
+from ctypes import POINTER, Structure
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPSTR, LPWSTR, ULARGE_INTEGER
 
-from .. import windll, nonzero
-from .minwinbase import LPSECURITY_ATTRIBUTES, LPOVERLAPPED
-from ..shared.ntdef import ULONGLONG
+from .. import nonzero, windll
 from ..shared.minwindef import FILETIME
+from ..shared.ntdef import ULONGLONG
+from .minwinbase import LPOVERLAPPED, LPSECURITY_ATTRIBUTES
 
 CREATE_NEW = 1
 CREATE_ALWAYS = 2

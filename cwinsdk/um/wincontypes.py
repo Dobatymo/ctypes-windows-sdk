@@ -1,9 +1,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, Union, POINTER, c_void_p
-from ctypes.wintypes import BOOL, WORD, SHORT, WCHAR, DWORD, UINT
+from ctypes import POINTER, Structure, Union, c_void_p
+from ctypes.wintypes import BOOL, DWORD, SHORT, UINT, WCHAR, WORD
 
 from ..shared.ntdef import CHAR
+
 
 class COORD(Structure):
 	# no pack

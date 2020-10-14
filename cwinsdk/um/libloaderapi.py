@@ -1,12 +1,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import CFUNCTYPE
-from ctypes.wintypes import BOOL, WORD, DWORD, LPVOID
-from ctypes.wintypes import LPSTR, LPWSTR, LPCSTR, LPCWSTR
+from ctypes.wintypes import BOOL, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, WORD
 
 from .. import windll
-from ..shared.minwindef import HMODULE, HRSRC, HGLOBAL
 from ..shared.basetsd import LONG_PTR
+from ..shared.minwindef import HGLOBAL, HMODULE, HRSRC
 from .winnt import LANGID
 
 FARPROC = LPVOID # todo: where does this come from?

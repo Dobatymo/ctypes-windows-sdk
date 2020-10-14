@@ -1,11 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import Structure, POINTER, Union
-from ctypes.wintypes import DWORD, LPVOID, BOOL, HANDLE, WORD
+from ctypes import POINTER, Structure, Union
+from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, WORD
 
 from .. import CEnum, windll
-from ..shared.ntdef import PVOID
 from ..shared.basetsd import ULONG_PTR
+from ..shared.ntdef import PVOID
+
 
 class SECURITY_ATTRIBUTES(Structure):
 	_fields_ = [

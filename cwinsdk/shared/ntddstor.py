@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from .. import CEnum
 
+
 class STORAGE_BUS_TYPE(CEnum):
 	BusTypeUnknown = 0x00
 	BusTypeScsi = 0x1

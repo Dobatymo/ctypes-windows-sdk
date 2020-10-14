@@ -1,7 +1,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from ctypes import POINTER
-from ctypes import c_int, c_uint, c_long, c_ulong, c_int64, c_uint64
+from ctypes import POINTER, c_int, c_int64, c_long, c_uint, c_uint64, c_ulong
 from platform import machine
 
 X64 = machine().endswith('64')
