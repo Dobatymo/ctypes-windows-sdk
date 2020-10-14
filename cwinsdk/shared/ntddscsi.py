@@ -4,14 +4,8 @@ from ctypes import Structure
 from ctypes.wintypes import ULONG, USHORT
 
 from .basetsd import ULONG_PTR
-from .devioctl import (
-    CTL_CODE,
-    FILE_ANY_ACCESS,
-    FILE_DEVICE_CONTROLLER,
-    FILE_READ_ACCESS,
-    FILE_WRITE_ACCESS,
-    METHOD_BUFFERED,
-)
+from .devioctl import (CTL_CODE, FILE_ANY_ACCESS, FILE_DEVICE_CONTROLLER, FILE_READ_ACCESS, FILE_WRITE_ACCESS,
+                       METHOD_BUFFERED)
 from .ntdef import PVOID, UCHAR
 
 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER

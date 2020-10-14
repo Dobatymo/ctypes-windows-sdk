@@ -9,7 +9,7 @@ from .winnt import LPCH, LPWCH, PHANDLE
 SetEnvironmentStringsW = windll.kernel32.SetEnvironmentStringsW
 SetEnvironmentStringsW.argtypes = [LPWCH]
 SetEnvironmentStringsW.restype = BOOL
- 
+
 GetStdHandle = windll.kernel32.GetStdHandle
 GetStdHandle.argtypes = [DWORD]
 GetStdHandle.restype = HANDLE

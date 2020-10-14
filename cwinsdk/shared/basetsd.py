@@ -14,7 +14,7 @@ if X64:
 else:
 	INT_PTR = c_int
 	UINT_PTR = c_uint
-	LONG_PTR = c_long 
+	LONG_PTR = c_long
 	ULONG_PTR = c_ulong
 	PULONG_PTR = POINTER(c_ulong)
 

@@ -8,16 +8,9 @@ from ..shared.basetsd import DWORD_PTR
 from ..shared.minwindef import LPDWORD, PBOOL, PDWORD, UCHAR
 from ..shared.ntdef import PVOID, ULONGLONG
 from .minwinbase import LPFILETIME, LPSYSTEMTIME, SYSTEMTIME
-from .winnt import (
-    DWORDLONG,
-    LOGICAL_PROCESSOR_RELATIONSHIP,
-    LPOSVERSIONINFOA,
-    LPOSVERSIONINFOW,
-    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION,
-    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX,
-    PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION,
-    PULONGLONG,
-)
+from .winnt import (DWORDLONG, LOGICAL_PROCESSOR_RELATIONSHIP, LPOSVERSIONINFOA, LPOSVERSIONINFOW,
+                    PSYSTEM_LOGICAL_PROCESSOR_INFORMATION, PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX,
+                    PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION, PULONGLONG)
 
 
 class SYSTEM_INFO_DUMMYSTRUCTNAME(Structure):
@@ -180,9 +173,12 @@ GetNativeSystemInfo = windll.kernel32.GetNativeSystemInfo
 GetNativeSystemInfo.argtypes = [LPSYSTEM_INFO]
 GetNativeSystemInfo.restype = None
 
-GetSystemTimePreciseAsFileTime = windll.kernel32.GetSystemTimePreciseAsFileTime
-GetSystemTimePreciseAsFileTime.argtypes = [LPFILETIME]
-GetSystemTimePreciseAsFileTime.restype = None
+try:
+	GetSystemTimePreciseAsFileTime = windll.kernel32.GetSystemTimePreciseAsFileTime
+	GetSystemTimePreciseAsFileTime.argtypes = [LPFILETIME]
+	GetSystemTimePreciseAsFileTime.restype = None
+except AttributeError:
+	pass
 
 GetProductInfo = windll.kernel32.GetProductInfo
 GetProductInfo.argtypes = [DWORD, DWORD, DWORD, DWORD, PDWORD]
@@ -204,9 +200,12 @@ GetSystemFirmwareTable = windll.kernel32.GetSystemFirmwareTable
 GetSystemFirmwareTable.argtypes = [DWORD, DWORD, PVOID, DWORD]
 GetSystemFirmwareTable.restype = UINT
 
-DnsHostnameToComputerNameExW = windll.kernel32.DnsHostnameToComputerNameExW
-DnsHostnameToComputerNameExW.argtypes = [LPCWSTR, LPWSTR, LPDWORD]
-DnsHostnameToComputerNameExW.restype = BOOL
+try:
+	DnsHostnameToComputerNameExW = windll.kernel32.DnsHostnameToComputerNameExW
+	DnsHostnameToComputerNameExW.argtypes = [LPCWSTR, LPWSTR, LPDWORD]
+	DnsHostnameToComputerNameExW.restype = BOOL
+except AttributeError:
+	pass
 
 GetPhysicallyInstalledSystemMemory = windll.kernel32.GetPhysicallyInstalledSystemMemory
 GetPhysicallyInstalledSystemMemory.argtypes = [PULONGLONG]
@@ -214,9 +213,12 @@ GetPhysicallyInstalledSystemMemory.restype = BOOL
 
 SCEX2_ALT_NETBIOS_NAME = 0x00000001
 
-SetComputerNameEx2W = windll.kernel32.SetComputerNameEx2W
-SetComputerNameEx2W.argtypes = [COMPUTER_NAME_FORMAT, DWORD, LPCWSTR]
-SetComputerNameEx2W.restype = BOOL
+try:
+	SetComputerNameEx2W = windll.kernel32.SetComputerNameEx2W
+	SetComputerNameEx2W.argtypes = [COMPUTER_NAME_FORMAT, DWORD, LPCWSTR]
+	SetComputerNameEx2W.restype = BOOL
+except AttributeError:
+	pass
 
 SetSystemTimeAdjustment = windll.kernel32.SetSystemTimeAdjustment
 SetSystemTimeAdjustment.argtypes = [DWORD, BOOL]
@@ -226,9 +228,12 @@ SetSystemTimeAdjustment.restype = BOOL
 #SetSystemTimeAdjustmentPrecise.argtypes = [DWORD64, BOOL]
 #SetSystemTimeAdjustmentPrecise.restype = BOOL
 
-InstallELAMCertificateInfo = windll.kernel32.InstallELAMCertificateInfo
-InstallELAMCertificateInfo.argtypes = [HANDLE]
-InstallELAMCertificateInfo.restype = BOOL
+try:
+	InstallELAMCertificateInfo = windll.kernel32.InstallELAMCertificateInfo
+	InstallELAMCertificateInfo.argtypes = [HANDLE]
+	InstallELAMCertificateInfo.restype = BOOL
+except AttributeError:
+	pass
 
 GetProcessorSystemCycleTime = windll.kernel32.GetProcessorSystemCycleTime
 GetProcessorSystemCycleTime.argtypes = [USHORT, PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION, PDWORD]

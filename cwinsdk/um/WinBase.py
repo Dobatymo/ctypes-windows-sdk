@@ -1,19 +1,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from ctypes import POINTER, Structure, Union, c_char
-from ctypes.wintypes import (  # CHAR not in py2
-    BOOL,
-    BYTE,
-    DWORD,
-    LPCSTR,
-    LPCWSTR,
-    LPSTR,
-    LPVOID,
-    LPWSTR,
-    ULONG,
-    WCHAR,
-    WORD,
-)
+from ctypes.wintypes import (BOOL, BYTE, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WCHAR,  # CHAR not in py2
+                             WORD)
 
 from .. import CEnum, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL

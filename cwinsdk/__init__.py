@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
 	from ctypes import Structure
-	from typing import Iterable, Iterator
+	from typing import Any, Callable, Iterable, Iterator, Tuple
 
 windll = LibraryLoader(WinDLL)
 
@@ -72,7 +72,7 @@ def s_ok(result, func, arguments):
 	return result
 
 def _not_available(funcname):
-	# type: (str) -> None
+	# type: (str) -> Callable
 
 	def inner(*args, **kwargs):
 		raise OSError("{}() is not available on {}".format(funcname, platform.platform()))

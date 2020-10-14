@@ -9,7 +9,6 @@ from ..shared.basetsd import DWORD64, KAFFINITY, PDWORD64, ULONG_PTR
 from ..shared.guiddef import GUID
 from ..shared.ntdef import CHAR, LONGLONG, PVOID, PVOID64, ULONGLONG
 
-CHAR = c_char
 SHORT = c_short
 LONG = c_long
 
