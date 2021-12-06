@@ -18,13 +18,11 @@ setup(
 		"Intended Audience :: Developers",
 		"License :: OSI Approved :: ISC License (ISCL)",
 		"Operating System :: Microsoft :: Windows",
-		"Programming Language :: Python :: 2",
 		"Programming Language :: Python :: 3",
 		"Topic :: Software Development",
 		"Topic :: System :: Operating System",
 	],
-
 	packages=["cwinsdk", "cwinsdk/km", "cwinsdk/km/crt", "cwinsdk/shared", "cwinsdk/um"],
-	python_requires=">=2.7",
+	python_requires=">=3.6",
 	use_2to3=False
 )
