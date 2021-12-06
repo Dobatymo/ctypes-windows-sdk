@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import POINTER, Structure
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WCHAR, WORD
 
@@ -27,39 +25,45 @@ COMMON_LVB_REVERSE_VIDEO = 0x4000
 COMMON_LVB_UNDERSCORE = 0x8000
 COMMON_LVB_SBCSDBCS = 0x0300
 
+
 class CONSOLE_SCREEN_BUFFER_INFO(Structure):
-	_fields_ = [
-		("dwSize", COORD),
-		("dwCursorPosition", COORD),
-		("wAttributes", WORD),
-		("srWindow", SMALL_RECT),
-		("dwMaximumWindowSize", COORD)
-	]
+    _fields_ = [
+        ("dwSize", COORD),
+        ("dwCursorPosition", COORD),
+        ("wAttributes", WORD),
+        ("srWindow", SMALL_RECT),
+        ("dwMaximumWindowSize", COORD),
+    ]
+
 
 LP_CONSOLE_SCREEN_BUFFER_INFO = POINTER(CONSOLE_SCREEN_BUFFER_INFO)
 
+
 class CONSOLE_SCREEN_BUFFER_INFOEX(Structure):
-	# no pack
-	_fields_ = [
-		("cbSize", ULONG),
-		("dwSize", COORD),
-		("dwCursorPosition", COORD),
-		("wAttributes", WORD),
-		("srWindow", SMALL_RECT),
-		("dwMaximumWindowSize", COORD),
-		("wPopupAttributes", WORD),
-		("bFullscreenSupported", BOOL),
-		("ColorTable", COLORREF*16),
-	]
+    # no pack
+    _fields_ = [
+        ("cbSize", ULONG),
+        ("dwSize", COORD),
+        ("dwCursorPosition", COORD),
+        ("wAttributes", WORD),
+        ("srWindow", SMALL_RECT),
+        ("dwMaximumWindowSize", COORD),
+        ("wPopupAttributes", WORD),
+        ("bFullscreenSupported", BOOL),
+        ("ColorTable", COLORREF * 16),
+    ]
+
 
 LP_CONSOLE_SCREEN_BUFFER_INFOEX = POINTER(CONSOLE_SCREEN_BUFFER_INFOEX)
 
+
 class CONSOLE_CURSOR_INFO(Structure):
-	# no pack
-	_fields_ = [
-		("dwSize", DWORD),
-		("bVisible", BOOL),
-	]
+    # no pack
+    _fields_ = [
+        ("dwSize", DWORD),
+        ("bVisible", BOOL),
+    ]
+
 
 PCONSOLE_CURSOR_INFO = POINTER(CONSOLE_CURSOR_INFO)
 

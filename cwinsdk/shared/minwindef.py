@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import POINTER, Structure, c_float, c_int, c_long, c_ubyte, c_uint, c_ulong, c_ushort, c_void_p
 from ctypes.wintypes import HANDLE
 
@@ -52,15 +50,17 @@ HLOCAL = HANDLE
 GLOBALHANDLE = HANDLE
 LOCALHANDLE = HANDLE
 
-ATOM = WORD # BUGBUG - might want to remove this from minwin
+ATOM = WORD  # BUGBUG - might want to remove this from minwin
+
 
 def DECLARE_HANDLE():
-	class HANDLE__(Structure):
-		_fields_ = [
-			("unused", c_int),
-		]
+    class HANDLE__(Structure):
+        _fields_ = [
+            ("unused", c_int),
+        ]
 
-	return POINTER(HANDLE__)
+    return POINTER(HANDLE__)
+
 
 HKEY = DECLARE_HANDLE()
 HMETAFILE = DECLARE_HANDLE()
@@ -75,9 +75,12 @@ HTASK = DECLARE_HANDLE()
 HWINSTA = DECLARE_HANDLE()
 HKL = DECLARE_HANDLE()
 
+
 class FILETIME(Structure):
-	_fields_ = [
-		("dwLowDateTime", DWORD),
-		("dwHighDateTime", DWORD),
-	]
+    _fields_ = [
+        ("dwLowDateTime", DWORD),
+        ("dwHighDateTime", DWORD),
+    ]
+
+
 PFILETIME = LPFILETIME = POINTER(FILETIME)

@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import CFUNCTYPE
 from ctypes.wintypes import BOOL, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, WORD
 
@@ -8,7 +6,7 @@ from ..shared.basetsd import LONG_PTR
 from ..shared.minwindef import HGLOBAL, HMODULE, HRSRC
 from .winnt import LANGID
 
-FARPROC = LPVOID # todo: where does this come from?
+FARPROC = LPVOID  # todo: where does this come from?
 
 ENUMRESTYPEPROCW = CFUNCTYPE(BOOL, HMODULE, LPWSTR, LONG_PTR)
 ENUMRESTYPEPROCA = CFUNCTYPE(BOOL, HMODULE, LPSTR, LONG_PTR)

@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 NO_ERROR = 0
 ERROR_INVALID_FUNCTION = 1
 ERROR_NOT_ENOUGH_MEMORY = 8

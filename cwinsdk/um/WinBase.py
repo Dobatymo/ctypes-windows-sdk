@@ -1,8 +1,6 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import POINTER, Structure, Union, c_char
-from ctypes.wintypes import (BOOL, BYTE, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WCHAR,  # CHAR not in py2
-                             WORD)
+from ctypes.wintypes import WCHAR  # CHAR not in py2
+from ctypes.wintypes import BOOL, BYTE, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WORD
 
 from .. import CEnum, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
@@ -164,43 +162,47 @@ PARITY_EVEN = 0x0400
 PARITY_MARK = 0x0800
 PARITY_SPACE = 0x1000
 
+
 class COMMPROP(Structure):
-	_fields_ = [
-		("wPacketLength", WORD),
-		("wPacketVersion", WORD),
-		("dwServiceMask", DWORD),
-		("dwReserved1", DWORD),
-		("dwMaxTxQueue", DWORD),
-		("dwMaxRxQueue", DWORD),
-		("dwMaxBaud", DWORD),
-		("dwProvSubType", DWORD),
-		("dwProvCapabilities", DWORD),
-		("dwSettableParams", DWORD),
-		("dwSettableBaud", DWORD),
-		("wSettableData", WORD),
-		("wSettableStopParity", WORD),
-		("dwCurrentTxQueue", DWORD),
-		("dwCurrentRxQueue", DWORD),
-		("dwProvSpec1", DWORD),
-		("dwProvSpec2", DWORD),
-		("wcProvChar", WCHAR*1),
-	]
+    _fields_ = [
+        ("wPacketLength", WORD),
+        ("wPacketVersion", WORD),
+        ("dwServiceMask", DWORD),
+        ("dwReserved1", DWORD),
+        ("dwMaxTxQueue", DWORD),
+        ("dwMaxRxQueue", DWORD),
+        ("dwMaxBaud", DWORD),
+        ("dwProvSubType", DWORD),
+        ("dwProvCapabilities", DWORD),
+        ("dwSettableParams", DWORD),
+        ("dwSettableBaud", DWORD),
+        ("wSettableData", WORD),
+        ("wSettableStopParity", WORD),
+        ("dwCurrentTxQueue", DWORD),
+        ("dwCurrentRxQueue", DWORD),
+        ("dwProvSpec1", DWORD),
+        ("dwProvSpec2", DWORD),
+        ("wcProvChar", WCHAR * 1),
+    ]
+
 
 COMMPROP_INITIALIZED = 0xE73CF52E
 
+
 class COMSTAT(Structure):
-	_fields_ = [
-		("fCtsHold", DWORD, 1),
-		("fDsrHold", DWORD, 1),
-		("fRlsdHold", DWORD, 1),
-		("fXoffHold", DWORD, 1),
-		("fXoffSent", DWORD, 1),
-		("fEof", DWORD, 1),
-		("fTxim", DWORD, 1),
-		("fReserved", DWORD, 25),
-		("cbInQue", DWORD),
-		("cbOutQue", DWORD),
-	]
+    _fields_ = [
+        ("fCtsHold", DWORD, 1),
+        ("fDsrHold", DWORD, 1),
+        ("fRlsdHold", DWORD, 1),
+        ("fXoffHold", DWORD, 1),
+        ("fXoffSent", DWORD, 1),
+        ("fEof", DWORD, 1),
+        ("fTxim", DWORD, 1),
+        ("fReserved", DWORD, 25),
+        ("cbInQue", DWORD),
+        ("cbOutQue", DWORD),
+    ]
+
 
 DTR_CONTROL_DISABLE = 0x00
 DTR_CONTROL_ENABLE = 0x01
@@ -211,58 +213,68 @@ RTS_CONTROL_ENABLE = 0x01
 RTS_CONTROL_HANDSHAKE = 0x02
 RTS_CONTROL_TOGGLE = 0x03
 
+
 class DCB(Structure):
-	_fields_ = [
-		("DCBlength", DWORD,),
-		("BaudRate", DWORD,),
-		("fBinary", DWORD, 1),
-		("fParity", DWORD, 1),
-		("fOutxCtsFlow", DWORD, 1),
-		("fOutxDsrFlow", DWORD, 1),
-		("fDtrControl", DWORD, 2),
-		("fDsrSensitivity", DWORD, 1),
-		("fTXContinueOnXoff", DWORD, 1),
-		("fOutX", DWORD, 1),
-		("fInX", DWORD, 1),
-		("fErrorChar", DWORD, 1),
-		("fNull", DWORD, 1),
-		("fRtsControl", DWORD, 2),
-		("fAbortOnError", DWORD, 1),
-		("fDummy2", DWORD, 17),
-		("wReserved", WORD),
-		("XonLim", WORD),
-		("XoffLim", WORD),
-		("ByteSize", BYTE),
-		("Parity", BYTE),
-		("StopBits", BYTE),
-		("XonChar", c_char),
-		("XoffChar", c_char),
-		("ErrorChar", c_char),
-		("EofChar", c_char),
-		("EvtChar", c_char),
-		("wReserved1", WORD),
-	]
+    _fields_ = [
+        (
+            "DCBlength",
+            DWORD,
+        ),
+        (
+            "BaudRate",
+            DWORD,
+        ),
+        ("fBinary", DWORD, 1),
+        ("fParity", DWORD, 1),
+        ("fOutxCtsFlow", DWORD, 1),
+        ("fOutxDsrFlow", DWORD, 1),
+        ("fDtrControl", DWORD, 2),
+        ("fDsrSensitivity", DWORD, 1),
+        ("fTXContinueOnXoff", DWORD, 1),
+        ("fOutX", DWORD, 1),
+        ("fInX", DWORD, 1),
+        ("fErrorChar", DWORD, 1),
+        ("fNull", DWORD, 1),
+        ("fRtsControl", DWORD, 2),
+        ("fAbortOnError", DWORD, 1),
+        ("fDummy2", DWORD, 17),
+        ("wReserved", WORD),
+        ("XonLim", WORD),
+        ("XoffLim", WORD),
+        ("ByteSize", BYTE),
+        ("Parity", BYTE),
+        ("StopBits", BYTE),
+        ("XonChar", c_char),
+        ("XoffChar", c_char),
+        ("ErrorChar", c_char),
+        ("EofChar", c_char),
+        ("EvtChar", c_char),
+        ("wReserved1", WORD),
+    ]
+
 
 class COMMTIMEOUTS(Structure):
-	_fields_ = [
-		("ReadIntervalTimeout", DWORD),
-		("ReadTotalTimeoutMultiplier", DWORD),
-		("ReadTotalTimeoutConstant", WORD),
-		("WriteTotalTimeoutMultiplier", DWORD),
-		("WriteTotalTimeoutConstant", DWORD),
-	]
+    _fields_ = [
+        ("ReadIntervalTimeout", DWORD),
+        ("ReadTotalTimeoutMultiplier", DWORD),
+        ("ReadTotalTimeoutConstant", WORD),
+        ("WriteTotalTimeoutMultiplier", DWORD),
+        ("WriteTotalTimeoutConstant", DWORD),
+    ]
+
 
 class COMMCONFIG(Structure):
-	_fields_ = [
-		("dwSize", DWORD),
-		("wVersion", WORD),
-		("wReserved", WORD),
-		("dcb", DCB),
-		("dwProviderSubType", DWORD),
-		("dwProviderOffset", DWORD),
-		("dwProviderSize", DWORD),
-		("wcProviderData", WCHAR*1),
-	]
+    _fields_ = [
+        ("dwSize", DWORD),
+        ("wVersion", WORD),
+        ("wReserved", WORD),
+        ("dcb", DCB),
+        ("dwProviderSubType", DWORD),
+        ("dwProviderOffset", DWORD),
+        ("dwProviderSize", DWORD),
+        ("wcProviderData", WCHAR * 1),
+    ]
+
 
 GMEM_FIXED = 0x0000
 GMEM_MOVEABLE = 0x0002
@@ -285,17 +297,19 @@ GPTR = GMEM_FIXED | GMEM_ZEROINIT
 GMEM_DISCARDED = 0x4000
 GMEM_LOCKCOUNT = 0x00FF
 
+
 class MEMORYSTATUS(Structure):
-	_fields_ = [
-		("dwLength", DWORD),
-		("dwMemoryLoad", DWORD),
-		("dwTotalPhys", SIZE_T),
-		("dwAvailPhys", SIZE_T),
-		("dwTotalPageFile", SIZE_T),
-		("dwAvailPageFile", SIZE_T),
-		("dwTotalVirtual", SIZE_T),
-		("dwAvailVirtual", SIZE_T),
-	]
+    _fields_ = [
+        ("dwLength", DWORD),
+        ("dwMemoryLoad", DWORD),
+        ("dwTotalPhys", SIZE_T),
+        ("dwAvailPhys", SIZE_T),
+        ("dwTotalPageFile", SIZE_T),
+        ("dwAvailPageFile", SIZE_T),
+        ("dwTotalVirtual", SIZE_T),
+        ("dwAvailVirtual", SIZE_T),
+    ]
+
 
 DEBUG_PROCESS = 0x00000001
 DEBUG_ONLY_THIS_PROCESS = 0x00000002
@@ -318,7 +332,7 @@ BELOW_NORMAL_PRIORITY_CLASS = 0x00004000
 ABOVE_NORMAL_PRIORITY_CLASS = 0x00008000
 
 INHERIT_PARENT_AFFINITY = 0x00010000
-INHERIT_CALLER_PRIORITY = 0x00020000 # Deprecated
+INHERIT_CALLER_PRIORITY = 0x00020000  # Deprecated
 CREATE_PROTECTED_PROCESS = 0x00040000
 EXTENDED_STARTUPINFO_PRESENT = 0x00080000
 
@@ -341,10 +355,10 @@ CREATE_IGNORE_SYSTEM_DEFAULT = 0x80000000
 STACK_SIZE_PARAM_IS_A_RESERVATION = 0x00010000
 
 THREAD_PRIORITY_LOWEST = THREAD_BASE_PRIORITY_MIN
-THREAD_PRIORITY_BELOW_NORMAL = THREAD_PRIORITY_LOWEST+1
+THREAD_PRIORITY_BELOW_NORMAL = THREAD_PRIORITY_LOWEST + 1
 THREAD_PRIORITY_NORMAL = 0
 THREAD_PRIORITY_HIGHEST = THREAD_BASE_PRIORITY_MAX
-THREAD_PRIORITY_ABOVE_NORMAL = THREAD_PRIORITY_HIGHEST-1
+THREAD_PRIORITY_ABOVE_NORMAL = THREAD_PRIORITY_HIGHEST - 1
 THREAD_PRIORITY_ERROR_RETURN = MAXLONG
 
 THREAD_PRIORITY_TIME_CRITICAL = THREAD_BASE_PRIORITY_LOWRT
@@ -353,24 +367,26 @@ THREAD_PRIORITY_IDLE = THREAD_BASE_PRIORITY_IDLE
 THREAD_MODE_BACKGROUND_BEGIN = 0x00010000
 THREAD_MODE_BACKGROUND_END = 0x00020000
 
-VOLUME_NAME_DOS = 0x0 # default
+VOLUME_NAME_DOS = 0x0  # default
 VOLUME_NAME_GUID = 0x1
 VOLUME_NAME_NT = 0x2
 VOLUME_NAME_NONE = 0x4
 
-FILE_NAME_NORMALIZED = 0x0 # default
+FILE_NAME_NORMALIZED = 0x0  # default
 FILE_NAME_OPENED = 0x8
 
+
 class JIT_DEBUG_INFO(Structure):
-	_fields_ = [
-		("dwSize", DWORD),
-		("dwProcessorArchitecture", DWORD),
-		("dwThreadID", DWORD),
-		("dwReserved0", DWORD),
-		("lpExceptionAddress", ULONG64),
-		("lpExceptionRecord", ULONG64),
-		("lpContextRecord", ULONG64),
-	]
+    _fields_ = [
+        ("dwSize", DWORD),
+        ("dwProcessorArchitecture", DWORD),
+        ("dwThreadID", DWORD),
+        ("dwReserved0", DWORD),
+        ("lpExceptionAddress", ULONG64),
+        ("lpExceptionRecord", ULONG64),
+        ("lpContextRecord", ULONG64),
+    ]
+
 
 DRIVE_UNKNOWN = 0
 DRIVE_NO_ROOT_DIR = 1
@@ -510,7 +526,7 @@ S_SERDDR = -14
 S_SERDSR = -15
 S_SERDST = -16
 
-NMPWAIT_WAIT_FOREVER = 0xffffffff
+NMPWAIT_WAIT_FOREVER = 0xFFFFFFFF
 NMPWAIT_NOWAIT = 0x00000001
 NMPWAIT_USE_DEFAULT_WAIT = 0x00000000
 
@@ -541,15 +557,17 @@ OF_REOPEN = 0x00008000
 
 OFS_MAXPATHNAME = 128
 
+
 class OFSTRUCT(Structure):
-	_fields_ = [
-		("cBytes", BYTE),
-		("fFixedDisk", BYTE),
-		("nErrCode", WORD),
-		("Reserved1", WORD),
-		("Reserved2", WORD),
-		("szPathName", CHAR*OFS_MAXPATHNAME),
-	]
+    _fields_ = [
+        ("cBytes", BYTE),
+        ("fFixedDisk", BYTE),
+        ("nErrCode", WORD),
+        ("Reserved1", WORD),
+        ("Reserved2", WORD),
+        ("szPathName", CHAR * OFS_MAXPATHNAME),
+    ]
+
 
 MAXINTATOM = 0xC000
 INVALID_ATOM = ATOM(0)
@@ -561,70 +579,79 @@ MOVEFILE_WRITE_THROUGH = 0x00000008
 MOVEFILE_CREATE_HARDLINK = 0x00000010
 MOVEFILE_FAIL_IF_NOT_TRACKABLE = 0x00000020
 
+
 class FILE_ALIGNMENT_INFO(Structure):
-	_fields_ = [
-		("AlignmentRequirement", ULONG),
-	]
+    _fields_ = [
+        ("AlignmentRequirement", ULONG),
+    ]
+
 
 STORAGE_INFO_FLAGS_ALIGNED_DEVICE = 0x00000001
 STORAGE_INFO_FLAGS_PARTITION_ALIGNED_ON_DEVICE = 0x00000002
-STORAGE_INFO_OFFSET_UNKNOWN = 0xffffffff
+STORAGE_INFO_OFFSET_UNKNOWN = 0xFFFFFFFF
+
 
 class FILE_STORAGE_INFO(Structure):
-	_fields_ = [
-		("LogicalBytesPerSector", ULONG),
-		("PhysicalBytesPerSectorForAtomicity", ULONG),
-		("PhysicalBytesPerSectorForPerformance", ULONG),
-		("FileSystemEffectivePhysicalBytesPerSectorForAtomicity", ULONG),
-		("Flags", ULONG),
-		("ByteOffsetForSectorAlignment", ULONG),
-		("ByteOffsetForPartitionAlignment", ULONG),
-	]
+    _fields_ = [
+        ("LogicalBytesPerSector", ULONG),
+        ("PhysicalBytesPerSectorForAtomicity", ULONG),
+        ("PhysicalBytesPerSectorForPerformance", ULONG),
+        ("FileSystemEffectivePhysicalBytesPerSectorForAtomicity", ULONG),
+        ("Flags", ULONG),
+        ("ByteOffsetForSectorAlignment", ULONG),
+        ("ByteOffsetForPartitionAlignment", ULONG),
+    ]
+
 
 class FILE_ID_INFO(Structure):
-	_fields_ = [
-		("VolumeSerialNumber", ULONGLONG),
-		("FileId", FILE_ID_128),
-	]
+    _fields_ = [
+        ("VolumeSerialNumber", ULONGLONG),
+        ("FileId", FILE_ID_128),
+    ]
+
 
 class FILE_ID_EXTD_DIR_INFO(Structure):
-	_fields_ = [
-		("NextEntryOffset", ULONG),
-		("FileIndex", ULONG),
-		("CreationTime", LARGE_INTEGER),
-		("LastAccessTime", LARGE_INTEGER),
-		("LastWriteTime", LARGE_INTEGER),
-		("ChangeTime", LARGE_INTEGER),
-		("EndOfFile", LARGE_INTEGER),
-		("AllocationSize", LARGE_INTEGER),
-		("FileAttributes", ULONG),
-		("FileNameLength", ULONG),
-		("EaSize", ULONG),
-		("ReparsePointTag", ULONG),
-		("FileId", FILE_ID_128),
-		("FileName", WCHAR*1),
-	]
+    _fields_ = [
+        ("NextEntryOffset", ULONG),
+        ("FileIndex", ULONG),
+        ("CreationTime", LARGE_INTEGER),
+        ("LastAccessTime", LARGE_INTEGER),
+        ("LastWriteTime", LARGE_INTEGER),
+        ("ChangeTime", LARGE_INTEGER),
+        ("EndOfFile", LARGE_INTEGER),
+        ("AllocationSize", LARGE_INTEGER),
+        ("FileAttributes", ULONG),
+        ("FileNameLength", ULONG),
+        ("EaSize", ULONG),
+        ("ReparsePointTag", ULONG),
+        ("FileId", FILE_ID_128),
+        ("FileName", WCHAR * 1),
+    ]
+
 
 class FILE_ID_TYPE(CEnum):
-	FileIdType = 0
-	ObjectIdType = 1
-	ExtendedFileIdType = 2
-	MaximumFileIdType = 3
+    FileIdType = 0
+    ObjectIdType = 1
+    ExtendedFileIdType = 2
+    MaximumFileIdType = 3
+
 
 class FILE_ID_DESCRIPTOR_UNION(Union):
-	_fields_ = [
-		("FileId", LARGE_INTEGER),
-		("ObjectId", GUID),
-		("ExtendedFileId", FILE_ID_128),
-	]
+    _fields_ = [
+        ("FileId", LARGE_INTEGER),
+        ("ObjectId", GUID),
+        ("ExtendedFileId", FILE_ID_128),
+    ]
+
 
 class FILE_ID_DESCRIPTOR(Structure):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("dwSize", DWORD),
-		("Type", FILE_ID_TYPE),
-		("u", FILE_ID_DESCRIPTOR_UNION),
-	]
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("dwSize", DWORD),
+        ("Type", FILE_ID_TYPE),
+        ("u", FILE_ID_DESCRIPTOR_UNION),
+    ]
+
 
 # advapi32 functions
 

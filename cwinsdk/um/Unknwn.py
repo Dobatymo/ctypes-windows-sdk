@@ -2,6 +2,7 @@ from ctypes import POINTER, Structure
 
 
 class IUnknown(Structure):
-	pass
+    pass
+
 
 LPUNKNOWN = POINTER(IUnknown)

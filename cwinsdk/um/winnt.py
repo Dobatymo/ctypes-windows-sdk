@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import CFUNCTYPE, POINTER, Structure, Union, c_char, c_long, c_short, sizeof
 from ctypes.wintypes import BYTE, DWORD, HANDLE, WCHAR, WORD
 
@@ -20,8 +18,8 @@ PWCHAR = POINTER(WCHAR)
 LPWCH = POINTER(WCHAR)
 PWCH = POINTER(WCHAR)
 
-LPCWCH = POINTER(WCHAR) # const
-PCWCH = POINTER(WCHAR) # const
+LPCWCH = POINTER(WCHAR)  # const
+PCWCH = POINTER(WCHAR)  # const
 
 NWPSTR = POINTER(WCHAR)
 LPWSTR = POINTER(WCHAR)
@@ -46,172 +44,179 @@ PULONGLONG = POINTER(ULONGLONG)
 
 # moved
 
+
 class _IMAGE_RUNTIME_FUNCTION_ENTRY_UNION(Union):
-	_fields_ = [
-		("UnwindInfoAddress", DWORD),
-		("UnwindData", DWORD),
-	]
+    _fields_ = [
+        ("UnwindInfoAddress", DWORD),
+        ("UnwindData", DWORD),
+    ]
+
 
 class _IMAGE_RUNTIME_FUNCTION_ENTRY(Union):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("BeginAddress", DWORD),
-		("EndAddress", DWORD),
-		("u", _IMAGE_RUNTIME_FUNCTION_ENTRY_UNION),
-	]
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("BeginAddress", DWORD),
+        ("EndAddress", DWORD),
+        ("u", _IMAGE_RUNTIME_FUNCTION_ENTRY_UNION),
+    ]
+
 
 EXCEPTION_MAXIMUM_PARAMETERS = 15
 
+
 class _EXCEPTION_RECORD(Structure):
-	pass
+    pass
+
 
 _EXCEPTION_RECORD._fields_ = [
-	("ExceptionCode", DWORD),
-	("ExceptionFlags", DWORD),
-	("ExceptionRecord", POINTER(_EXCEPTION_RECORD)),
-	("ExceptionAddress", PVOID),
-	("NumberParameters", DWORD),
-	("ExceptionInformation", ULONG_PTR*EXCEPTION_MAXIMUM_PARAMETERS),
+    ("ExceptionCode", DWORD),
+    ("ExceptionFlags", DWORD),
+    ("ExceptionRecord", POINTER(_EXCEPTION_RECORD)),
+    ("ExceptionAddress", PVOID),
+    ("NumberParameters", DWORD),
+    ("ExceptionInformation", ULONG_PTR * EXCEPTION_MAXIMUM_PARAMETERS),
 ]
 
 EXCEPTION_RECORD = _EXCEPTION_RECORD
 
+
 class M128A(Structure):
-	_fields_ = [
-		("Low", ULONGLONG),
-		("High", LONGLONG),
-	]
+    _fields_ = [
+        ("Low", ULONGLONG),
+        ("High", LONGLONG),
+    ]
+
 
 class XSAVE_FORMAT(Structure):
-	_fields_ = [
-		("ControlWord", WORD),
-		("StatusWord", WORD),
-		("TagWord", BYTE),
-		("Reserved1", BYTE),
-		("ErrorOpcode", WORD),
-		("ErrorOffset", DWORD),
-		("ErrorSelector", WORD),
-		("Reserved2", WORD),
-		("DataOffset", DWORD),
-		("DataSelector", WORD),
-		("Reserved3", WORD),
-		("MxCsr", DWORD),
-		("MxCsr_Mask", DWORD),
-		("FloatRegisters", M128A*8),
+    _fields_ = [
+        ("ControlWord", WORD),
+        ("StatusWord", WORD),
+        ("TagWord", BYTE),
+        ("Reserved1", BYTE),
+        ("ErrorOpcode", WORD),
+        ("ErrorOffset", DWORD),
+        ("ErrorSelector", WORD),
+        ("Reserved2", WORD),
+        ("DataOffset", DWORD),
+        ("DataSelector", WORD),
+        ("Reserved3", WORD),
+        ("MxCsr", DWORD),
+        ("MxCsr_Mask", DWORD),
+        ("FloatRegisters", M128A * 8),
+        # if defined(_WIN64)
+        ("XmmRegisters", M128A * 16),
+        ("Reserved4", BYTE * 96),
+        # else
+        ("XmmRegisters", M128A * 8),
+        ("Reserved4", BYTE * 224),
+        # endif
+    ]
 
-		#if defined(_WIN64)
-		("XmmRegisters", M128A*16 ),
-		("Reserved4", BYTE*96 ),
-		#else
-		("XmmRegisters", M128A*8 ),
-		("Reserved4", BYTE*224 ),
-		#endif
-	]
 
 XMM_SAVE_AREA32 = XSAVE_FORMAT
 
+
 class _CONTEXT_STRUCT(Structure):
-	_fields_ = [
-		("Header", M128A*2),
-		("Legacy", M128A*8),
-		("Xmm0", M128A),
-		("Xmm1", M128A),
-		("Xmm2", M128A),
-		("Xmm3", M128A),
-		("Xmm4", M128A),
-		("Xmm5", M128A),
-		("Xmm6", M128A),
-		("Xmm7", M128A),
-		("Xmm8", M128A),
-		("Xmm9", M128A),
-		("Xmm10", M128A),
-		("Xmm11", M128A),
-		("Xmm12", M128A),
-		("Xmm13", M128A),
-		("Xmm14", M128A),
-		("Xmm15", M128A),
-	]
+    _fields_ = [
+        ("Header", M128A * 2),
+        ("Legacy", M128A * 8),
+        ("Xmm0", M128A),
+        ("Xmm1", M128A),
+        ("Xmm2", M128A),
+        ("Xmm3", M128A),
+        ("Xmm4", M128A),
+        ("Xmm5", M128A),
+        ("Xmm6", M128A),
+        ("Xmm7", M128A),
+        ("Xmm8", M128A),
+        ("Xmm9", M128A),
+        ("Xmm10", M128A),
+        ("Xmm11", M128A),
+        ("Xmm12", M128A),
+        ("Xmm13", M128A),
+        ("Xmm14", M128A),
+        ("Xmm15", M128A),
+    ]
+
 
 class _CONTEXT_UNION(Union):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("FltSave", XMM_SAVE_AREA32),
-		("u", _CONTEXT_STRUCT),
-	]
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("FltSave", XMM_SAVE_AREA32),
+        ("u", _CONTEXT_STRUCT),
+    ]
+
 
 class _CONTEXT(Structure):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("P1Home", DWORD64),
-		("P2Home", DWORD64),
-		("P3Home", DWORD64),
-		("P4Home", DWORD64),
-		("P5Home", DWORD64),
-		("P6Home", DWORD64),
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("P1Home", DWORD64),
+        ("P2Home", DWORD64),
+        ("P3Home", DWORD64),
+        ("P4Home", DWORD64),
+        ("P5Home", DWORD64),
+        ("P6Home", DWORD64),
+        ("ContextFlags", DWORD),
+        ("MxCsr", DWORD),
+        ("SegCs", WORD),
+        ("SegDs", WORD),
+        ("SegEs", WORD),
+        ("SegFs", WORD),
+        ("SegGs", WORD),
+        ("SegSs", WORD),
+        ("EFlags", DWORD),
+        ("Dr0", DWORD64),
+        ("Dr1", DWORD64),
+        ("Dr2", DWORD64),
+        ("Dr3", DWORD64),
+        ("Dr6", DWORD64),
+        ("Dr7", DWORD64),
+        ("Rax", DWORD64),
+        ("Rcx", DWORD64),
+        ("Rdx", DWORD64),
+        ("Rbx", DWORD64),
+        ("Rsp", DWORD64),
+        ("Rbp", DWORD64),
+        ("Rsi", DWORD64),
+        ("Rdi", DWORD64),
+        ("R8", DWORD64),
+        ("R9", DWORD64),
+        ("R10", DWORD64),
+        ("R11", DWORD64),
+        ("R12", DWORD64),
+        ("R13", DWORD64),
+        ("R14", DWORD64),
+        ("R15", DWORD64),
+        ("Rip", DWORD64),
+        ("u", _CONTEXT_UNION),
+        ("VectorRegister", M128A * 26),
+        ("VectorControl", DWORD64),
+        ("DebugControl", DWORD64),
+        ("LastBranchToRip", DWORD64),
+        ("LastBranchFromRip", DWORD64),
+        ("LastExceptionToRip", DWORD64),
+        ("LastExceptionFromRip", DWORD64),
+    ]
 
-		("ContextFlags", DWORD),
-		("MxCsr", DWORD),
-
-		("SegCs", WORD),
-		("SegDs", WORD),
-		("SegEs", WORD),
-		("SegFs", WORD),
-		("SegGs", WORD),
-		("SegSs", WORD),
-		("EFlags", DWORD),
-
-		("Dr0", DWORD64),
-		("Dr1", DWORD64),
-		("Dr2", DWORD64),
-		("Dr3", DWORD64),
-		("Dr6", DWORD64),
-		("Dr7", DWORD64),
-
-		("Rax", DWORD64),
-		("Rcx", DWORD64),
-		("Rdx", DWORD64),
-		("Rbx", DWORD64),
-		("Rsp", DWORD64),
-		("Rbp", DWORD64),
-		("Rsi", DWORD64),
-		("Rdi", DWORD64),
-		("R8", DWORD64),
-		("R9", DWORD64),
-		("R10", DWORD64),
-		("R11", DWORD64),
-		("R12", DWORD64),
-		("R13", DWORD64),
-		("R14", DWORD64),
-		("R15", DWORD64),
-
-		("Rip", DWORD64),
-
-		("u", _CONTEXT_UNION),
-
-		("VectorRegister", M128A*26),
-		("VectorControl", DWORD64),
-
-		("DebugControl", DWORD64),
-		("LastBranchToRip", DWORD64),
-		("LastBranchFromRip", DWORD64),
-		("LastExceptionToRip", DWORD64),
-		("LastExceptionFromRip", DWORD64),
-	]
 
 CONTEXT = _CONTEXT
 
+
 class SID_IDENTIFIER_AUTHORITY(Structure):
-	_fields_ = [
-		("Value", BYTE*6),
-	]
+    _fields_ = [
+        ("Value", BYTE * 6),
+    ]
+
 
 class SID(Structure):
-	_fields_ = [
-		("Revision", BYTE),
-		("SubAuthorityCount", BYTE),
-		("IdentifierAuthority", SID_IDENTIFIER_AUTHORITY),
-		("SubAuthority", DWORD*ANYSIZE_ARRAY),
-	]
+    _fields_ = [
+        ("Revision", BYTE),
+        ("SubAuthorityCount", BYTE),
+        ("IdentifierAuthority", SID_IDENTIFIER_AUTHORITY),
+        ("SubAuthority", DWORD * ANYSIZE_ARRAY),
+    ]
+
+
 PSID = POINTER(SID)
 
 # /moved
@@ -220,33 +225,38 @@ CCHAR = c_char
 LCID = DWORD
 LANGID = WORD
 
-ALL_PROCESSOR_GROUPS = 0xffff
+ALL_PROCESSOR_GROUPS = 0xFFFF
+
 
 class PROCESSOR_NUMBER(Structure):
-	_fields_ = [
-		("Group", WORD),
-		("Number", BYTE),
-		("Reserved", BYTE),
-	]
+    _fields_ = [
+        ("Group", WORD),
+        ("Number", BYTE),
+        ("Reserved", BYTE),
+    ]
+
 
 class GROUP_AFFINITY(Structure):
-	_fields_ = [
-		("Mask", KAFFINITY),
-		("Group", WORD),
-		("Reserved", WORD*3),
-	]
+    _fields_ = [
+        ("Mask", KAFFINITY),
+        ("Group", WORD),
+        ("Reserved", WORD * 3),
+    ]
 
-#if defined(_WIN64)
+
+# if defined(_WIN64)
 MAXIMUM_PROC_PER_GROUP = 64
-#else
+# else
 MAXIMUM_PROC_PER_GROUP = 32
-#endif
+# endif
 
 MAXIMUM_PROCESSORS = MAXIMUM_PROC_PER_GROUP
 
+
 class COMPARTMENT_ID(CEnum):
-	UNSPECIFIED_COMPARTMENT_ID = 0
-	DEFAULT_COMPARTMENT_ID = 1
+    UNSPECIFIED_COMPARTMENT_ID = 0
+    DEFAULT_COMPARTMENT_ID = 1
+
 
 APPLICATION_ERROR_MASK = 0x20000000
 ERROR_SEVERITY_SUCCESS = 0x00000000
@@ -254,45 +264,51 @@ ERROR_SEVERITY_INFORMATIONAL = 0x40000000
 ERROR_SEVERITY_WARNING = 0x80000000
 ERROR_SEVERITY_ERROR = 0xC0000000
 
-MAXLONGLONG = 0x7fffffffffffffff
+MAXLONGLONG = 0x7FFFFFFFFFFFFFFF
+
 
 class LARGE_INTEGER_STRUCT(Structure):
-	_fields_ = [
-		("LowPart", DWORD),
-		("HighPart", LONG),
-	]
+    _fields_ = [
+        ("LowPart", DWORD),
+        ("HighPart", LONG),
+    ]
+
 
 class LARGE_INTEGER(Union):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("u", LARGE_INTEGER_STRUCT),
-		("QuadPart", LONGLONG),
-	]
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("u", LARGE_INTEGER_STRUCT),
+        ("QuadPart", LONGLONG),
+    ]
+
 
 class LUID(Structure):
-	_fields_ = [
-		("LowPart", DWORD),
-		("HighPart", LONG),
-	]
+    _fields_ = [
+        ("LowPart", DWORD),
+        ("HighPart", LONG),
+    ]
+
 
 DWORDLONG = ULONGLONG
 PDWORDLONG = POINTER(DWORDLONG)
 
+
 class OBJECTID(Structure):
-	_fields_ = [
-		("Lineage", GUID),
-		("Uniquifier", DWORD),
-	]
+    _fields_ = [
+        ("Lineage", GUID),
+        ("Uniquifier", DWORD),
+    ]
+
 
 MINCHAR = 0x80
-MAXCHAR = 0x7f
+MAXCHAR = 0x7F
 MINSHORT = 0x8000
-MAXSHORT = 0x7fff
+MAXSHORT = 0x7FFF
 MINLONG = 0x80000000
-MAXLONG = 0x7fffffff
-MAXBYTE = 0xff
-MAXWORD = 0xffff
-MAXDWORD = 0xffffffff
+MAXLONG = 0x7FFFFFFF
+MAXBYTE = 0xFF
+MAXWORD = 0xFFFF
+MAXDWORD = 0xFFFFFFFF
 
 EXCEPTION_ROUTINE = CFUNCTYPE(EXCEPTION_DISPOSITION, POINTER(_EXCEPTION_RECORD), PVOID, POINTER(_CONTEXT), PVOID)
 
@@ -470,37 +486,37 @@ PRODUCT_CLOUDEN = 0x000000BA
 PRODUCT_UNLICENSED = 0xABCDABCD
 
 LANG_NEUTRAL = 0x00
-LANG_INVARIANT = 0x7f
+LANG_INVARIANT = 0x7F
 
 LANG_AFRIKAANS = 0x36
-LANG_ALBANIAN = 0x1c
+LANG_ALBANIAN = 0x1C
 LANG_ALSATIAN = 0x84
-LANG_AMHARIC = 0x5e
+LANG_AMHARIC = 0x5E
 LANG_ARABIC = 0x01
-LANG_ARMENIAN = 0x2b
-LANG_ASSAMESE = 0x4d
-LANG_AZERI = 0x2c
-LANG_AZERBAIJANI = 0x2c
+LANG_ARMENIAN = 0x2B
+LANG_ASSAMESE = 0x4D
+LANG_AZERI = 0x2C
+LANG_AZERBAIJANI = 0x2C
 LANG_BANGLA = 0x45
-LANG_BASHKIR = 0x6d
-LANG_BASQUE = 0x2d
+LANG_BASHKIR = 0x6D
+LANG_BASQUE = 0x2D
 LANG_BELARUSIAN = 0x23
 LANG_BENGALI = 0x45
-LANG_BRETON = 0x7e
-LANG_BOSNIAN = 0x1a
-LANG_BOSNIAN_NEUTRAL = 0x781a
+LANG_BRETON = 0x7E
+LANG_BOSNIAN = 0x1A
+LANG_BOSNIAN_NEUTRAL = 0x781A
 LANG_BULGARIAN = 0x02
 LANG_CATALAN = 0x03
 LANG_CENTRAL_KURDISH = 0x92
-LANG_CHEROKEE = 0x5c
+LANG_CHEROKEE = 0x5C
 LANG_CHINESE = 0x04
 LANG_CHINESE_SIMPLIFIED = 0x04
-LANG_CHINESE_TRADITIONAL = 0x7c04
+LANG_CHINESE_TRADITIONAL = 0x7C04
 LANG_CORSICAN = 0x83
-LANG_CROATIAN = 0x1a
+LANG_CROATIAN = 0x1A
 LANG_CZECH = 0x05
 LANG_DANISH = 0x06
-LANG_DARI = 0x8c
+LANG_DARI = 0x8C
 LANG_DIVEHI = 0x65
 LANG_DUTCH = 0x13
 LANG_ENGLISH = 0x09
@@ -508,31 +524,31 @@ LANG_ESTONIAN = 0x25
 LANG_FAEROESE = 0x38
 LANG_FARSI = 0x29
 LANG_FILIPINO = 0x64
-LANG_FINNISH = 0x0b
-LANG_FRENCH = 0x0c
+LANG_FINNISH = 0x0B
+LANG_FRENCH = 0x0C
 LANG_FRISIAN = 0x62
 LANG_FULAH = 0x67
 LANG_GALICIAN = 0x56
 LANG_GEORGIAN = 0x37
 LANG_GERMAN = 0x07
 LANG_GREEK = 0x08
-LANG_GREENLANDIC = 0x6f
+LANG_GREENLANDIC = 0x6F
 LANG_GUJARATI = 0x47
 LANG_HAUSA = 0x68
 LANG_HAWAIIAN = 0x75
-LANG_HEBREW = 0x0d
+LANG_HEBREW = 0x0D
 LANG_HINDI = 0x39
-LANG_HUNGARIAN = 0x0e
-LANG_ICELANDIC = 0x0f
+LANG_HUNGARIAN = 0x0E
+LANG_ICELANDIC = 0x0F
 LANG_IGBO = 0x70
 LANG_INDONESIAN = 0x21
-LANG_INUKTITUT = 0x5d
-LANG_IRISH = 0x3c
+LANG_INUKTITUT = 0x5D
+LANG_IRISH = 0x3C
 LANG_ITALIAN = 0x10
 LANG_JAPANESE = 0x11
-LANG_KANNADA = 0x4b
+LANG_KANNADA = 0x4B
 LANG_KASHMIRI = 0x60
-LANG_KAZAK = 0x3f
+LANG_KAZAK = 0x3F
 LANG_KHMER = 0x53
 LANG_KICHE = 0x86
 LANG_KINYARWANDA = 0x87
@@ -542,17 +558,17 @@ LANG_KYRGYZ = 0x40
 LANG_LAO = 0x54
 LANG_LATVIAN = 0x26
 LANG_LITHUANIAN = 0x27
-LANG_LOWER_SORBIAN = 0x2e
-LANG_LUXEMBOURGISH = 0x6e
-LANG_MACEDONIAN = 0x2f
-LANG_MALAY = 0x3e
-LANG_MALAYALAM = 0x4c
-LANG_MALTESE = 0x3a
+LANG_LOWER_SORBIAN = 0x2E
+LANG_LUXEMBOURGISH = 0x6E
+LANG_MACEDONIAN = 0x2F
+LANG_MALAY = 0x3E
+LANG_MALAYALAM = 0x4C
+LANG_MALTESE = 0x3A
 LANG_MANIPURI = 0x58
 LANG_MAORI = 0x81
-LANG_MAPUDUNGUN = 0x7a
-LANG_MARATHI = 0x4e
-LANG_MOHAWK = 0x7c
+LANG_MAPUDUNGUN = 0x7A
+LANG_MARATHI = 0x4E
+LANG_MOHAWK = 0x7C
 LANG_MONGOLIAN = 0x50
 LANG_NEPALI = 0x61
 LANG_NORWEGIAN = 0x14
@@ -565,50 +581,50 @@ LANG_POLISH = 0x15
 LANG_PORTUGUESE = 0x16
 LANG_PULAR = 0x67
 LANG_PUNJABI = 0x46
-LANG_QUECHUA = 0x6b
+LANG_QUECHUA = 0x6B
 LANG_ROMANIAN = 0x18
 LANG_ROMANSH = 0x17
 LANG_RUSSIAN = 0x19
 LANG_SAKHA = 0x85
-LANG_SAMI = 0x3b
-LANG_SANSKRIT = 0x4f
+LANG_SAMI = 0x3B
+LANG_SANSKRIT = 0x4F
 LANG_SCOTTISH_GAELIC = 0x91
-LANG_SERBIAN = 0x1a
-LANG_SERBIAN_NEUTRAL = 0x7c1a
+LANG_SERBIAN = 0x1A
+LANG_SERBIAN_NEUTRAL = 0x7C1A
 LANG_SINDHI = 0x59
-LANG_SINHALESE = 0x5b
-LANG_SLOVAK = 0x1b
+LANG_SINHALESE = 0x5B
+LANG_SLOVAK = 0x1B
 LANG_SLOVENIAN = 0x24
-LANG_SOTHO = 0x6c
-LANG_SPANISH = 0x0a
+LANG_SOTHO = 0x6C
+LANG_SPANISH = 0x0A
 LANG_SWAHILI = 0x41
-LANG_SWEDISH = 0x1d
-LANG_SYRIAC = 0x5a
+LANG_SWEDISH = 0x1D
+LANG_SYRIAC = 0x5A
 LANG_TAJIK = 0x28
-LANG_TAMAZIGHT = 0x5f
+LANG_TAMAZIGHT = 0x5F
 LANG_TAMIL = 0x49
 LANG_TATAR = 0x44
-LANG_TELUGU = 0x4a
-LANG_THAI = 0x1e
+LANG_TELUGU = 0x4A
+LANG_THAI = 0x1E
 LANG_TIBETAN = 0x51
 LANG_TIGRIGNA = 0x73
 LANG_TIGRINYA = 0x73
 LANG_TSWANA = 0x32
-LANG_TURKISH = 0x1f
+LANG_TURKISH = 0x1F
 LANG_TURKMEN = 0x42
 LANG_UIGHUR = 0x80
 LANG_UKRAINIAN = 0x22
-LANG_UPPER_SORBIAN = 0x2e
+LANG_UPPER_SORBIAN = 0x2E
 LANG_URDU = 0x20
 LANG_UZBEK = 0x43
 LANG_VALENCIAN = 0x03
-LANG_VIETNAMESE = 0x2a
+LANG_VIETNAMESE = 0x2A
 LANG_WELSH = 0x52
 LANG_WOLOF = 0x88
 LANG_XHOSA = 0x34
 LANG_YAKUT = 0x85
 LANG_YI = 0x78
-LANG_YORUBA = 0x6a
+LANG_YORUBA = 0x6A
 LANG_ZULU = 0x35
 
 SUBLANG_NEUTRAL = 0x00
@@ -631,12 +647,12 @@ SUBLANG_ARABIC_MOROCCO = 0x06
 SUBLANG_ARABIC_TUNISIA = 0x07
 SUBLANG_ARABIC_OMAN = 0x08
 SUBLANG_ARABIC_YEMEN = 0x09
-SUBLANG_ARABIC_SYRIA = 0x0a
-SUBLANG_ARABIC_JORDAN = 0x0b
-SUBLANG_ARABIC_LEBANON = 0x0c
-SUBLANG_ARABIC_KUWAIT = 0x0d
-SUBLANG_ARABIC_UAE = 0x0e
-SUBLANG_ARABIC_BAHRAIN = 0x0f
+SUBLANG_ARABIC_SYRIA = 0x0A
+SUBLANG_ARABIC_JORDAN = 0x0B
+SUBLANG_ARABIC_LEBANON = 0x0C
+SUBLANG_ARABIC_KUWAIT = 0x0D
+SUBLANG_ARABIC_UAE = 0x0E
+SUBLANG_ARABIC_BAHRAIN = 0x0F
 SUBLANG_ARABIC_QATAR = 0x10
 SUBLANG_ARMENIAN_ARMENIA = 0x01
 SUBLANG_ASSAMESE_INDIA = 0x01
@@ -681,10 +697,10 @@ SUBLANG_ENGLISH_EIRE = 0x06
 SUBLANG_ENGLISH_SOUTH_AFRICA = 0x07
 SUBLANG_ENGLISH_JAMAICA = 0x08
 SUBLANG_ENGLISH_CARIBBEAN = 0x09
-SUBLANG_ENGLISH_BELIZE = 0x0a
-SUBLANG_ENGLISH_TRINIDAD = 0x0b
-SUBLANG_ENGLISH_ZIMBABWE = 0x0c
-SUBLANG_ENGLISH_PHILIPPINES = 0x0d
+SUBLANG_ENGLISH_BELIZE = 0x0A
+SUBLANG_ENGLISH_TRINIDAD = 0x0B
+SUBLANG_ENGLISH_ZIMBABWE = 0x0C
+SUBLANG_ENGLISH_PHILIPPINES = 0x0D
 SUBLANG_ENGLISH_INDIA = 0x10
 SUBLANG_ENGLISH_MALAYSIA = 0x11
 SUBLANG_ENGLISH_SINGAPORE = 0x12
@@ -785,10 +801,10 @@ SUBLANG_SANSKRIT_INDIA = 0x01
 SUBLANG_SCOTTISH_GAELIC = 0x01
 SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_LATIN = 0x06
 SUBLANG_SERBIAN_BOSNIA_HERZEGOVINA_CYRILLIC = 0x07
-SUBLANG_SERBIAN_MONTENEGRO_LATIN = 0x0b
-SUBLANG_SERBIAN_MONTENEGRO_CYRILLIC = 0x0c
+SUBLANG_SERBIAN_MONTENEGRO_LATIN = 0x0B
+SUBLANG_SERBIAN_MONTENEGRO_CYRILLIC = 0x0C
 SUBLANG_SERBIAN_SERBIA_LATIN = 0x09
-SUBLANG_SERBIAN_SERBIA_CYRILLIC = 0x0a
+SUBLANG_SERBIAN_SERBIA_CYRILLIC = 0x0A
 SUBLANG_SERBIAN_CROATIA = 0x01
 SUBLANG_SERBIAN_LATIN = 0x02
 SUBLANG_SERBIAN_CYRILLIC = 0x03
@@ -808,12 +824,12 @@ SUBLANG_SPANISH_PANAMA = 0x06
 SUBLANG_SPANISH_DOMINICAN_REPUBLIC = 0x07
 SUBLANG_SPANISH_VENEZUELA = 0x08
 SUBLANG_SPANISH_COLOMBIA = 0x09
-SUBLANG_SPANISH_PERU = 0x0a
-SUBLANG_SPANISH_ARGENTINA = 0x0b
-SUBLANG_SPANISH_ECUADOR = 0x0c
-SUBLANG_SPANISH_CHILE = 0x0d
-SUBLANG_SPANISH_URUGUAY = 0x0e
-SUBLANG_SPANISH_PARAGUAY = 0x0f
+SUBLANG_SPANISH_PERU = 0x0A
+SUBLANG_SPANISH_ARGENTINA = 0x0B
+SUBLANG_SPANISH_ECUADOR = 0x0C
+SUBLANG_SPANISH_CHILE = 0x0D
+SUBLANG_SPANISH_URUGUAY = 0x0E
+SUBLANG_SPANISH_PARAGUAY = 0x0F
 SUBLANG_SPANISH_BOLIVIA = 0x10
 SUBLANG_SPANISH_EL_SALVADOR = 0x11
 SUBLANG_SPANISH_HONDURAS = 0x12
@@ -876,22 +892,25 @@ SORT_HUNGARIAN_TECHNICAL = 0x1
 SORT_GEORGIAN_TRADITIONAL = 0x0
 SORT_GEORGIAN_MODERN = 0x1
 
+
 def MAKELANGID(p, s):
-	return (s << 10) | p
+    return (s << 10) | p
+
 
 def MAKELCID(lgid, srtid):
-	return (srtid << 16) | lgid
+    return (srtid << 16) | lgid
 
-LOCALE_CUSTOM_DEFAULT = (MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_DEFAULT), SORT_DEFAULT))
-LOCALE_CUSTOM_UNSPECIFIED = (MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_UNSPECIFIED), SORT_DEFAULT))
-LOCALE_CUSTOM_UI_DEFAULT = (MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_UI_CUSTOM_DEFAULT), SORT_DEFAULT))
-LOCALE_NEUTRAL = (MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT))
-LOCALE_INVARIANT = (MAKELCID(MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_DEFAULT))
+
+LOCALE_CUSTOM_DEFAULT = MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_DEFAULT), SORT_DEFAULT)
+LOCALE_CUSTOM_UNSPECIFIED = MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_CUSTOM_UNSPECIFIED), SORT_DEFAULT)
+LOCALE_CUSTOM_UI_DEFAULT = MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_UI_CUSTOM_DEFAULT), SORT_DEFAULT)
+LOCALE_NEUTRAL = MAKELCID(MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT)
+LOCALE_INVARIANT = MAKELCID(MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_DEFAULT)
 
 LOCALE_TRANSIENT_KEYBOARD1 = 0x2000
 LOCALE_TRANSIENT_KEYBOARD2 = 0x2400
 LOCALE_TRANSIENT_KEYBOARD3 = 0x2800
-LOCALE_TRANSIENT_KEYBOARD4 = 0x2c00
+LOCALE_TRANSIENT_KEYBOARD4 = 0x2C00
 
 LOCALE_UNASSIGNED_LCID = LOCALE_CUSTOM_UNSPECIFIED
 
@@ -960,56 +979,60 @@ MAXIMUM_WAIT_OBJECTS = 64
 
 MAXIMUM_SUSPEND_COUNT = MAXCHAR
 
+
 class XSAVE_CET_U_FORMAT(Structure):
-	_fields_ = [
-		("Ia32CetUMsr", DWORD64),
-		("Ia32Pl3SspMsr", DWORD64),
-	]
+    _fields_ = [
+        ("Ia32CetUMsr", DWORD64),
+        ("Ia32Pl3SspMsr", DWORD64),
+    ]
+
 
 class XSAVE_AREA_HEADER(Structure):
-	_fields_ = [
-		("Mask", DWORD64),
-		("CompactionMask", DWORD64),
-		("Reserved2", DWORD64*6),
-	]
+    _fields_ = [
+        ("Mask", DWORD64),
+        ("CompactionMask", DWORD64),
+        ("Reserved2", DWORD64 * 6),
+    ]
+
 
 class XSAVE_AREA(Structure):
-	_fields_ = [
-		("LegacyState", XSAVE_FORMAT),
-		("Header", XSAVE_AREA_HEADER),
-	]
+    _fields_ = [
+        ("LegacyState", XSAVE_FORMAT),
+        ("Header", XSAVE_AREA_HEADER),
+    ]
+
 
 class XSTATE_CONTEXT(Structure):
-	_fields_ = [
-		("Mask", DWORD64),
-		("Length", DWORD),
-		("Reserved1", DWORD),
-		("Area", POINTER(XSAVE_AREA)),
+    _fields_ = [
+        ("Mask", DWORD64),
+        ("Length", DWORD),
+        ("Reserved1", DWORD),
+        ("Area", POINTER(XSAVE_AREA)),
+        # if defined(_X86_)
+        ("Reserved2", DWORD),
+        # endif
+        ("Buffer", PVOID),
+        # if defined(_X86_)
+        ("Reserved3", DWORD),
+        # endif
+    ]
 
-		#if defined(_X86_)
-		("Reserved2", DWORD),
-		#endif
-
-		("Buffer", PVOID),
-
-		#if defined(_X86_)
-		("Reserved3", DWORD),
-		#endif
-	]
 
 class _SCOPE_RECORD(Structure):
-	_fields_ = [
-		("BeginAddress", DWORD),
-		("EndAddress", DWORD),
-		("HandlerAddress", DWORD),
-		("JumpTarget", DWORD),
-	]
+    _fields_ = [
+        ("BeginAddress", DWORD),
+        ("EndAddress", DWORD),
+        ("HandlerAddress", DWORD),
+        ("JumpTarget", DWORD),
+    ]
+
 
 class SCOPE_TABLE_AMD64(Structure):
-	_fields_ = [
-		("Count", DWORD),
-		("ScopeRecord", _SCOPE_RECORD*1),
-	]
+    _fields_ = [
+        ("Count", DWORD),
+        ("ScopeRecord", _SCOPE_RECORD * 1),
+    ]
+
 
 _MM_HINT_T0 = 1
 _MM_HINT_T1 = 2
@@ -1040,8 +1063,8 @@ CONTEXT_SERVICE_ACTIVE = 0x10000000
 CONTEXT_EXCEPTION_REQUEST = 0x40000000
 CONTEXT_EXCEPTION_REPORTING = 0x80000000
 
-INITIAL_MXCSR = 0x1f80
-INITIAL_FPCSR = 0x027f
+INITIAL_MXCSR = 0x1F80
+INITIAL_FPCSR = 0x027F
 
 RUNTIME_FUNCTION_INDIRECT = 0x1
 
@@ -1056,105 +1079,115 @@ UNW_FLAG_NO_EPILOGUE = 0x80000000
 
 UNWIND_HISTORY_TABLE_SIZE = 12
 
+
 class UNWIND_HISTORY_TABLE_ENTRY(Structure):
-	_fields_ = [
-		("ImageBase", DWORD64),
-		("FunctionEntry", POINTER(RUNTIME_FUNCTION)),
-	]
+    _fields_ = [
+        ("ImageBase", DWORD64),
+        ("FunctionEntry", POINTER(RUNTIME_FUNCTION)),
+    ]
+
 
 class UNWIND_HISTORY_TABLE(Structure):
-	_fields_ = [
-		("Count", DWORD),
-		("LocalHint", BYTE),
-		("GlobalHint", BYTE),
-		("Search", BYTE),
-		("Once", BYTE),
-		("LowAddress", DWORD64),
-		("HighAddress", DWORD64),
-		("Entry", UNWIND_HISTORY_TABLE_ENTRY*UNWIND_HISTORY_TABLE_SIZE),
-	]
+    _fields_ = [
+        ("Count", DWORD),
+        ("LocalHint", BYTE),
+        ("GlobalHint", BYTE),
+        ("Search", BYTE),
+        ("Once", BYTE),
+        ("LowAddress", DWORD64),
+        ("HighAddress", DWORD64),
+        ("Entry", UNWIND_HISTORY_TABLE_ENTRY * UNWIND_HISTORY_TABLE_SIZE),
+    ]
+
 
 class DISPATCHER_CONTEXT(Structure):
-	_fields_ = [
-		("ControlPc", DWORD64),
-		("ImageBase", DWORD64),
-		("FunctionEntry", POINTER(RUNTIME_FUNCTION)),
-		("EstablisherFrame", DWORD64),
-		("TargetIp", DWORD64),
-		("ContextRecord", POINTER(CONTEXT)),
-		("LanguageHandler", POINTER(EXCEPTION_ROUTINE)),
-		("HandlerData", PVOID),
-		("HistoryTable", POINTER(UNWIND_HISTORY_TABLE)),
-		("ScopeIndex", DWORD),
-		("Fill0", DWORD),
-	]
+    _fields_ = [
+        ("ControlPc", DWORD64),
+        ("ImageBase", DWORD64),
+        ("FunctionEntry", POINTER(RUNTIME_FUNCTION)),
+        ("EstablisherFrame", DWORD64),
+        ("TargetIp", DWORD64),
+        ("ContextRecord", POINTER(CONTEXT)),
+        ("LanguageHandler", POINTER(EXCEPTION_ROUTINE)),
+        ("HandlerData", PVOID),
+        ("HistoryTable", POINTER(UNWIND_HISTORY_TABLE)),
+        ("ScopeIndex", DWORD),
+        ("Fill0", DWORD),
+    ]
+
 
 class _KNONVOLATILE_CONTEXT_POINTERS_STRUCT1(Union):
-	_fields_ = [
-		("Xmm0", POINTER(M128A)),
-		("Xmm1", POINTER(M128A)),
-		("Xmm2", POINTER(M128A)),
-		("Xmm3", POINTER(M128A)),
-		("Xmm4", POINTER(M128A)),
-		("Xmm5", POINTER(M128A)),
-		("Xmm6", POINTER(M128A)),
-		("Xmm7", POINTER(M128A)),
-		("Xmm8", POINTER(M128A)),
-		("Xmm9", POINTER(M128A)),
-		("Xmm10", POINTER(M128A)),
-		("Xmm11", POINTER(M128A)),
-		("Xmm12", POINTER(M128A)),
-		("Xmm13", POINTER(M128A)),
-		("Xmm14", POINTER(M128A)),
-		("Xmm15", POINTER(M128A)),
-	]
+    _fields_ = [
+        ("Xmm0", POINTER(M128A)),
+        ("Xmm1", POINTER(M128A)),
+        ("Xmm2", POINTER(M128A)),
+        ("Xmm3", POINTER(M128A)),
+        ("Xmm4", POINTER(M128A)),
+        ("Xmm5", POINTER(M128A)),
+        ("Xmm6", POINTER(M128A)),
+        ("Xmm7", POINTER(M128A)),
+        ("Xmm8", POINTER(M128A)),
+        ("Xmm9", POINTER(M128A)),
+        ("Xmm10", POINTER(M128A)),
+        ("Xmm11", POINTER(M128A)),
+        ("Xmm12", POINTER(M128A)),
+        ("Xmm13", POINTER(M128A)),
+        ("Xmm14", POINTER(M128A)),
+        ("Xmm15", POINTER(M128A)),
+    ]
+
 
 class _KNONVOLATILE_CONTEXT_POINTERS_UNION1(Union):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("FloatingContext", POINTER(M128A)*16),
-		("u", _KNONVOLATILE_CONTEXT_POINTERS_STRUCT1),
-	]
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("FloatingContext", POINTER(M128A) * 16),
+        ("u", _KNONVOLATILE_CONTEXT_POINTERS_STRUCT1),
+    ]
+
 
 class _KNONVOLATILE_CONTEXT_POINTERS_STRUCT2(Structure):
-	_fields_ = [
-		("Rax", PDWORD64),
-		("Rcx", PDWORD64),
-		("Rdx", PDWORD64),
-		("Rbx", PDWORD64),
-		("Rsp", PDWORD64),
-		("Rbp", PDWORD64),
-		("Rsi", PDWORD64),
-		("Rdi", PDWORD64),
-		("R8", PDWORD64),
-		("R9", PDWORD64),
-		("R10", PDWORD64),
-		("R11", PDWORD64),
-		("R12", PDWORD64),
-		("R13", PDWORD64),
-		("R14", PDWORD64),
-		("R15", PDWORD64),
-	]
+    _fields_ = [
+        ("Rax", PDWORD64),
+        ("Rcx", PDWORD64),
+        ("Rdx", PDWORD64),
+        ("Rbx", PDWORD64),
+        ("Rsp", PDWORD64),
+        ("Rbp", PDWORD64),
+        ("Rsi", PDWORD64),
+        ("Rdi", PDWORD64),
+        ("R8", PDWORD64),
+        ("R9", PDWORD64),
+        ("R10", PDWORD64),
+        ("R11", PDWORD64),
+        ("R12", PDWORD64),
+        ("R13", PDWORD64),
+        ("R14", PDWORD64),
+        ("R15", PDWORD64),
+    ]
+
 
 class _KNONVOLATILE_CONTEXT_POINTERS_UNION2(Union):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("IntegerContext", PDWORD64*16),
-		("u", _KNONVOLATILE_CONTEXT_POINTERS_STRUCT2),
-	]
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("IntegerContext", PDWORD64 * 16),
+        ("u", _KNONVOLATILE_CONTEXT_POINTERS_STRUCT2),
+    ]
+
 
 class KNONVOLATILE_CONTEXT_POINTERS(Structure):
-	_anonymous_ = ("u", "v")
-	_fields_ = [
-		("u", _KNONVOLATILE_CONTEXT_POINTERS_UNION1),
-		("v", _KNONVOLATILE_CONTEXT_POINTERS_UNION2),
-	]
+    _anonymous_ = ("u", "v")
+    _fields_ = [
+        ("u", _KNONVOLATILE_CONTEXT_POINTERS_UNION1),
+        ("v", _KNONVOLATILE_CONTEXT_POINTERS_UNION2),
+    ]
+
 
 class SCOPE_TABLE_ARM(Structure):
-	_fields_ = [
-		("Count", DWORD),
-		("ScopeRecord", _SCOPE_RECORD*1),
-	]
+    _fields_ = [
+        ("Count", DWORD),
+        ("ScopeRecord", _SCOPE_RECORD * 1),
+    ]
+
 
 PF_TEMPORAL_LEVEL_1 = 0
 PF_TEMPORAL_LEVEL_2 = 1
@@ -1184,55 +1217,53 @@ INITIAL_FPSCR = 0
 ARM_MAX_BREAKPOINTS = 8
 ARM_MAX_WATCHPOINTS = 1
 
+
 class NEON128(Structure):
-	_fields_ = [
-		("Low", ULONGLONG),
-		("High", LONGLONG),
-	]
+    _fields_ = [
+        ("Low", ULONGLONG),
+        ("High", LONGLONG),
+    ]
+
 
 class _CONTEXT_UNION(Union):
-	_fields_ = [
-		("Q", NEON128*16),
-		("D", ULONGLONG*32),
-		("S", DWORD*32),
-	]
+    _fields_ = [
+        ("Q", NEON128 * 16),
+        ("D", ULONGLONG * 32),
+        ("S", DWORD * 32),
+    ]
+
 
 class CONTEXT(Structure):
-	_anonymous_ = ("u", )
-	_fields_ = [
-		("ContextFlags", DWORD),
+    _anonymous_ = ("u",)
+    _fields_ = [
+        ("ContextFlags", DWORD),
+        ("R0", DWORD),
+        ("R1", DWORD),
+        ("R2", DWORD),
+        ("R3", DWORD),
+        ("R4", DWORD),
+        ("R5", DWORD),
+        ("R6", DWORD),
+        ("R7", DWORD),
+        ("R8", DWORD),
+        ("R9", DWORD),
+        ("R10", DWORD),
+        ("R11", DWORD),
+        ("R12", DWORD),
+        ("Sp", DWORD),
+        ("Lr", DWORD),
+        ("Pc", DWORD),
+        ("Cpsr", DWORD),
+        ("Fpscr", DWORD),
+        ("Padding", DWORD),
+        ("u", _CONTEXT_UNION),
+        ("Bvr", DWORD * ARM_MAX_BREAKPOINTS),
+        ("Bcr", DWORD * ARM_MAX_BREAKPOINTS),
+        ("Wvr", DWORD * ARM_MAX_WATCHPOINTS),
+        ("Wcr", DWORD * ARM_MAX_WATCHPOINTS),
+        ("Padding2", DWORD * 2),
+    ]
 
-		("R0", DWORD),
-		("R1", DWORD),
-		("R2", DWORD),
-		("R3", DWORD),
-		("R4", DWORD),
-		("R5", DWORD),
-		("R6", DWORD),
-		("R7", DWORD),
-		("R8", DWORD),
-		("R9", DWORD),
-		("R10", DWORD),
-		("R11", DWORD),
-		("R12", DWORD),
-
-		("Sp", DWORD),
-		("Lr", DWORD),
-		("Pc", DWORD),
-		("Cpsr", DWORD),
-
-		("Fpscr", DWORD),
-		("Padding", DWORD),
-
-		("u", _CONTEXT_UNION),
-
-		("Bvr", DWORD*ARM_MAX_BREAKPOINTS),
-		("Bcr", DWORD*ARM_MAX_BREAKPOINTS),
-		("Wvr", DWORD*ARM_MAX_WATCHPOINTS),
-		("Wcr", DWORD*ARM_MAX_WATCHPOINTS),
-
-		("Padding2", DWORD*2),
-	]
 
 UNW_FLAG_NHANDLER = 0x0
 UNW_FLAG_EHANDLER = 0x1
@@ -1240,7 +1271,7 @@ UNW_FLAG_UHANDLER = 0x2
 
 UNWIND_HISTORY_TABLE_SIZE = 12
 
-'''
+"""
 class UNWIND_HISTORY_TABLE_ENTRY(Structure):
 	_fields_ = [
 		 ("ImageBase", DWORD),
@@ -1715,7 +1746,7 @@ class EXCEPTION_RECORD64(Structure):
 class EXCEPTION_POINTERS(Structure):
  ("ExceptionRecord", PEXCEPTION_RECORD),
  ("ContextRecord", PCONTEXT),
-'''
+"""
 
 ACCESS_MASK = DWORD
 
@@ -1740,36 +1771,47 @@ GENERIC_WRITE = 0x40000000
 GENERIC_EXECUTE = 0x20000000
 GENERIC_ALL = 0x10000000
 
+
 class GENERIC_MAPPING(Structure):
-	_fields_ = [
-		("GenericRead", ACCESS_MASK),
-		("GenericWrite", ACCESS_MASK),
-		("GenericExecute", ACCESS_MASK),
-		("GenericAll", ACCESS_MASK),
-	]
+    _fields_ = [
+        ("GenericRead", ACCESS_MASK),
+        ("GenericWrite", ACCESS_MASK),
+        ("GenericExecute", ACCESS_MASK),
+        ("GenericAll", ACCESS_MASK),
+    ]
+
+
 PGENERIC_MAPPING = POINTER(GENERIC_MAPPING)
 
+
 class LUID_AND_ATTRIBUTES(Structure):
-	_fields_ = [
-		("Luid", LUID),
-		("Attributes", DWORD),
-	]
+    _fields_ = [
+        ("Luid", LUID),
+        ("Attributes", DWORD),
+    ]
+
 
 SID_REVISION = 1
 SID_MAX_SUB_AUTHORITIES = 15
 SID_RECOMMENDED_SUB_AUTHORITIES = 1
-SECURITY_MAX_SID_SIZE = (sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD)))
+SECURITY_MAX_SID_SIZE = sizeof(SID) - sizeof(DWORD) + (SID_MAX_SUB_AUTHORITIES * sizeof(DWORD))
+
+
 def SECURITY_SID_SIZE(SubAuthorityCount_):
-	return (sizeof(SID) - sizeof(DWORD) + (SubAuthorityCount_) * sizeof(DWORD))
-SECURITY_MAX_SID_STRING_CHARACTERS = (2 + 4 + 15 + (11 * SID_MAX_SUB_AUTHORITIES) + 1)
+    return sizeof(SID) - sizeof(DWORD) + (SubAuthorityCount_) * sizeof(DWORD)
+
+
+SECURITY_MAX_SID_STRING_CHARACTERS = 2 + 4 + 15 + (11 * SID_MAX_SUB_AUTHORITIES) + 1
+
 
 class SE_SID(Union):
-	_fields_ = [
-		("Sid", SID),
-		("Buffer", BYTE*SECURITY_MAX_SID_SIZE),
-	]
+    _fields_ = [
+        ("Sid", SID),
+        ("Buffer", BYTE * SECURITY_MAX_SID_SIZE),
+    ]
 
-'''
+
+"""
 class SID_NAME_USE(CEnum):
  SidTypeUser = 1,
  SidTypeGroup,
@@ -2224,18 +2266,22 @@ ACL_REVISION2 = 2
 ACL_REVISION3 = 3
 ACL_REVISION4 = 4
 MAX_ACL_REVISION ACL_REVISION4
-'''
+"""
+
+
 class ACL(Structure):
-	_fields_ = [
-		("AclRevision", BYTE),
-		("Sbz1", BYTE),
-		("AclSize", WORD),
-		("AceCount", WORD),
-		("Sbz2", WORD),
-	]
+    _fields_ = [
+        ("AclRevision", BYTE),
+        ("Sbz1", BYTE),
+        ("AclSize", WORD),
+        ("AceCount", WORD),
+        ("Sbz2", WORD),
+    ]
+
+
 PACL = POINTER(ACL)
 
-'''
+"""
 typedef struct _ACE_HEADER {
  BYTE AceType
  BYTE AceFlags
@@ -2493,7 +2539,7 @@ SECURITY_DESCRIPTOR_REVISION = 1
 SECURITY_DESCRIPTOR_REVISION1 = 1
 
 SECURITY_DESCRIPTOR_MIN_LENGTH = sizeof(SECURITY_DESCRIPTOR)
-'''
+"""
 
 SECURITY_DESCRIPTOR_CONTROL = WORD
 
@@ -2512,41 +2558,49 @@ SE_SACL_PROTECTED = 0x2000
 SE_RM_CONTROL_VALID = 0x4000
 SE_SELF_RELATIVE = 0x8000
 
+
 class SECURITY_DESCRIPTOR_RELATIVE(Structure):
-	_fields_ = [
-		("Revision", BYTE),
-		("Sbz1", BYTE),
-		("Control", SECURITY_DESCRIPTOR_CONTROL),
-		("Owner", DWORD),
-		("Group", DWORD),
-		("Sacl", DWORD),
-		("Dacl", DWORD),
-	]
+    _fields_ = [
+        ("Revision", BYTE),
+        ("Sbz1", BYTE),
+        ("Control", SECURITY_DESCRIPTOR_CONTROL),
+        ("Owner", DWORD),
+        ("Group", DWORD),
+        ("Sacl", DWORD),
+        ("Dacl", DWORD),
+    ]
+
 
 class SECURITY_DESCRIPTOR(Structure):
-	_fields_ = [
-		("Revision", BYTE),
-		("Sbz1", BYTE),
-		("Control", SECURITY_DESCRIPTOR_CONTROL),
-		("Owner", PSID),
-		("Group", PSID),
-		("Sacl", PACL),
-		("Dacl", PACL),
-	]
+    _fields_ = [
+        ("Revision", BYTE),
+        ("Sbz1", BYTE),
+        ("Control", SECURITY_DESCRIPTOR_CONTROL),
+        ("Owner", PSID),
+        ("Group", PSID),
+        ("Sacl", PACL),
+        ("Dacl", PACL),
+    ]
+
+
 PSECURITY_DESCRIPTOR = POINTER(SECURITY_DESCRIPTOR)
 
+
 class SECURITY_OBJECT_AI_PARAMS(Structure):
-	_fields_ = [
-		("Size", DWORD),
-		("ConstraintMask", DWORD),
-	]
+    _fields_ = [
+        ("Size", DWORD),
+        ("ConstraintMask", DWORD),
+    ]
+
 
 class OBJECT_TYPE_LIST(Structure):
-	_fields_ = [
-		("Level", WORD),
-		("Sbz", WORD),
-		("ObjectType", POINTER(GUID)),
-	]
+    _fields_ = [
+        ("Level", WORD),
+        ("Sbz", WORD),
+        ("ObjectType", POINTER(GUID)),
+    ]
+
+
 POBJECT_TYPE_LIST = POINTER(OBJECT_TYPE_LIST)
 
 ACCESS_OBJECT_GUID = 0
@@ -2554,40 +2608,47 @@ ACCESS_PROPERTY_SET_GUID = 1
 ACCESS_PROPERTY_GUID = 2
 ACCESS_MAX_LEVEL = 4
 
+
 class AUDIT_EVENT_TYPE(CEnum):
-	AuditEventObjectAccess = 0
-	AuditEventDirectoryServiceAccess = 1
+    AuditEventObjectAccess = 0
+    AuditEventDirectoryServiceAccess = 1
+
 
 AUDIT_ALLOW_NO_PRIVILEGE = 0x1
 
 ACCESS_DS_SOURCE_A = b"DS"
-ACCESS_DS_SOURCE_W = u"DS"
+ACCESS_DS_SOURCE_W = "DS"
 ACCESS_DS_OBJECT_TYPE_NAME_A = b"Directory Service Object"
-ACCESS_DS_OBJECT_TYPE_NAME_W = u"Directory Service Object"
+ACCESS_DS_OBJECT_TYPE_NAME_W = "Directory Service Object"
 
 SE_PRIVILEGE_ENABLED_BY_DEFAULT = 0x00000001
 SE_PRIVILEGE_ENABLED = 0x00000002
-SE_PRIVILEGE_REMOVED = 0X00000004
+SE_PRIVILEGE_REMOVED = 0x00000004
 SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000
-SE_PRIVILEGE_VALID_ATTRIBUTES = SE_PRIVILEGE_ENABLED_BY_DEFAULT | SE_PRIVILEGE_ENABLED | SE_PRIVILEGE_REMOVED | SE_PRIVILEGE_USED_FOR_ACCESS
+SE_PRIVILEGE_VALID_ATTRIBUTES = (
+    SE_PRIVILEGE_ENABLED_BY_DEFAULT | SE_PRIVILEGE_ENABLED | SE_PRIVILEGE_REMOVED | SE_PRIVILEGE_USED_FOR_ACCESS
+)
 
 PRIVILEGE_SET_ALL_NECESSARY = 1
 
+
 class PRIVILEGE_SET(Structure):
-	_fields_ = [
-		("PrivilegeCount", DWORD),
-		("Control", DWORD),
-		("Privilege", LUID_AND_ATTRIBUTES*ANYSIZE_ARRAY),
-	]
+    _fields_ = [
+        ("PrivilegeCount", DWORD),
+        ("Control", DWORD),
+        ("Privilege", LUID_AND_ATTRIBUTES * ANYSIZE_ARRAY),
+    ]
+
+
 PPRIVILEGE_SET = POINTER(PRIVILEGE_SET)
 
-ACCESS_REASON_TYPE_MASK = 0x00ff0000
-ACCESS_REASON_DATA_MASK = 0x0000ffff
+ACCESS_REASON_TYPE_MASK = 0x00FF0000
+ACCESS_REASON_DATA_MASK = 0x0000FFFF
 
 ACCESS_REASON_STAGING_MASK = 0x80000000
-ACCESS_REASON_EXDATA_MASK = 0x7f000000
+ACCESS_REASON_EXDATA_MASK = 0x7F000000
 
-'''
+"""
 typedef enum _ACCESS_REASON_TYPE{
 
  AccessReasonNone = 0x00000000,
@@ -2672,7 +2733,7 @@ typedef struct _SE_ACCESS_REPLY
  PACCESS_REASONS AccessReason
  PPRIVILEGE_SET* Privileges
 } SE_ACCESS_REPLY, *PSE_ACCESS_REPLY
-'''
+"""
 SE_CREATE_TOKEN_NAME = "SeCreateTokenPrivilege"
 SE_ASSIGNPRIMARYTOKEN_NAME = "SeAssignPrimaryTokenPrivilege"
 SE_LOCK_MEMORY_NAME = "SeLockMemoryPrivilege"
@@ -2710,24 +2771,28 @@ SE_TIME_ZONE_NAME = "SeTimeZonePrivilege"
 SE_CREATE_SYMBOLIC_LINK_NAME = "SeCreateSymbolicLinkPrivilege"
 SE_DELEGATE_SESSION_USER_IMPERSONATE_NAME = "SeDelegateSessionUserImpersonatePrivilege"
 
-SE_ACTIVATE_AS_USER_CAPABILITY = u"activateAsUser"
-SE_CONSTRAINED_IMPERSONATION_CAPABILITY = u"constrainedImpersonation"
-SE_SESSION_IMPERSONATION_CAPABILITY = u"sessionImpersonation"
-SE_MUMA_CAPABILITY = u"muma"
-SE_DEVELOPMENT_MODE_NETWORK_CAPABILITY = u"developmentModeNetwork"
+SE_ACTIVATE_AS_USER_CAPABILITY = "activateAsUser"
+SE_CONSTRAINED_IMPERSONATION_CAPABILITY = "constrainedImpersonation"
+SE_SESSION_IMPERSONATION_CAPABILITY = "sessionImpersonation"
+SE_MUMA_CAPABILITY = "muma"
+SE_DEVELOPMENT_MODE_NETWORK_CAPABILITY = "developmentModeNetwork"
+
 
 class SECURITY_IMPERSONATION_LEVEL(CEnum):
-	SecurityAnonymous = 0
-	SecurityIdentification = 1
-	SecurityImpersonation = 2
-	SecurityDelegation = 3
+    SecurityAnonymous = 0
+    SecurityIdentification = 1
+    SecurityImpersonation = 2
+    SecurityDelegation = 3
+
 
 SECURITY_MAX_IMPERSONATION_LEVEL = SECURITY_IMPERSONATION_LEVEL.SecurityDelegation
 SECURITY_MIN_IMPERSONATION_LEVEL = SECURITY_IMPERSONATION_LEVEL.SecurityAnonymous
 DEFAULT_IMPERSONATION_LEVEL = SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation
 
+
 def VALID_IMPERSONATION_LEVEL(L):
-	return (L >= SECURITY_MIN_IMPERSONATION_LEVEL) and (L <= SECURITY_MAX_IMPERSONATION_LEVEL)
+    return (L >= SECURITY_MIN_IMPERSONATION_LEVEL) and (L <= SECURITY_MAX_IMPERSONATION_LEVEL)
+
 
 TOKEN_ASSIGN_PRIMARY = 0x0001
 TOKEN_DUPLICATE = 0x0002
@@ -2739,7 +2804,17 @@ TOKEN_ADJUST_GROUPS = 0x0040
 TOKEN_ADJUST_DEFAULT = 0x0080
 TOKEN_ADJUST_SESSIONID = 0x0100
 
-TOKEN_ALL_ACCESS_P = STANDARD_RIGHTS_REQUIRED | TOKEN_ASSIGN_PRIMARY | TOKEN_DUPLICATE | TOKEN_IMPERSONATE | TOKEN_QUERY | TOKEN_QUERY_SOURCE | TOKEN_ADJUST_PRIVILEGES | TOKEN_ADJUST_GROUPS | TOKEN_ADJUST_DEFAULT
+TOKEN_ALL_ACCESS_P = (
+    STANDARD_RIGHTS_REQUIRED
+    | TOKEN_ASSIGN_PRIMARY
+    | TOKEN_DUPLICATE
+    | TOKEN_IMPERSONATE
+    | TOKEN_QUERY
+    | TOKEN_QUERY_SOURCE
+    | TOKEN_ADJUST_PRIVILEGES
+    | TOKEN_ADJUST_GROUPS
+    | TOKEN_ADJUST_DEFAULT
+)
 TOKEN_ALL_ACCESS = TOKEN_ALL_ACCESS_P | TOKEN_ADJUST_SESSIONID
 TOKEN_READ = STANDARD_RIGHTS_READ | TOKEN_QUERY
 TOKEN_WRITE = STANDARD_RIGHTS_WRITE | TOKEN_ADJUST_PRIVILEGES | TOKEN_ADJUST_GROUPS | TOKEN_ADJUST_DEFAULT
@@ -2747,7 +2822,7 @@ TOKEN_EXECUTE = STANDARD_RIGHTS_EXECUTE
 TOKEN_TRUST_CONSTRAINT_MASK = STANDARD_RIGHTS_READ | TOKEN_QUERY | TOKEN_QUERY_SOURCE
 TOKEN_ACCESS_PSEUDO_HANDLE_WIN8 = TOKEN_QUERY | TOKEN_QUERY_SOURCE
 TOKEN_ACCESS_PSEUDO_HANDLE = TOKEN_ACCESS_PSEUDO_HANDLE_WIN8
-'''
+"""
 typedef enum _TOKEN_TYPE {
  TokenPrimary = 1,
  TokenImpersonation
@@ -2841,21 +2916,25 @@ typedef struct _TOKEN_GROUPS {
  SID_AND_ATTRIBUTES Groups[ANYSIZE_ARRAY]
 #endif
 } TOKEN_GROUPS, *PTOKEN_GROUPS
-'''
+"""
+
+
 class TOKEN_PRIVILEGES(Structure):
-	_fields_ = [
-		("PrivilegeCount", DWORD),
-		("Privileges", LUID_AND_ATTRIBUTES * ANYSIZE_ARRAY)
-	]
+    _fields_ = [("PrivilegeCount", DWORD), ("Privileges", LUID_AND_ATTRIBUTES * ANYSIZE_ARRAY)]
+
+
 PTOKEN_PRIVILEGES = POINTER(TOKEN_PRIVILEGES)
 
+
 class TOKEN_OWNER(Structure):
-	_fields_ = [
-		("Owner", PSID),
-	]
+    _fields_ = [
+        ("Owner", PSID),
+    ]
+
+
 PTOKEN_OWNER = POINTER(TOKEN_OWNER)
 
-'''
+"""
 #ifndef MIDL_PASS
 TOKEN_OWNER_MAX_SIZE = sizeof(TOKEN_OWNER) + SECURITY_MAX_SID_SIZE
 #endif
@@ -3306,7 +3385,7 @@ typedef struct _NT_TIB64 {
  DWORD64 ArbitraryUserPointer
  DWORD64 Self
 } NT_TIB64, *PNT_TIB64
-'''
+"""
 THREAD_DYNAMIC_CODE_ALLOW = 1
 
 THREAD_BASE_PRIORITY_LOWRT = 15
@@ -3314,7 +3393,7 @@ THREAD_BASE_PRIORITY_MAX = 2
 THREAD_BASE_PRIORITY_MIN = -2
 THREAD_BASE_PRIORITY_IDLE = -15
 
-'''
+"""
 typedef struct _UMS_CREATE_THREAD_ATTRIBUTES {
  DWORD UmsVersion
  PVOID UmsContext
@@ -4073,126 +4152,159 @@ TIME_ZONE_ID_UNKNOWN 0
 TIME_ZONE_ID_STANDARD 1
 TIME_ZONE_ID_DAYLIGHT 2
 
-'''
+"""
+
+
 class LOGICAL_PROCESSOR_RELATIONSHIP(CEnum):
-	RelationProcessorCore = 0
-	RelationNumaNode = 1
-	RelationCache = 2
-	RelationProcessorPackage = 3
-	RelationGroup = 4
-	RelationAll = 0xffff
+    RelationProcessorCore = 0
+    RelationNumaNode = 1
+    RelationCache = 2
+    RelationProcessorPackage = 3
+    RelationGroup = 4
+    RelationAll = 0xFFFF
+
 
 LTP_PC_SMT = 0x1
 
+
 class PROCESSOR_CACHE_TYPE(CEnum):
-	CacheUnified = 0
-	CacheInstruction = 1
-	CacheData = 2
-	CacheTrace = 3
+    CacheUnified = 0
+    CacheInstruction = 1
+    CacheData = 2
+    CacheTrace = 3
+
 
 CACHE_FULLY_ASSOCIATIVE = 0xFF
 
+
 class CACHE_DESCRIPTOR(Structure):
-	_fields_ = [
-		("Level", BYTE),
-		("Associativity", BYTE),
-		("LineSize", WORD),
-		("Size", DWORD),
-		("Type", PROCESSOR_CACHE_TYPE),
-	]
+    _fields_ = [
+        ("Level", BYTE),
+        ("Associativity", BYTE),
+        ("LineSize", WORD),
+        ("Size", DWORD),
+        ("Type", PROCESSOR_CACHE_TYPE),
+    ]
+
+
 PCACHE_DESCRIPTOR = POINTER(CACHE_DESCRIPTOR)
 
+
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_PROCESSORCORE(Structure):
-	_fields_ = [
-		("Flags", BYTE),
-	]
+    _fields_ = [
+        ("Flags", BYTE),
+    ]
+
 
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_NUMANODE(Structure):
-	_fields_ = [
-		("NodeNumber", DWORD),
-	]
+    _fields_ = [
+        ("NodeNumber", DWORD),
+    ]
+
 
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_DUMMYUNIONNAME(Union):
-	_fields_ = [
-		("ProcessorCore", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_PROCESSORCORE),
-		("NumaNode", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_NUMANODE),
-		("Cache", CACHE_DESCRIPTOR),
-		("Reserved", ULONGLONG*2),
-	]
+    _fields_ = [
+        ("ProcessorCore", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_PROCESSORCORE),
+        ("NumaNode", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_NUMANODE),
+        ("Cache", CACHE_DESCRIPTOR),
+        ("Reserved", ULONGLONG * 2),
+    ]
+
 
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION(Structure):
-	_anonymous_ = ["Dummy"]
-	_fields_ = [
-		("ProcessorMask", ULONG_PTR),
-		("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
-		("Dummy", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_DUMMYUNIONNAME),
-	]
+    _anonymous_ = ["Dummy"]
+    _fields_ = [
+        ("ProcessorMask", ULONG_PTR),
+        ("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
+        ("Dummy", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_DUMMYUNIONNAME),
+    ]
+
+
 PSYSTEM_LOGICAL_PROCESSOR_INFORMATION = POINTER(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)
 
+
 class PROCESSOR_RELATIONSHIP(Structure):
-	_fields_ = [
-		("EfficiencyClass", BYTE),
-		("Reserved", BYTE*20),
-		("GroupCount", WORD),
-		("GroupMask", GROUP_AFFINITY*ANYSIZE_ARRAY),
-	]
+    _fields_ = [
+        ("EfficiencyClass", BYTE),
+        ("Reserved", BYTE * 20),
+        ("GroupCount", WORD),
+        ("GroupMask", GROUP_AFFINITY * ANYSIZE_ARRAY),
+    ]
+
+
 PPROCESSOR_RELATIONSHIP = POINTER(PROCESSOR_RELATIONSHIP)
 
+
 class NUMA_NODE_RELATIONSHIP(Structure):
-	_fields_ = [
-		("NodeNumber", DWORD),
-		("Reserved", BYTE*20),
-		("GroupMask", GROUP_AFFINITY),
-	]
+    _fields_ = [
+        ("NodeNumber", DWORD),
+        ("Reserved", BYTE * 20),
+        ("GroupMask", GROUP_AFFINITY),
+    ]
+
+
 PNUMA_NODE_RELATIONSHIP = POINTER(NUMA_NODE_RELATIONSHIP)
 
+
 class CACHE_RELATIONSHIP(Structure):
-	_fields_ = [
-		("Level", BYTE),
-		("Associativity", BYTE),
-		("LineSize", WORD),
-		("CacheSize", DWORD),
-		("Type", PROCESSOR_CACHE_TYPE),
-		("Reserved", BYTE*20),
-		("GroupMask", GROUP_AFFINITY),
-	]
+    _fields_ = [
+        ("Level", BYTE),
+        ("Associativity", BYTE),
+        ("LineSize", WORD),
+        ("CacheSize", DWORD),
+        ("Type", PROCESSOR_CACHE_TYPE),
+        ("Reserved", BYTE * 20),
+        ("GroupMask", GROUP_AFFINITY),
+    ]
+
+
 PCACHE_RELATIONSHIP = POINTER(CACHE_RELATIONSHIP)
 
+
 class PROCESSOR_GROUP_INFO(Structure):
-	_fields_ = [
-		("MaximumProcessorCount", BYTE),
-		("ActiveProcessorCount", BYTE*38),
-		("ActiveProcessorMask", KAFFINITY),
-	]
+    _fields_ = [
+        ("MaximumProcessorCount", BYTE),
+        ("ActiveProcessorCount", BYTE * 38),
+        ("ActiveProcessorMask", KAFFINITY),
+    ]
+
+
 PPROCESSOR_GROUP_INFO = POINTER(PROCESSOR_GROUP_INFO)
 
+
 class GROUP_RELATIONSHIP(Structure):
-	_fields_ = [
-		("MaximumGroupCount", WORD),
-		("ActiveGroupCount", WORD),
-		("Reserved", BYTE*20),
-		("GroupInfo", PROCESSOR_GROUP_INFO*ANYSIZE_ARRAY),
-	]
+    _fields_ = [
+        ("MaximumGroupCount", WORD),
+        ("ActiveGroupCount", WORD),
+        ("Reserved", BYTE * 20),
+        ("GroupInfo", PROCESSOR_GROUP_INFO * ANYSIZE_ARRAY),
+    ]
+
+
 PGROUP_RELATIONSHIP = POINTER(GROUP_RELATIONSHIP)
 
+
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX_DUMMYUNIONNAME(Union):
-	_fields_ = [
-		("Processor", PROCESSOR_RELATIONSHIP),
-		("NumaNode", NUMA_NODE_RELATIONSHIP),
-		("Cache", CACHE_RELATIONSHIP),
-		("Group", GROUP_RELATIONSHIP),
-	]
+    _fields_ = [
+        ("Processor", PROCESSOR_RELATIONSHIP),
+        ("NumaNode", NUMA_NODE_RELATIONSHIP),
+        ("Cache", CACHE_RELATIONSHIP),
+        ("Group", GROUP_RELATIONSHIP),
+    ]
+
 
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Structure):
-	_anonymous_ = ["Dummy"]
-	_fields_ = [
-		("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
-		("Size", DWORD),
-		("Dummy", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX_DUMMYUNIONNAME),
-	]
+    _anonymous_ = ["Dummy"]
+    _fields_ = [
+        ("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
+        ("Size", DWORD),
+        ("Dummy", SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX_DUMMYUNIONNAME),
+    ]
+
+
 PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX = POINTER(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX)
 
-'''
+"""
 typedef enum _CPU_SET_INFORMATION_TYPE {
  CpuSetInformation
 } CPU_SET_INFORMATION_TYPE, *PCPU_SET_INFORMATION_TYPE
@@ -4237,15 +4349,18 @@ SYSTEM_CPU_SET_INFORMATION_REALTIME 0x8
 }
 
 typedef struct _SYSTEM_CPU_SET_INFORMATION SYSTEM_CPU_SET_INFORMATION, *PSYSTEM_CPU_SET_INFORMATION
-'''
+"""
+
 
 class SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION(Structure):
-	_fields_ = [
-		("CycleTime", DWORD64),
-	]
+    _fields_ = [
+        ("CycleTime", DWORD64),
+    ]
+
+
 PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION = POINTER(SYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION)
 
-'''
+"""
 PROCESSOR_INTEL_386 386
 PROCESSOR_INTEL_486 486
 PROCESSOR_INTEL_PENTIUM 586
@@ -4577,7 +4692,7 @@ typedef struct _ENCLAVE_INIT_INFO_VBS {
  DWORD Length
  DWORD ThreadCount
 } ENCLAVE_INIT_INFO_VBS, *PENCLAVE_INIT_INFO_VBS
-'''
+"""
 
 FILE_READ_DATA = 0x0001
 FILE_LIST_DIRECTORY = 0x0001
@@ -4596,7 +4711,9 @@ FILE_WRITE_ATTRIBUTES = 0x0100
 
 FILE_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x1FF
 FILE_GENERIC_READ = STANDARD_RIGHTS_READ | FILE_READ_DATA | FILE_READ_ATTRIBUTES | FILE_READ_EA | SYNCHRONIZE
-FILE_GENERIC_WRITE = STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | SYNCHRONIZE
+FILE_GENERIC_WRITE = (
+    STANDARD_RIGHTS_WRITE | FILE_WRITE_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA | FILE_APPEND_DATA | SYNCHRONIZE
+)
 FILE_GENERIC_EXECUTE = STANDARD_RIGHTS_EXECUTE | FILE_READ_ATTRIBUTES | FILE_EXECUTE | SYNCHRONIZE
 FILE_SHARE_READ = 0x00000001
 FILE_SHARE_WRITE = 0x00000002
@@ -4674,48 +4791,53 @@ FILE_SUPPORTS_GHOSTING = 0x40000000
 
 FILE_INVALID_FILE_ID = LONGLONG(-1)
 
+
 class FILE_ID_128(Structure):
-	_fields_ = [
-		("Identifier", BYTE*16),
-	]
+    _fields_ = [
+        ("Identifier", BYTE * 16),
+    ]
+
 
 class FILE_NOTIFY_INFORMATION(Structure):
-	_fields_ = [
-		("NextEntryOffset", DWORD),
-		("Action", DWORD),
-		("FileNameLength", DWORD),
-		("FileName", WCHAR*1),
-	]
+    _fields_ = [
+        ("NextEntryOffset", DWORD),
+        ("Action", DWORD),
+        ("FileNameLength", DWORD),
+        ("FileName", WCHAR * 1),
+    ]
+
 
 class FILE_NOTIFY_EXTENDED_INFORMATION(Structure):
-	_fields_ = [
-		("NextEntryOffset", DWORD),
-		("Action", DWORD),
-		("CreationTime", LARGE_INTEGER),
-		("LastModificationTime", LARGE_INTEGER),
-		("LastChangeTime", LARGE_INTEGER),
-		("LastAccessTime", LARGE_INTEGER),
-		("AllocatedLength", LARGE_INTEGER),
-		("FileSize", LARGE_INTEGER),
-		("FileAttributes", DWORD),
-		("ReparsePointTag", DWORD),
-		("FileId", LARGE_INTEGER),
-		("ParentFileId", LARGE_INTEGER),
-		("FileNameLength", DWORD),
-		("FileName", WCHAR*1),
-	]
+    _fields_ = [
+        ("NextEntryOffset", DWORD),
+        ("Action", DWORD),
+        ("CreationTime", LARGE_INTEGER),
+        ("LastModificationTime", LARGE_INTEGER),
+        ("LastChangeTime", LARGE_INTEGER),
+        ("LastAccessTime", LARGE_INTEGER),
+        ("AllocatedLength", LARGE_INTEGER),
+        ("FileSize", LARGE_INTEGER),
+        ("FileAttributes", DWORD),
+        ("ReparsePointTag", DWORD),
+        ("FileId", LARGE_INTEGER),
+        ("ParentFileId", LARGE_INTEGER),
+        ("FileNameLength", DWORD),
+        ("FileName", WCHAR * 1),
+    ]
+
 
 class FILE_SEGMENT_ELEMENT(Structure):
-	_fields_ = [
-		("Buffer", PVOID64),
-		("Alignment", ULONGLONG),
-	]
+    _fields_ = [
+        ("Buffer", PVOID64),
+        ("Alignment", ULONGLONG),
+    ]
+
 
 FLUSH_FLAGS_FILE_DATA_ONLY = 0x00000001
 FLUSH_FLAGS_NO_SYNC = 0x00000002
 FLUSH_FLAGS_FILE_DATA_SYNC_ONLY = 0x00000004
 
-'''
+"""
 typedef struct _REPARSE_GUID_DATA_BUFFER {
  DWORD ReparseTag
  WORD ReparseDataLength
@@ -8576,30 +8698,37 @@ typedef struct _MESSAGE_RESOURCE_DATA {
  DWORD NumberOfBlocks
  MESSAGE_RESOURCE_BLOCK Blocks[ 1 ]
 } MESSAGE_RESOURCE_DATA, *PMESSAGE_RESOURCE_DATA
-'''
+"""
+
+
 class OSVERSIONINFOA(Structure):
-	_fields_ = [
-		("dwOSVersionInfoSize", DWORD),
-		("dwMajorVersion", DWORD),
-		("dwMinorVersion", DWORD),
-		("dwBuildNumber", DWORD),
-		("dwPlatformId", DWORD),
-		("szCSDVersion", CHAR*128),
-	]
+    _fields_ = [
+        ("dwOSVersionInfoSize", DWORD),
+        ("dwMajorVersion", DWORD),
+        ("dwMinorVersion", DWORD),
+        ("dwBuildNumber", DWORD),
+        ("dwPlatformId", DWORD),
+        ("szCSDVersion", CHAR * 128),
+    ]
+
+
 LPOSVERSIONINFOA = POINTER(OSVERSIONINFOA)
 
+
 class OSVERSIONINFOW(Structure):
-	_fields_ = [
-		("dwOSVersionInfoSize", DWORD),
-		("dwMajorVersion", DWORD),
-		("dwMinorVersion", DWORD),
-		("dwBuildNumber", DWORD),
-		("dwPlatformId", DWORD),
-		("szCSDVersion", WCHAR*128),
-	]
+    _fields_ = [
+        ("dwOSVersionInfoSize", DWORD),
+        ("dwMajorVersion", DWORD),
+        ("dwMinorVersion", DWORD),
+        ("dwBuildNumber", DWORD),
+        ("dwPlatformId", DWORD),
+        ("szCSDVersion", WCHAR * 128),
+    ]
+
+
 LPOSVERSIONINFOW = POINTER(OSVERSIONINFOW)
 
-'''
+"""
 typedef struct _OSVERSIONINFOEXA {
  DWORD dwOSVersionInfoSize
  DWORD dwMajorVersion
@@ -8805,30 +8934,40 @@ typedef struct _RTL_CRITICAL_SECTION_DEBUG {
  WORD CreatorBackTraceIndexHigh
  WORD SpareWORD
 } RTL_CRITICAL_SECTION_DEBUG, *PRTL_CRITICAL_SECTION_DEBUG, RTL_RESOURCE_DEBUG, *PRTL_RESOURCE_DEBUG
-'''
+"""
 RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO = 0x01000000
 RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN = 0x02000000
 RTL_CRITICAL_SECTION_FLAG_STATIC_INIT = 0x04000000
 RTL_CRITICAL_SECTION_FLAG_RESOURCE_TYPE = 0x08000000
 RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO = 0x10000000
 RTL_CRITICAL_SECTION_ALL_FLAG_BITS = 0xFF000000
-RTL_CRITICAL_SECTION_FLAG_RESERVED = RTL_CRITICAL_SECTION_ALL_FLAG_BITS & (~(RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO | RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN | RTL_CRITICAL_SECTION_FLAG_STATIC_INIT | RTL_CRITICAL_SECTION_FLAG_RESOURCE_TYPE | RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO))
+RTL_CRITICAL_SECTION_FLAG_RESERVED = RTL_CRITICAL_SECTION_ALL_FLAG_BITS & (
+    ~(
+        RTL_CRITICAL_SECTION_FLAG_NO_DEBUG_INFO
+        | RTL_CRITICAL_SECTION_FLAG_DYNAMIC_SPIN
+        | RTL_CRITICAL_SECTION_FLAG_STATIC_INIT
+        | RTL_CRITICAL_SECTION_FLAG_RESOURCE_TYPE
+        | RTL_CRITICAL_SECTION_FLAG_FORCE_DEBUG_INFO
+    )
+)
 RTL_CRITICAL_SECTION_DEBUG_FLAG_STATIC_INIT = 0x00000001
 
+
 class HEAP_INFORMATION_CLASS(CEnum):
-	HeapCompatibilityInformation = 0
-	HeapEnableTerminationOnCorruption = 1
-	HeapOptimizeResources = 3
+    HeapCompatibilityInformation = 0
+    HeapEnableTerminationOnCorruption = 1
+    HeapOptimizeResources = 3
+
 
 HEAP_OPTIMIZE_RESOURCES_CURRENT_VERSION = 1
 
-'''
+"""
 typedef struct _HEAP_OPTIMIZE_RESOURCES_INFORMATION {
  DWORD Version
  DWORD Flags
 } HEAP_OPTIMIZE_RESOURCES_INFORMATION, *PHEAP_OPTIMIZE_RESOURCES_INFORMATION
 
-'''
+"""
 WT_EXECUTEDEFAULT = 0x00000000
 WT_EXECUTEINIOTHREAD = 0x00000001
 WT_EXECUTEINUITHREAD = 0x00000002
@@ -8840,23 +8979,25 @@ WT_EXECUTEINPERSISTENTIOTHREAD = 0x00000040
 WT_EXECUTEINPERSISTENTTHREAD = 0x00000080
 WT_TRANSFER_IMPERSONATION = 0x00000100
 
-class ACTIVATION_CONTEXT_INFO_CLASS(CEnum):
-	ActivationContextBasicInformation = 1
-	ActivationContextDetailedInformation = 2
-	AssemblyDetailedInformationInActivationContext = 3
-	FileInformationInAssemblyOfAssemblyInActivationContext = 4
-	RunlevelInformationInActivationContext = 5
-	CompatibilityInformationInActivationContext = 6
-	ActivationContextManifestResourceName = 7
-	MaxActivationContextInfoClass = 8
 
-	# compatibility with old names
-	AssemblyDetailedInformationInActivationContxt = 3
-	FileInformationInAssemblyOfAssemblyInActivationContxt = 4
+class ACTIVATION_CONTEXT_INFO_CLASS(CEnum):
+    ActivationContextBasicInformation = 1
+    ActivationContextDetailedInformation = 2
+    AssemblyDetailedInformationInActivationContext = 3
+    FileInformationInAssemblyOfAssemblyInActivationContext = 4
+    RunlevelInformationInActivationContext = 5
+    CompatibilityInformationInActivationContext = 6
+    ActivationContextManifestResourceName = 7
+    MaxActivationContextInfoClass = 8
+
+    # compatibility with old names
+    AssemblyDetailedInformationInActivationContxt = 3
+    FileInformationInAssemblyOfAssemblyInActivationContxt = 4
+
 
 ACTIVATIONCONTEXTINFOCLASS = ACTIVATION_CONTEXT_INFO_CLASS
 
-'''
+"""
 typedef struct _ACTIVATION_CONTEXT_QUERY_INDEX {
  DWORD ulAssemblyIndex
  DWORD ulFileIndexInAssembly
@@ -9434,4 +9575,4 @@ ACTIVATION_CONTEXT_SECTION_GLOBAL_OBJECT_RENAME_TABLE = 8
 ACTIVATION_CONTEXT_SECTION_CLR_SURROGATES = 9
 ACTIVATION_CONTEXT_SECTION_APPLICATION_SETTINGS = 10
 ACTIVATION_CONTEXT_SECTION_COMPATIBILITY_INFO = 11
-'''
+"""

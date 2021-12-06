@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import POINTER, c_char, c_double, c_int64, c_long, c_short, c_ubyte, c_uint64, c_ulong, c_ushort, c_void_p
 from ctypes.wintypes import WCHAR
 
@@ -7,8 +5,8 @@ PWCHAR = POINTER(WCHAR)
 LPWCH = POINTER(WCHAR)
 PWCH = POINTER(WCHAR)
 
-LPCWCH = POINTER(WCHAR) # const
-PCWCH = POINTER(WCHAR) # const
+LPCWCH = POINTER(WCHAR)  # const
+PCWCH = POINTER(WCHAR)  # const
 
 NWPSTR = POINTER(WCHAR)
 LPWSTR = POINTER(WCHAR)

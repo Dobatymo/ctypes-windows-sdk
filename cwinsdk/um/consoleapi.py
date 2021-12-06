@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import CFUNCTYPE, POINTER, Structure
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, UINT, ULONG
 
@@ -39,13 +37,15 @@ PSEUDOCONSOLE_INHERIT_CURSOR = 0x1
 
 # structs
 
+
 class CONSOLE_READCONSOLE_CONTROL(Structure):
-	_fields_ = [
-		("nLength", ULONG),
-		("nInitialChars", ULONG),
-		("dwCtrlWakeupMask", ULONG),
-		("dwControlKeyState", ULONG),
-	]
+    _fields_ = [
+        ("nLength", ULONG),
+        ("nInitialChars", ULONG),
+        ("dwCtrlWakeupMask", ULONG),
+        ("dwControlKeyState", ULONG),
+    ]
+
 
 PCONSOLE_READCONSOLE_CONTROL = POINTER(CONSOLE_READCONSOLE_CONTROL)
 
@@ -114,29 +114,29 @@ ReadConsoleW.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, PCONSOLE_READCONSOLE_CO
 ReadConsoleW.restype = BOOL
 
 WriteConsoleA = windll.kernel32.WriteConsoleA
-WriteConsoleA.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, LPVOID] # const
+WriteConsoleA.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, LPVOID]  # const
 WriteConsoleA.restype = BOOL
 
 WriteConsoleW = windll.kernel32.WriteConsoleW
-WriteConsoleW.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, LPVOID] # const
+WriteConsoleW.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, LPVOID]  # const
 WriteConsoleW.restype = BOOL
 
 SetConsoleCtrlHandler = windll.kernel32.SetConsoleCtrlHandler
 SetConsoleCtrlHandler.argtypes = [PHANDLER_ROUTINE, BOOL]
 SetConsoleCtrlHandler.restype = BOOL
 
-try: # Windows 10 1809
-	CreatePseudoConsole = windll.kernel32.CreatePseudoConsole
-	CreatePseudoConsole.argtypes = [COORD, HANDLE, HANDLE, DWORD, POINTER(HPCON)]
-	CreatePseudoConsole.restype = HRESULT
+try:  # Windows 10 1809
+    CreatePseudoConsole = windll.kernel32.CreatePseudoConsole
+    CreatePseudoConsole.argtypes = [COORD, HANDLE, HANDLE, DWORD, POINTER(HPCON)]
+    CreatePseudoConsole.restype = HRESULT
 
-	ResizePseudoConsole = windll.kernel32.ResizePseudoConsole
-	ResizePseudoConsole.argtypes = [HPCON, COORD]
-	ResizePseudoConsole.restype = HRESULT
+    ResizePseudoConsole = windll.kernel32.ResizePseudoConsole
+    ResizePseudoConsole.argtypes = [HPCON, COORD]
+    ResizePseudoConsole.restype = HRESULT
 
-	ClosePseudoConsole = windll.kernel32.ClosePseudoConsole
-	ClosePseudoConsole.argtypes = [HPCON]
-	ClosePseudoConsole.restype = None
+    ClosePseudoConsole = windll.kernel32.ClosePseudoConsole
+    ClosePseudoConsole.argtypes = [HPCON]
+    ClosePseudoConsole.restype = None
 
 except AttributeError:
-	pass
+    pass

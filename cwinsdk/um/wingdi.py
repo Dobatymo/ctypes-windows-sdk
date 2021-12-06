@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import POINTER, Structure, c_int
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPVOID, UINT, WORD
 
@@ -21,43 +19,48 @@ warn("Don't use last parameter of `CreateDCA` or `CreateDCW`, as `DEVMODEA` and 
 DEVMODEA = c_int
 DEVMODEW = c_int
 
+
 class RGBQUAD(Structure):
-	_fields_ = [
-		("rgbBlue", BYTE),
-		("rgbGreen", BYTE),
-		("rgbRed", BYTE),
-		("rgbReserved", BYTE),
-	]
+    _fields_ = [
+        ("rgbBlue", BYTE),
+        ("rgbGreen", BYTE),
+        ("rgbRed", BYTE),
+        ("rgbReserved", BYTE),
+    ]
+
 
 class BITMAPCOREHEADER(Structure):
-	_fields_ = [
-		("bcSize", DWORD),
-		("bcWidth", WORD),
-		("bcHeight", WORD),
-		("bcPlanes", WORD),
-		("bcBitCount", WORD),
-	]
+    _fields_ = [
+        ("bcSize", DWORD),
+        ("bcWidth", WORD),
+        ("bcHeight", WORD),
+        ("bcPlanes", WORD),
+        ("bcBitCount", WORD),
+    ]
+
 
 class BITMAPINFOHEADER(Structure):
-	_fields_ = [
-		("biSize", DWORD),
-		("biWidth", LONG),
-		("biHeight", LONG),
-		("biPlanes", WORD),
-		("biBitCount", WORD),
-		("biCompression", DWORD),
-		("biSizeImage", DWORD),
-		("biXPelsPerMeter", LONG),
-		("biYPelsPerMeter", LONG),
-		("biClrUsed", DWORD),
-		("biClrImportant", DWORD),
-	]
+    _fields_ = [
+        ("biSize", DWORD),
+        ("biWidth", LONG),
+        ("biHeight", LONG),
+        ("biPlanes", WORD),
+        ("biBitCount", WORD),
+        ("biCompression", DWORD),
+        ("biSizeImage", DWORD),
+        ("biXPelsPerMeter", LONG),
+        ("biYPelsPerMeter", LONG),
+        ("biClrUsed", DWORD),
+        ("biClrImportant", DWORD),
+    ]
+
 
 class BITMAPINFO(Structure):
-	_fields_ = [
-		("bmiHeader", BITMAPINFOHEADER),
-		("bmiColors", RGBQUAD*1),
-	]
+    _fields_ = [
+        ("bmiHeader", BITMAPINFOHEADER),
+        ("bmiColors", RGBQUAD * 1),
+    ]
+
 
 # functions
 

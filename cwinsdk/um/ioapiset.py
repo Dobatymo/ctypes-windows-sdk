@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ctypes import POINTER
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, ULONG
 
@@ -40,12 +38,12 @@ CancelIo = windll.kernel32.CancelIo
 CancelIo.argtypes = [HANDLE]
 CancelIo.restype = BOOL
 
-try: # only windows 8+
-	GetOverlappedResultEx = windll.kernel32.GetOverlappedResultEx
-	GetOverlappedResultEx.argtypes = [HANDLE, LPOVERLAPPED, LPDWORD, DWORD, BOOL]
-	GetOverlappedResultEx.restype = BOOL
+try:  # only windows 8+
+    GetOverlappedResultEx = windll.kernel32.GetOverlappedResultEx
+    GetOverlappedResultEx.argtypes = [HANDLE, LPOVERLAPPED, LPDWORD, DWORD, BOOL]
+    GetOverlappedResultEx.restype = BOOL
 except AttributeError:
-	GetOverlappedResultEx = _not_available("GetOverlappedResultEx")
+    GetOverlappedResultEx = _not_available("GetOverlappedResultEx")
 
 CancelSynchronousIo = windll.kernel32.CancelSynchronousIo
 CancelSynchronousIo.argtypes = [HANDLE]
