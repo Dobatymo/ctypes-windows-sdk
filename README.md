@@ -4,6 +4,8 @@ A totally incomplete and random port of the C Windows SDK for Python ctypes. No 
 
 ## Install
 
+Requires Python 3.6+.
+
 ```
 pip install ctypes-windows-sdk
 ```

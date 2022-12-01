@@ -4,7 +4,7 @@ from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCSTR, LPCWSTR, LPSTR, LPVOID,
 from .. import CEnum, windll
 from ..shared.basetsd import DWORD_PTR
 from ..shared.minwindef import LPDWORD, PBOOL, PDWORD, UCHAR
-from ..shared.ntdef import PVOID, ULONGLONG
+from ..shared.ntdef import HRESULT, PVOID, ULONGLONG
 from .minwinbase import LPFILETIME, LPSYSTEMTIME, SYSTEMTIME
 from .winnt import (
     DWORDLONG,
@@ -257,13 +257,12 @@ GetProcessorSystemCycleTime = windll.kernel32.GetProcessorSystemCycleTime
 GetProcessorSystemCycleTime.argtypes = [USHORT, PSYSTEM_PROCESSOR_CYCLE_TIME_INFORMATION, PDWORD]
 GetProcessorSystemCycleTime.restype = BOOL
 
-# GetOsManufacturingMode = windll.XXX.GetOsManufacturingMode
-# GetOsManufacturingMode.argtypes = [PBOOL]
-# GetOsManufacturingMode.restype = BOOL
-
-# GetIntegratedDisplaySize = windll.onecore.GetIntegratedDisplaySize
-# GetIntegratedDisplaySize.argtypes = [POINTER(c_double)]
-# GetIntegratedDisplaySize.restype = HRESULT
+try:
+    GetIntegratedDisplaySize = windll.onecore.GetIntegratedDisplaySize
+    GetIntegratedDisplaySize.argtypes = [POINTER(c_double)]
+    GetIntegratedDisplaySize.restype = HRESULT
+except (AttributeError, OSError):
+    pass
 
 SetComputerNameA = windll.kernel32.SetComputerNameA
 SetComputerNameA.argtypes = [LPCSTR]

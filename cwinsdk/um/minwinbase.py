@@ -110,5 +110,10 @@ class FILE_INFO_BY_HANDLE_CLASS(CEnum):
     MaximumFileInfoByHandleClass = 23
 
 
+class GET_FILEEX_INFO_LEVELS(CEnum):
+    GetFileExInfoStandard = 0
+    GetFileExMaxInfoLevel = 1
+
+
 LOCKFILE_FAIL_IMMEDIATELY = 0x00000001
 LOCKFILE_EXCLUSIVE_LOCK = 0x00000002

@@ -1,11 +1,11 @@
 from ctypes import Structure, Union
-from ctypes.wintypes import BOOLEAN, BYTE, DWORD, LARGE_INTEGER, WCHAR
+from ctypes.wintypes import BOOLEAN, BYTE, DWORD, LARGE_INTEGER, SHORT, WCHAR, WORD
 
 from .. import CEnum, windll
 from ..shared.basetsd import DWORD64
 from ..shared.guiddef import GUID
 from ..shared.ntddstor import STORAGE_BUS_TYPE
-from .winnt import FILE_READ_DATA, FILE_WRITE_DATA
+from .winnt import ANYSIZE_ARRAY, FILE_READ_DATA, FILE_WRITE_DATA
 
 
 def CTL_CODE(DeviceType, Function, Method, Access):
@@ -670,6 +670,49 @@ class STORAGE_DEVICE_DESCRIPTOR(Structure):
         ("BusType", STORAGE_BUS_TYPE),
         ("RawPropertiesLength", DWORD),
         ("RawDeviceProperties", BYTE * 1),
+    ]
+
+
+class DEVICE_SEEK_PENALTY_DESCRIPTOR(Structure):
+    _fields_ = [
+        ("Version", DWORD),
+        ("Size", DWORD),
+        ("IncursSeekPenalty", BOOLEAN),
+    ]
+
+
+class DEVICE_TRIM_DESCRIPTOR(Structure):
+    _fields_ = [
+        ("Version", DWORD),
+        ("Size", DWORD),
+        ("TrimEnabled", BOOLEAN),
+    ]
+
+
+class STORAGE_TEMPERATURE_INFO(Structure):
+    _fields_ = [
+        ("Index", WORD),
+        ("Temperature", SHORT),
+        ("OverThreshold", SHORT),
+        ("UnderThreshold", SHORT),
+        ("OverThresholdChangable", BOOLEAN),
+        ("UnderThresholdChangable", BOOLEAN),
+        ("EventGenerated", BOOLEAN),
+        ("Reserved0", BYTE),
+        ("Reserved1", DWORD),
+    ]
+
+
+class STORAGE_TEMPERATURE_DATA_DESCRIPTOR(Structure):
+    _fields_ = [
+        ("Version", DWORD),
+        ("Size", DWORD),
+        ("CriticalTemperature", SHORT),
+        ("WarningTemperature", SHORT),
+        ("InfoCount", WORD),
+        ("Reserved0", BYTE * 2),
+        ("Reserved1", DWORD * 2),
+        ("TemperatureInfo", STORAGE_TEMPERATURE_INFO * ANYSIZE_ARRAY),
     ]
 
 

@@ -1,11 +1,7 @@
 import platform
-from ctypes import LibraryLoader, WinDLL, WinError, c_int
+from ctypes import LibraryLoader, Structure, WinDLL, WinError, c_int
 from ctypes.wintypes import HANDLE
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ctypes import Structure
-    from typing import Any, Callable, Iterable, Iterator, Tuple
+from typing import Any, Callable, Iterable, Iterator, Tuple
 
 windll = LibraryLoader(WinDLL)
 
@@ -21,8 +17,7 @@ class WinApiError(OSError):
     pass
 
 
-def _value_with_length(values):
-    # type: (Iterable, ) -> Iterator
+def _value_with_length(values: Iterable) -> Iterator:
 
     for value in values:
         if hasattr(value, "_fields_"):
@@ -35,8 +30,7 @@ def _value_with_length(values):
         yield value
 
 
-def _struct2pairs(struct):
-    # type: (Structure, ) -> Iterator[Tuple[str, Any]]
+def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
 
     for name, _ in struct._fields_:
         value = getattr(struct, name)
@@ -51,8 +45,7 @@ def _struct2pairs(struct):
         yield name, value
 
 
-def struct2dict(struct):
-    # type: (Structure, ) -> dict
+def struct2dict(struct: Structure) -> dict:
 
     return dict(_struct2pairs(struct))
 
@@ -78,9 +71,7 @@ def s_ok(result, func, arguments):
     return result
 
 
-def _not_available(funcname):
-    # type: (str) -> Callable
-
+def _not_available(funcname: str) -> Callable:
     def inner(*args, **kwargs):
         raise OSError(f"{funcname}() is not available on {platform.platform()}")
 
