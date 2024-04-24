@@ -1,35 +1,51 @@
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: check-json
-      - id: check-toml
-      - id: check-yaml
-      - id: check-case-conflict
-      - id: check-added-large-files
-      - id: debug-statements
-      - id: end-of-file-fixer
-      - id: mixed-line-ending
-        args: ["--fix=no"]
-      - id: requirements-txt-fixer
-      - id: trailing-whitespace
-        args: ["--markdown-linebreak-ext=md"]
-  - repo: https://github.com/asottile/pyupgrade
-    rev: 'v3.2.3'
-    hooks:
-      - id: pyupgrade
-        args: ["--py36-plus"]
-  - repo: https://github.com/psf/black
-    rev: '22.10.0'
-    hooks:
-      - id: black
-        language_version: python3 # Should be a command that runs python3.6+
-  - repo: https://github.com/PyCQA/isort
-    rev: '5.10.1'
-    hooks:
-      - id: isort
-        language_version: python3
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+  - id: check-added-large-files
+  - id: check-case-conflict
+  - id: check-json
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: check-toml
+  - id: check-yaml
+  - id: debug-statements
+  - id: detect-private-key
+  - id: end-of-file-fixer
+  - id: mixed-line-ending
+    args: [--fix=no]
+  - id: requirements-txt-fixer
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+  rev: v2.12.0
+  hooks:
+  - id: pretty-format-yaml
+    args: [--autofix]
+- repo: https://github.com/tox-dev/pyproject-fmt
+  rev: 1.7.0
+  hooks:
+  - id: pyproject-fmt
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.15.0
+  hooks:
+  - id: pyupgrade
+    args: [--py37-plus]
+- repo: https://github.com/psf/black-pre-commit-mirror
+  rev: 24.3.0
+  hooks:
+  - id: black
+- repo: https://github.com/PyCQA/isort
+  rev: 5.13.2
+  hooks:
+  - id: isort
+- repo: https://github.com/pycqa/flake8
+  rev: 7.0.0
+  hooks:
+  - id: flake8
+    additional_dependencies:
+    - flake8-annotations
+    - flake8-bugbear
+    - flake8-eradicate
+    - flake8-mutable
+    - flake8-simplify

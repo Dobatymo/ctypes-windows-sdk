@@ -58,14 +58,17 @@ PHANDLER_ROUTINE = CFUNCTYPE(BOOL, DWORD)
 AllocConsole = windll.kernel32.AllocConsole
 AllocConsole.argtypes = []
 AllocConsole.restype = BOOL
+AllocConsole.errcheck = nonzero
 
 FreeConsole = windll.kernel32.FreeConsole
 FreeConsole.argtypes = []
 FreeConsole.restype = BOOL
+FreeConsole.errcheck = nonzero
 
 AttachConsole = windll.kernel32.AttachConsole
 AttachConsole.argtypes = [DWORD]
 AttachConsole.restype = BOOL
+AttachConsole.errcheck = nonzero
 
 GetConsoleCP = windll.kernel32.GetConsoleCP
 GetConsoleCP.argtypes = []
@@ -92,38 +95,47 @@ GetNumberOfConsoleInputEvents.restype = BOOL
 ReadConsoleInputA = windll.kernel32.ReadConsoleInputA
 ReadConsoleInputA.argtypes = [HANDLE, PINPUT_RECORD, DWORD, LPDWORD]
 ReadConsoleInputA.restype = BOOL
+ReadConsoleInputA.errcheck = nonzero
 
 ReadConsoleInputW = windll.kernel32.ReadConsoleInputW
 ReadConsoleInputW.argtypes = [HANDLE, PINPUT_RECORD, DWORD, LPDWORD]
 ReadConsoleInputW.restype = BOOL
+ReadConsoleInputW.errcheck = nonzero
 
 PeekConsoleInputA = windll.kernel32.PeekConsoleInputA
 PeekConsoleInputA.argtypes = [HANDLE, PINPUT_RECORD, DWORD, LPDWORD]
 PeekConsoleInputA.restype = BOOL
+PeekConsoleInputA.errcheck = nonzero
 
 PeekConsoleInputW = windll.kernel32.PeekConsoleInputW
 PeekConsoleInputW.argtypes = [HANDLE, PINPUT_RECORD, DWORD, LPDWORD]
 PeekConsoleInputW.restype = BOOL
+PeekConsoleInputW.errcheck = nonzero
 
 ReadConsoleA = windll.kernel32.ReadConsoleA
 ReadConsoleA.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, PCONSOLE_READCONSOLE_CONTROL]
 ReadConsoleA.restype = BOOL
+ReadConsoleA.errcheck = nonzero
 
 ReadConsoleW = windll.kernel32.ReadConsoleW
 ReadConsoleW.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, PCONSOLE_READCONSOLE_CONTROL]
 ReadConsoleW.restype = BOOL
+ReadConsoleW.errcheck = nonzero
 
 WriteConsoleA = windll.kernel32.WriteConsoleA
 WriteConsoleA.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, LPVOID]  # const
 WriteConsoleA.restype = BOOL
+WriteConsoleA.errcheck = nonzero
 
 WriteConsoleW = windll.kernel32.WriteConsoleW
 WriteConsoleW.argtypes = [HANDLE, LPVOID, DWORD, LPDWORD, LPVOID]  # const
 WriteConsoleW.restype = BOOL
+WriteConsoleW.errcheck = nonzero
 
 SetConsoleCtrlHandler = windll.kernel32.SetConsoleCtrlHandler
 SetConsoleCtrlHandler.argtypes = [PHANDLER_ROUTINE, BOOL]
 SetConsoleCtrlHandler.restype = BOOL
+SetConsoleCtrlHandler.errcheck = nonzero
 
 try:  # Windows 10 1809
     CreatePseudoConsole = windll.kernel32.CreatePseudoConsole

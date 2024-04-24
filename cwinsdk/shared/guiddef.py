@@ -1,4 +1,4 @@
-from ctypes import POINTER, Structure, Union, c_ubyte, c_ulong, c_ushort
+from ctypes import POINTER, Structure, c_ubyte, c_ulong, c_ushort
 
 
 class GUID(Structure):

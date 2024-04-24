@@ -1,5 +1,18 @@
-from ctypes import POINTER, c_char, c_double, c_int64, c_long, c_short, c_ubyte, c_uint64, c_ulong, c_ushort, c_void_p
-from ctypes.wintypes import WCHAR
+from ctypes import (
+    POINTER,
+    Structure,
+    c_char,
+    c_double,
+    c_int64,
+    c_long,
+    c_short,
+    c_ubyte,
+    c_uint64,
+    c_ulong,
+    c_ushort,
+    c_void_p,
+)
+from ctypes.wintypes import HANDLE, WCHAR
 
 PWCHAR = POINTER(WCHAR)
 LPWCH = POINTER(WCHAR)
@@ -31,3 +44,46 @@ ULONGLONG = c_uint64
 LOGICAL = ULONG
 
 HRESULT = LONG
+NTSTATUS = LONG
+
+
+class STRING(Structure):
+    _fields_ = [
+        ("Length", USHORT),
+        ("MaximumLength", USHORT),
+        ("Buffer", POINTER(CHAR)),
+    ]
+
+
+ANSI_STRING = STRING
+OEM_STRING = STRING
+
+
+class CSTRING(Structure):
+    _fields_ = [
+        ("Length", USHORT),
+        ("MaximumLength", USHORT),
+        ("Buffer", POINTER(c_char)),
+    ]
+
+
+CANSI_STRING = STRING
+
+
+class UNICODE_STRING(Structure):
+    _fields_ = [
+        ("Length", USHORT),
+        ("MaximumLength", USHORT),
+        ("Buffer", PWCH),
+    ]
+
+
+class OBJECT_ATTRIBUTES(Structure):
+    _fields_ = [
+        ("Length", ULONG),
+        ("RootDirectory", HANDLE),
+        ("ObjectName", POINTER(UNICODE_STRING)),
+        ("Attributes", ULONG),
+        ("SecurityDescriptor", PVOID),  # Points to type SECURITY_DESCRIPTOR
+        ("SecurityQualityOfService", PVOID),  # Points to type SECURITY_QUALITY_OF_SERVICE
+    ]

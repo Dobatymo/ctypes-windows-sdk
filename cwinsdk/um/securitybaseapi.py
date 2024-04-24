@@ -1,9 +1,36 @@
 from ctypes import POINTER
-from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCWSTR, LPVOID, LPWSTR
+from ctypes.wintypes import BOOL, BOOLEAN, BYTE, DWORD, HANDLE, LONG, LPCWSTR, LPVOID, LPWSTR, ULONG
 
-from .. import windll
-from ..shared.minwindef import LPBOOL, LPDWORD, PDWORD
-from .winnt import PGENERIC_MAPPING, POBJECT_TYPE_LIST, PPRIVILEGE_SET, PSECURITY_DESCRIPTOR, PSID, PTOKEN_PRIVILEGES
+from .. import nonzero, windll
+from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
+from ..shared.guiddef import GUID
+from ..shared.minwindef import LPBOOL, LPDWORD, PBOOL, PDWORD, PUCHAR, PULONG, UCHAR
+from ..shared.ntdef import PVOID
+from .minwinbase import SECURITY_ATTRIBUTES
+from .winnt import (
+    ACL_INFORMATION_CLASS,
+    AUDIT_EVENT_TYPE,
+    CLAIM_SECURITY_ATTRIBUTES_INFORMATION,
+    LUID,
+    LUID_AND_ATTRIBUTES,
+    PACL,
+    PCWSTR,
+    PGENERIC_MAPPING,
+    PHANDLE,
+    POBJECT_TYPE_LIST,
+    PPRIVILEGE_SET,
+    PSECURITY_DESCRIPTOR,
+    PSID,
+    PTOKEN_PRIVILEGES,
+    SECURITY_DESCRIPTOR_CONTROL,
+    SECURITY_INFORMATION,
+    SID_AND_ATTRIBUTES,
+    SID_IDENTIFIER_AUTHORITY,
+    TOKEN_GROUPS,
+    TOKEN_INFORMATION_CLASS,
+    TOKEN_TYPE,
+    WELL_KNOWN_SID_TYPE,
+)
 
 AccessCheck = windll.advapi32.AccessCheck
 AccessCheck.argtypes = [PSECURITY_DESCRIPTOR, HANDLE, DWORD, PGENERIC_MAPPING, PPRIVILEGE_SET, LPDWORD, LPDWORD, LPBOOL]
@@ -57,1114 +84,936 @@ AccessCheckByTypeResultList.argtypes = [
 ]
 AccessCheckByTypeResultList.restype = BOOL
 
-"""
-BOOL
+AccessCheckByTypeAndAuditAlarmW = windll.advapi32.AccessCheckByTypeAndAuditAlarmW
+AccessCheckByTypeAndAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    LPCWSTR,
+    LPCWSTR,
+    PSECURITY_DESCRIPTOR,
+    PSID,
+    DWORD,
+    AUDIT_EVENT_TYPE,
+    DWORD,
+    POBJECT_TYPE_LIST,
+    DWORD,
+    PGENERIC_MAPPING,
+    BOOL,
+    POINTER(DWORD),
+    POINTER(BOOL),
+    POINTER(BOOL),
+]
+AccessCheckByTypeAndAuditAlarmW.restype = BOOL
 
-AccessCheckByTypeAndAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ LPCWSTR ObjectTypeName,
-    _In_opt_ LPCWSTR ObjectName,
-    _In_ PSECURITY_DESCRIPTOR SecurityDescriptor,
-    _In_opt_ PSID PrincipalSelfSid,
-    _In_ DWORD DesiredAccess,
-    _In_ AUDIT_EVENT_TYPE AuditType,
-    _In_ DWORD Flags,
-    _Inout_updates_opt_(ObjectTypeListLength) POBJECT_TYPE_LIST ObjectTypeList,
-    _In_ DWORD ObjectTypeListLength,
-    _In_ PGENERIC_MAPPING GenericMapping,
-    _In_ BOOL ObjectCreation,
-    _Out_ LPDWORD GrantedAccess,
-    _Out_ LPBOOL AccessStatus,
-    _Out_ LPBOOL pfGenerateOnClose
-    );
+AccessCheckByTypeResultListAndAuditAlarmW = windll.advapi32.AccessCheckByTypeResultListAndAuditAlarmW
+AccessCheckByTypeResultListAndAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    LPCWSTR,
+    LPCWSTR,
+    PSECURITY_DESCRIPTOR,
+    PSID,
+    DWORD,
+    AUDIT_EVENT_TYPE,
+    DWORD,
+    POBJECT_TYPE_LIST,
+    DWORD,
+    PGENERIC_MAPPING,
+    BOOL,
+    LPDWORD,
+    LPDWORD,
+    POINTER(BOOL),
+]
+AccessCheckByTypeResultListAndAuditAlarmW.restype = BOOL
 
+AccessCheckByTypeResultListAndAuditAlarmByHandleW = windll.advapi32.AccessCheckByTypeResultListAndAuditAlarmByHandleW
+AccessCheckByTypeResultListAndAuditAlarmByHandleW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    HANDLE,
+    LPCWSTR,
+    LPCWSTR,
+    PSECURITY_DESCRIPTOR,
+    PSID,
+    DWORD,
+    AUDIT_EVENT_TYPE,
+    DWORD,
+    POBJECT_TYPE_LIST,
+    DWORD,
+    PGENERIC_MAPPING,
+    BOOL,
+    LPDWORD,
+    LPDWORD,
+    POINTER(BOOL),
+]
+AccessCheckByTypeResultListAndAuditAlarmByHandleW.restype = BOOL
 
-BOOL
+AddAccessAllowedAce = windll.advapi32.AddAccessAllowedAce
+AddAccessAllowedAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    PSID,
+]
+AddAccessAllowedAce.restype = BOOL
 
-AccessCheckByTypeResultListAndAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ LPCWSTR ObjectTypeName,
-    _In_opt_ LPCWSTR ObjectName,
-    _In_ PSECURITY_DESCRIPTOR SecurityDescriptor,
-    _In_opt_ PSID PrincipalSelfSid,
-    _In_ DWORD DesiredAccess,
-    _In_ AUDIT_EVENT_TYPE AuditType,
-    _In_ DWORD Flags,
-    _Inout_updates_opt_(ObjectTypeListLength) POBJECT_TYPE_LIST ObjectTypeList,
-    _In_ DWORD ObjectTypeListLength,
-    _In_ PGENERIC_MAPPING GenericMapping,
-    _In_ BOOL ObjectCreation,
-    _Out_writes_(ObjectTypeListLength) LPDWORD GrantedAccessList,
-    _Out_writes_(ObjectTypeListLength) LPDWORD AccessStatusList,
-    _Out_ LPBOOL pfGenerateOnClose
-    );
+AddAccessAllowedAceEx = windll.advapi32.AddAccessAllowedAceEx
+AddAccessAllowedAceEx.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    PSID,
+]
+AddAccessAllowedAceEx.restype = BOOL
 
-BOOL
+AddAccessAllowedObjectAce = windll.advapi32.AddAccessAllowedObjectAce
+AddAccessAllowedObjectAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    POINTER(GUID),
+    POINTER(GUID),
+    PSID,
+]
+AddAccessAllowedObjectAce.restype = BOOL
 
-AccessCheckByTypeResultListAndAuditAlarmByHandleW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ HANDLE ClientToken,
-    _In_ LPCWSTR ObjectTypeName,
-    _In_opt_ LPCWSTR ObjectName,
-    _In_ PSECURITY_DESCRIPTOR SecurityDescriptor,
-    _In_opt_ PSID PrincipalSelfSid,
-    _In_ DWORD DesiredAccess,
-    _In_ AUDIT_EVENT_TYPE AuditType,
-    _In_ DWORD Flags,
-    _Inout_updates_opt_(ObjectTypeListLength) POBJECT_TYPE_LIST ObjectTypeList,
-    _In_ DWORD ObjectTypeListLength,
-    _In_ PGENERIC_MAPPING GenericMapping,
-    _In_ BOOL ObjectCreation,
-    _Out_writes_(ObjectTypeListLength) LPDWORD GrantedAccessList,
-    _Out_writes_(ObjectTypeListLength) LPDWORD AccessStatusList,
-    _Out_ LPBOOL pfGenerateOnClose
-    );
+AddAccessDeniedAce = windll.advapi32.AddAccessDeniedAce
+AddAccessDeniedAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    PSID,
+]
+AddAccessDeniedAce.restype = BOOL
 
-BOOL
+AddAccessDeniedAceEx = windll.advapi32.AddAccessDeniedAceEx
+AddAccessDeniedAceEx.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    PSID,
+]
+AddAccessDeniedAceEx.restype = BOOL
 
-AddAccessAllowedAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AccessMask,
-    _In_ PSID pSid
-    );
+AddAccessDeniedObjectAce = windll.advapi32.AddAccessDeniedObjectAce
+AddAccessDeniedObjectAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    POINTER(GUID),
+    POINTER(GUID),
+    PSID,
+]
+AddAccessDeniedObjectAce.restype = BOOL
 
+AddAce = windll.advapi32.AddAce
+AddAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    LPVOID,
+    DWORD,
+]
+AddAce.restype = BOOL
 
+AddAuditAccessAce = windll.advapi32.AddAuditAccessAce
+AddAuditAccessAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    PSID,
+    BOOL,
+    BOOL,
+]
+AddAuditAccessAce.restype = BOOL
 
-BOOL
+AddAuditAccessAceEx = windll.advapi32.AddAuditAccessAceEx
+AddAuditAccessAceEx.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    PSID,
+    BOOL,
+    BOOL,
+]
+AddAuditAccessAceEx.restype = BOOL
 
-AddAccessAllowedAceEx(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_ PSID pSid
-    );
+AddAuditAccessObjectAce = windll.advapi32.AddAuditAccessObjectAce
+AddAuditAccessObjectAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    POINTER(GUID),
+    POINTER(GUID),
+    PSID,
+    BOOL,
+    BOOL,
+]
+AddAuditAccessObjectAce.restype = BOOL
 
+AddMandatoryAce = windll.advapi32.AddMandatoryAce
+AddMandatoryAce.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+    DWORD,
+    PSID,
+]
+AddMandatoryAce.restype = BOOL
 
-BOOL
+try:  # Windows 8+
+    AddResourceAttributeAce = windll.kernel32.AddResourceAttributeAce
+    AddResourceAttributeAce.argtypes = [
+        PACL,
+        DWORD,
+        DWORD,
+        DWORD,
+        PSID,
+        POINTER(CLAIM_SECURITY_ATTRIBUTES_INFORMATION),
+        PDWORD,
+    ]
+    AddResourceAttributeAce.restype = BOOL
+except AttributeError:
+    pass
 
-AddAccessAllowedObjectAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_opt_ GUID* ObjectTypeGuid,
-    _In_opt_ GUID* InheritedObjectTypeGuid,
-    _In_ PSID pSid
-    );
+try:  # Windows 8+
+    AddScopedPolicyIDAce = windll.kernel32.AddScopedPolicyIDAce
+    AddScopedPolicyIDAce.argtypes = [
+        PACL,
+        DWORD,
+        DWORD,
+        DWORD,
+        PSID,
+    ]
+    AddScopedPolicyIDAce.restype = BOOL
+except AttributeError:
+    pass
 
-
-
-BOOL
-
-AddAccessDeniedAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AccessMask,
-    _In_ PSID pSid
-    );
-
-
-
-BOOL
-
-AddAccessDeniedAceEx(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_ PSID pSid
-    );
-
-
-
-BOOL
-
-AddAccessDeniedObjectAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_opt_ GUID* ObjectTypeGuid,
-    _In_opt_ GUID* InheritedObjectTypeGuid,
-    _In_ PSID pSid
-    );
-
-
-
-BOOL
-
-AddAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD dwStartingAceIndex,
-    _In_reads_bytes_(nAceListLength) LPVOID pAceList,
-    _In_ DWORD nAceListLength
-    );
-
-
-
-BOOL
-
-AddAuditAccessAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD dwAccessMask,
-    _In_ PSID pSid,
-    _In_ BOOL bAuditSuccess,
-    _In_ BOOL bAuditFailure
-    );
-
-
-
-BOOL
-
-AddAuditAccessAceEx(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD dwAccessMask,
-    _In_ PSID pSid,
-    _In_ BOOL bAuditSuccess,
-    _In_ BOOL bAuditFailure
-    );
-
-
-
-BOOL
-
-AddAuditAccessObjectAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_opt_ GUID* ObjectTypeGuid,
-    _In_opt_ GUID* InheritedObjectTypeGuid,
-    _In_ PSID pSid,
-    _In_ BOOL bAuditSuccess,
-    _In_ BOOL bAuditFailure
-    );
-
-
-
-BOOL
-
-AddMandatoryAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD MandatoryPolicy,
-    _In_ PSID pLabelSid
-    );
-
-
-
-BOOL
-
-AddResourceAttributeAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_ PSID pSid,
-    _In_ PCLAIM_SECURITY_ATTRIBUTES_INFORMATION pAttributeInfo,
-    _Out_ PDWORD pReturnLength
-    );
-
-
-
-BOOL
-
-AddScopedPolicyIDAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceRevision,
-    _In_ DWORD AceFlags,
-    _In_ DWORD AccessMask,
-    _In_ PSID pSid
-    );
-
-
-
-BOOL
-
-AdjustTokenGroups(
-    _In_ HANDLE TokenHandle,
-    _In_ BOOL ResetToDefault,
-    _In_opt_ PTOKEN_GROUPS NewState,
-    _In_ DWORD BufferLength,
-    _Out_writes_bytes_to_opt_(BufferLength,*ReturnLength) PTOKEN_GROUPS PreviousState,
-    _Out_opt_ PDWORD ReturnLength
-    );
-"""
+AdjustTokenGroups = windll.advapi32.AdjustTokenGroups
+AdjustTokenGroups.argtypes = [
+    HANDLE,
+    BOOL,
+    POINTER(TOKEN_GROUPS),
+    DWORD,
+    POINTER(TOKEN_GROUPS),
+    PDWORD,
+]
+AdjustTokenGroups.restype = BOOL
 
 AdjustTokenPrivileges = windll.advapi32.AdjustTokenPrivileges
 AdjustTokenPrivileges.argtypes = [HANDLE, BOOL, PTOKEN_PRIVILEGES, DWORD, PTOKEN_PRIVILEGES, PDWORD]
 AdjustTokenPrivileges.restype = BOOL
 
-
-"""
-BOOL
-
-AllocateAndInitializeSid(
-    _In_ PSID_IDENTIFIER_AUTHORITY pIdentifierAuthority,
-    _In_ BYTE nSubAuthorityCount,
-    _In_ DWORD nSubAuthority0,
-    _In_ DWORD nSubAuthority1,
-    _In_ DWORD nSubAuthority2,
-    _In_ DWORD nSubAuthority3,
-    _In_ DWORD nSubAuthority4,
-    _In_ DWORD nSubAuthority5,
-    _In_ DWORD nSubAuthority6,
-    _In_ DWORD nSubAuthority7,
-    _Outptr_ PSID* pSid
-    );
-
-
-
-BOOL
-
-AllocateLocallyUniqueId(
-    _Out_ PLUID Luid
-    );
-
-
-
-BOOL
-
-AreAllAccessesGranted(
-    _In_ DWORD GrantedAccess,
-    _In_ DWORD DesiredAccess
-    );
-
-
-
-BOOL
-
-AreAnyAccessesGranted(
-    _In_ DWORD GrantedAccess,
-    _In_ DWORD DesiredAccess
-    );
-
-
-
-
-BOOL
-
-CheckTokenMembership(
-    _In_opt_ HANDLE TokenHandle,
-    _In_ PSID SidToCheck,
-    _Out_ PBOOL IsMember
-    );
-
-
-
-BOOL
-
-CheckTokenCapability(
-    _In_opt_ HANDLE TokenHandle,
-    _In_ PSID CapabilitySidToCheck,
-    _Out_ PBOOL HasCapability
-    );
-
-
-
-BOOL
-
-GetAppContainerAce(
-    _In_ PACL Acl,
-    _In_ DWORD StartingAceIndex,
-    _Outptr_ PVOID* AppContainerAce,
-    _Out_opt_ DWORD* AppContainerAceIndex
-    );
-
-
-
-BOOL
-
-CheckTokenMembershipEx(
-    _In_opt_ HANDLE TokenHandle,
-    _In_ PSID SidToCheck,
-    _In_ DWORD Flags,
-    _Out_ PBOOL IsMember
-    );
-
-
-
-BOOL
-
-ConvertToAutoInheritPrivateObjectSecurity(
-    _In_opt_ PSECURITY_DESCRIPTOR ParentDescriptor,
-    _In_ PSECURITY_DESCRIPTOR CurrentSecurityDescriptor,
-    _Outptr_ PSECURITY_DESCRIPTOR* NewSecurityDescriptor,
-    _In_opt_ GUID* ObjectType,
-    _In_ BOOLEAN IsDirectoryObject,
-    _In_ PGENERIC_MAPPING GenericMapping
-    );
-
-
-
-BOOL
-
-CopySid(
-    _In_ DWORD nDestinationSidLength,
-    _Out_writes_bytes_(nDestinationSidLength) PSID pDestinationSid,
-    _In_ PSID pSourceSid
-    );
-
-
-
-BOOL
-
-CreatePrivateObjectSecurity(
-    _In_opt_ PSECURITY_DESCRIPTOR ParentDescriptor,
-    _In_opt_ PSECURITY_DESCRIPTOR CreatorDescriptor,
-    _Outptr_ PSECURITY_DESCRIPTOR* NewDescriptor,
-    _In_ BOOL IsDirectoryObject,
-    _In_opt_ HANDLE Token,
-    _In_ PGENERIC_MAPPING GenericMapping
-    );
-
-
-
-BOOL
-
-CreatePrivateObjectSecurityEx(
-    _In_opt_ PSECURITY_DESCRIPTOR ParentDescriptor,
-    _In_opt_ PSECURITY_DESCRIPTOR CreatorDescriptor,
-    _Outptr_ PSECURITY_DESCRIPTOR* NewDescriptor,
-    _In_opt_ GUID* ObjectType,
-    _In_ BOOL IsContainerObject,
-    _In_ ULONG AutoInheritFlags,
-    _In_opt_ HANDLE Token,
-    _In_ PGENERIC_MAPPING GenericMapping
-    );
-
-
-
-BOOL
-
-CreatePrivateObjectSecurityWithMultipleInheritance(
-    _In_opt_ PSECURITY_DESCRIPTOR ParentDescriptor,
-    _In_opt_ PSECURITY_DESCRIPTOR CreatorDescriptor,
-    _Outptr_ PSECURITY_DESCRIPTOR* NewDescriptor,
-    _In_reads_opt_(GuidCount) GUID** ObjectTypes,
-    _In_ ULONG GuidCount,
-    _In_ BOOL IsContainerObject,
-    _In_ ULONG AutoInheritFlags,
-    _In_opt_ HANDLE Token,
-    _In_ PGENERIC_MAPPING GenericMapping
-    );
-
-
-
-BOOL
-
-CreateRestrictedToken(
-    _In_ HANDLE ExistingTokenHandle,
-    _In_ DWORD Flags,
-    _In_ DWORD DisableSidCount,
-    _In_reads_opt_(DisableSidCount) PSID_AND_ATTRIBUTES SidsToDisable,
-    _In_ DWORD DeletePrivilegeCount,
-    _In_reads_opt_(DeletePrivilegeCount) PLUID_AND_ATTRIBUTES PrivilegesToDelete,
-    _In_ DWORD RestrictedSidCount,
-    _In_reads_opt_(RestrictedSidCount) PSID_AND_ATTRIBUTES SidsToRestrict,
-    _Outptr_ PHANDLE NewTokenHandle
-    );
-
-
-
-BOOL
-
-CreateWellKnownSid(
-    _In_ WELL_KNOWN_SID_TYPE WellKnownSidType,
-    _In_opt_ PSID DomainSid,
-    _Out_writes_bytes_to_opt_(*cbSid,*cbSid) PSID pSid,
-    _Inout_ DWORD* cbSid
-    );
-
-
-
-BOOL
-
-EqualDomainSid(
-    _In_ PSID pSid1,
-    _In_ PSID pSid2,
-    _Out_ BOOL* pfEqual
-    );
-
-
-
-
-BOOL
-
-DeleteAce(
-    _Inout_ PACL pAcl,
-    _In_ DWORD dwAceIndex
-    );
-
-
-BOOL
-
-DestroyPrivateObjectSecurity(
-    _Pre_valid_ _Post_invalid_ PSECURITY_DESCRIPTOR* ObjectDescriptor
-    );
-
-
-BOOL
-
-DuplicateToken(
-    _In_ HANDLE ExistingTokenHandle,
-    _In_ SECURITY_IMPERSONATION_LEVEL ImpersonationLevel,
-    _Outptr_ PHANDLE DuplicateTokenHandle
-    );
-
-
-
-BOOL
-
-DuplicateTokenEx(
-    _In_ HANDLE hExistingToken,
-    _In_ DWORD dwDesiredAccess,
-    _In_opt_ LPSECURITY_ATTRIBUTES lpTokenAttributes,
-    _In_ SECURITY_IMPERSONATION_LEVEL ImpersonationLevel,
-    _In_ TOKEN_TYPE TokenType,
-    _Outptr_ PHANDLE phNewToken
-    );
-
-
-
-BOOL
-
-EqualPrefixSid(
-    _In_ PSID pSid1,
-    _In_ PSID pSid2
-    );
-
-
-
-BOOL
-
-EqualSid(
-    _In_ PSID pSid1,
-    _In_ PSID pSid2
-    );
-
-
-
-BOOL
-
-FindFirstFreeAce(
-    _In_ PACL pAcl,
-    _Outptr_ LPVOID* pAce
-    );
-
-
-
-PVOID
-
-FreeSid(
-    _In_ PSID pSid
-    );
-
-
-
-BOOL
-
-GetAce(
-    _In_ PACL pAcl,
-    _In_ DWORD dwAceIndex,
-    _Outptr_ LPVOID* pAce
-    );
-
-
-
-BOOL
-
-GetAclInformation(
-    _In_ PACL pAcl,
-    _Out_writes_bytes_(nAclInformationLength) LPVOID pAclInformation,
-    _In_ DWORD nAclInformationLength,
-    _In_ ACL_INFORMATION_CLASS dwAclInformationClass
-    );
-
-
-
-
-BOOL
-
-GetFileSecurityW(
-    _In_ LPCWSTR lpFileName,
-    _In_ SECURITY_INFORMATION RequestedInformation,
-    _Out_writes_bytes_to_opt_(nLength,*lpnLengthNeeded) PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ DWORD nLength,
-    _Out_ LPDWORD lpnLengthNeeded
-    );
-
-
-
-BOOL
-
-GetKernelObjectSecurity(
-    _In_ HANDLE Handle,
-    _In_ SECURITY_INFORMATION RequestedInformation,
-    _Out_writes_bytes_opt_(nLength) PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ DWORD nLength,
-    _Out_ LPDWORD lpnLengthNeeded
-    );
-
-
-
-DWORD
-
-GetLengthSid(
-    _In_ _Post_readable_byte_size_(return) PSID pSid
-    );
-
-
-
-_Success_(return != FALSE)
-BOOL
-
-GetPrivateObjectSecurity(
-    _In_ PSECURITY_DESCRIPTOR ObjectDescriptor,
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _Out_writes_bytes_to_opt_(DescriptorLength,*ReturnLength) PSECURITY_DESCRIPTOR ResultantDescriptor,
-    _In_ DWORD DescriptorLength,
-    _Out_ PDWORD ReturnLength
-    );
-
-
-
-BOOL
-
-GetSecurityDescriptorControl(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _Out_ PSECURITY_DESCRIPTOR_CONTROL pControl,
-    _Out_ LPDWORD lpdwRevision
-    );
-
-
-
-BOOL
-
-GetSecurityDescriptorDacl(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _Out_ LPBOOL lpbDaclPresent,
-    _Outptr_ PACL* pDacl,
-    _Out_ LPBOOL lpbDaclDefaulted
-    );
-
-
-
-BOOL
-
-GetSecurityDescriptorGroup(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _Outptr_ PSID* pGroup,
-    _Out_ LPBOOL lpbGroupDefaulted
-    );
-
-
-
-DWORD
-
-GetSecurityDescriptorLength(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor
-    );
-
-
-
-BOOL
-
-GetSecurityDescriptorOwner(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _Outptr_ PSID* pOwner,
-    _Out_ LPBOOL lpbOwnerDefaulted
-    );
-
-
-
-DWORD
-
-GetSecurityDescriptorRMControl(
-    _In_ PSECURITY_DESCRIPTOR SecurityDescriptor,
-    _Out_ PUCHAR RMControl
-    );
-
-
-
-BOOL
-
-GetSecurityDescriptorSacl(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _Out_ LPBOOL lpbSaclPresent,
-    _Outptr_ PACL* pSacl,
-    _Out_ LPBOOL lpbSaclDefaulted
-    );
-
-
-
-PSID_IDENTIFIER_AUTHORITY
-
-GetSidIdentifierAuthority(
-    _In_ PSID pSid
-    );
-
-
-
-DWORD
-
-GetSidLengthRequired(
-    _In_ UCHAR nSubAuthorityCount
-    );
-
-
-
-PDWORD
-
-GetSidSubAuthority(
-    _In_ PSID pSid,
-    _In_ DWORD nSubAuthority
-    );
-
-
-
-PUCHAR
-
-GetSidSubAuthorityCount(
-    _In_ PSID pSid
-    );
-
-
-
-BOOL
-
-GetTokenInformation(
-    _In_ HANDLE TokenHandle,
-    _In_ TOKEN_INFORMATION_CLASS TokenInformationClass,
-    _Out_writes_bytes_to_opt_(TokenInformationLength,*ReturnLength) LPVOID TokenInformation,
-    _In_ DWORD TokenInformationLength,
-    _Out_ PDWORD ReturnLength
-    );
-
-
-BOOL
-
-GetWindowsAccountDomainSid(
-    _In_ PSID pSid,
-    _Out_writes_bytes_to_opt_(*cbDomainSid,*cbDomainSid) PSID pDomainSid,
-    _Inout_ DWORD* cbDomainSid
-    );
-
-
-
-BOOL
-
-ImpersonateAnonymousToken(
-    _In_ HANDLE ThreadHandle
-    );
-
-
-_Must_inspect_result_
-
-BOOL
-
-ImpersonateLoggedOnUser(
-    _In_ HANDLE hToken
-    );
-
-
-_Must_inspect_result_
-
-BOOL
-
-ImpersonateSelf(
-    _In_ SECURITY_IMPERSONATION_LEVEL ImpersonationLevel
-    );
-
-
-
-BOOL
-
-InitializeAcl(
-    _Out_writes_bytes_(nAclLength) PACL pAcl,
-    _In_ DWORD nAclLength,
-    _In_ DWORD dwAclRevision
-    );
-
-
-
-BOOL
-
-InitializeSecurityDescriptor(
-    _Out_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ DWORD dwRevision
-    );
-
-
-
-BOOL
-
-InitializeSid(
-    _Out_writes_bytes_(_Inexpressible_(GetSidLengthRequired(nSubAuthorityCount))) PSID Sid,
-    _In_ PSID_IDENTIFIER_AUTHORITY pIdentifierAuthority,
-    _In_ BYTE nSubAuthorityCount
-    );
-
-
-
-BOOL
-
-IsTokenRestricted(
-    _In_ HANDLE TokenHandle
-    );
-
-
-
-
-BOOL
-
-IsValidAcl(
-    _In_ PACL pAcl
-    );
-
-
-
-BOOL
-
-IsValidSecurityDescriptor(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor
-    );
-
-
-
-BOOL
-
-IsValidSid(
-    _In_ PSID pSid
-    );
-
-
-
-
-BOOL
-
-IsWellKnownSid(
-    _In_ PSID pSid,
-    _In_ WELL_KNOWN_SID_TYPE WellKnownSidType
-    );
-
-
-
-BOOL
-
-MakeAbsoluteSD(
-    _In_ PSECURITY_DESCRIPTOR pSelfRelativeSecurityDescriptor,
-    _Out_writes_bytes_to_opt_(*lpdwAbsoluteSecurityDescriptorSize,*lpdwAbsoluteSecurityDescriptorSize) PSECURITY_DESCRIPTOR pAbsoluteSecurityDescriptor,
-    _Inout_ LPDWORD lpdwAbsoluteSecurityDescriptorSize,
-    _Out_writes_bytes_to_opt_(*lpdwDaclSize,*lpdwDaclSize) PACL pDacl,
-    _Inout_ LPDWORD lpdwDaclSize,
-    _Out_writes_bytes_to_opt_(*lpdwSaclSize,*lpdwSaclSize) PACL pSacl,
-    _Inout_ LPDWORD lpdwSaclSize,
-    _Out_writes_bytes_to_opt_(*lpdwOwnerSize,*lpdwOwnerSize) PSID pOwner,
-    _Inout_ LPDWORD lpdwOwnerSize,
-    _Out_writes_bytes_to_opt_(*lpdwPrimaryGroupSize,*lpdwPrimaryGroupSize) PSID pPrimaryGroup,
-    _Inout_ LPDWORD lpdwPrimaryGroupSize
-    );
-
-
-
-BOOL
-
-MakeSelfRelativeSD(
-    _In_ PSECURITY_DESCRIPTOR pAbsoluteSecurityDescriptor,
-    _Out_writes_bytes_to_opt_(*lpdwBufferLength,*lpdwBufferLength) PSECURITY_DESCRIPTOR pSelfRelativeSecurityDescriptor,
-    _Inout_ LPDWORD lpdwBufferLength
-    );
-
-
-
-
-VOID
-
-MapGenericMask(
-    _Inout_ PDWORD AccessMask,
-    _In_ PGENERIC_MAPPING GenericMapping
-    );
-
-
-
-BOOL
-
-ObjectCloseAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ BOOL GenerateOnClose
-    );
-
-
-
-
-BOOL
-
-ObjectDeleteAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ BOOL GenerateOnClose
-    );
-
-
-
-BOOL
-
-ObjectOpenAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ LPWSTR ObjectTypeName,
-    _In_opt_ LPWSTR ObjectName,
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ HANDLE ClientToken,
-    _In_ DWORD DesiredAccess,
-    _In_ DWORD GrantedAccess,
-    _In_opt_ PPRIVILEGE_SET Privileges,
-    _In_ BOOL ObjectCreation,
-    _In_ BOOL AccessGranted,
-    _Out_ LPBOOL GenerateOnClose
-    );
-
-
-BOOL
-
-ObjectPrivilegeAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPVOID HandleId,
-    _In_ HANDLE ClientToken,
-    _In_ DWORD DesiredAccess,
-    _In_ PPRIVILEGE_SET Privileges,
-    _In_ BOOL AccessGranted
-    );
-
-
-
-BOOL
-
-PrivilegeCheck(
-    _In_ HANDLE ClientToken,
-    _Inout_ PPRIVILEGE_SET RequiredPrivileges,
-    _Out_ LPBOOL pfResult
-    );
-
-
-
-BOOL
-
-PrivilegedServiceAuditAlarmW(
-    _In_ LPCWSTR SubsystemName,
-    _In_ LPCWSTR ServiceName,
-    _In_ HANDLE ClientToken,
-    _In_ PPRIVILEGE_SET Privileges,
-    _In_ BOOL AccessGranted
-    );
-
-
-
-VOID
-
-QuerySecurityAccessMask(
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _Out_ LPDWORD DesiredAccess
-    );
-
-
-
-BOOL
-
-RevertToSelf(
-    VOID
-    );
-
-
-
-BOOL
-
-SetAclInformation(
-    _Inout_ PACL pAcl,
-    _In_reads_bytes_(nAclInformationLength) LPVOID pAclInformation,
-    _In_ DWORD nAclInformationLength,
-    _In_ ACL_INFORMATION_CLASS dwAclInformationClass
-    );
-
-
-
-BOOL
-
-SetFileSecurityW(
-    _In_ LPCWSTR lpFileName,
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor
-    );
-
-
-BOOL
-
-SetKernelObjectSecurity(
-    _In_ HANDLE Handle,
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _In_ PSECURITY_DESCRIPTOR SecurityDescriptor
-    );
-
-
-
-BOOL
-
-SetPrivateObjectSecurity(
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _In_ PSECURITY_DESCRIPTOR ModificationDescriptor,
-    _Inout_ PSECURITY_DESCRIPTOR* ObjectsSecurityDescriptor,
-    _In_ PGENERIC_MAPPING GenericMapping,
-    _In_opt_ HANDLE Token
-    );
-
-
-
-BOOL
-
-SetPrivateObjectSecurityEx(
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _In_ PSECURITY_DESCRIPTOR ModificationDescriptor,
-    _Inout_ PSECURITY_DESCRIPTOR* ObjectsSecurityDescriptor,
-    _In_ ULONG AutoInheritFlags,
-    _In_ PGENERIC_MAPPING GenericMapping,
-    _In_opt_ HANDLE Token
-    );
-
-
-VOID
-
-SetSecurityAccessMask(
-    _In_ SECURITY_INFORMATION SecurityInformation,
-    _Out_ LPDWORD DesiredAccess
-    );
-
-
-
-
-BOOL
-
-SetSecurityDescriptorControl(
-    _In_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ SECURITY_DESCRIPTOR_CONTROL ControlBitsOfInterest,
-    _In_ SECURITY_DESCRIPTOR_CONTROL ControlBitsToSet
-    );
-
-
-
-BOOL
-
-SetSecurityDescriptorDacl(
-    _Inout_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ BOOL bDaclPresent,
-    _In_opt_ PACL pDacl,
-    _In_ BOOL bDaclDefaulted
-    );
-
-
-
-BOOL
-
-SetSecurityDescriptorGroup(
-    _Inout_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_opt_ PSID pGroup,
-    _In_ BOOL bGroupDefaulted
-    );
-
-
-
-BOOL
-
-SetSecurityDescriptorOwner(
-    _Inout_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_opt_ PSID pOwner,
-    _In_ BOOL bOwnerDefaulted
-    );
-
-
-
-DWORD
-
-SetSecurityDescriptorRMControl(
-    _Inout_ PSECURITY_DESCRIPTOR SecurityDescriptor,
-    _In_opt_ PUCHAR RMControl
-    );
-
-
-
-BOOL
-
-SetSecurityDescriptorSacl(
-    _Inout_ PSECURITY_DESCRIPTOR pSecurityDescriptor,
-    _In_ BOOL bSaclPresent,
-    _In_opt_ PACL pSacl,
-    _In_ BOOL bSaclDefaulted
-    );
-
-
-
-BOOL
-
-SetTokenInformation(
-    _In_ HANDLE TokenHandle,
-    _In_ TOKEN_INFORMATION_CLASS TokenInformationClass,
-    _In_reads_bytes_(TokenInformationLength) LPVOID TokenInformation,
-    _In_ DWORD TokenInformationLength
-    );
-
-
-
-BOOL
-
-SetCachedSigningLevel(
-    _In_reads_(SourceFileCount) PHANDLE SourceFiles,
-    _In_ ULONG SourceFileCount,
-    _In_ ULONG Flags,
-    _In_opt_ HANDLE TargetFile
-    );
-
-
-
-BOOL
-
-GetCachedSigningLevel(
-    _In_ HANDLE File,
-    _Out_ PULONG Flags,
-    _Out_ PULONG SigningLevel,
-    _Out_writes_bytes_to_opt_(*ThumbprintSize,*ThumbprintSize) PUCHAR Thumbprint,
-    _Inout_opt_ PULONG ThumbprintSize,
-    _Out_opt_ PULONG ThumbprintAlgorithm
-    );
-
-
-
-LONG
-
-CveEventWrite(
-    _In_ PCWSTR CveId,
-    _In_opt_ PCWSTR AdditionalDetails
-    );
-
-
-
-BOOL
-
-DeriveCapabilitySidsFromName(
-    _In_ LPCWSTR CapName,
-    _Outptr_result_buffer_maybenull_(*CapabilityGroupSidCount) PSID** CapabilityGroupSids,
-    _Out_ DWORD* CapabilityGroupSidCount,
-    _Outptr_result_buffer_maybenull_(*CapabilitySidCount) PSID** CapabilitySids,
-    _Out_ DWORD* CapabilitySidCount
-    );
-"""
+AllocateAndInitializeSid = windll.advapi32.AllocateAndInitializeSid
+AllocateAndInitializeSid.argtypes = [
+    POINTER(SID_IDENTIFIER_AUTHORITY),
+    BYTE,
+    DWORD,
+    DWORD,
+    DWORD,
+    DWORD,
+    DWORD,
+    DWORD,
+    DWORD,
+    DWORD,
+    POINTER(PSID),
+]
+AllocateAndInitializeSid.restype = BOOL
+
+AllocateLocallyUniqueId = windll.advapi32.AllocateLocallyUniqueId
+AllocateLocallyUniqueId.argtypes = [
+    POINTER(LUID),
+]
+AllocateLocallyUniqueId.restype = BOOL
+
+AreAllAccessesGranted = windll.advapi32.AreAllAccessesGranted
+AreAllAccessesGranted.argtypes = [
+    DWORD,
+    DWORD,
+]
+AreAllAccessesGranted.restype = BOOL
+
+AreAnyAccessesGranted = windll.advapi32.AreAnyAccessesGranted
+AreAnyAccessesGranted.argtypes = [
+    DWORD,
+    DWORD,
+]
+AreAnyAccessesGranted.restype = BOOL
+
+CheckTokenMembership = windll.advapi32.CheckTokenMembership
+CheckTokenMembership.argtypes = [
+    HANDLE,
+    PSID,
+    PBOOL,
+]
+CheckTokenMembership.restype = BOOL
+
+try:
+    CheckTokenCapability = windll.kernel32.CheckTokenCapability
+    CheckTokenCapability.argtypes = [
+        HANDLE,
+        PSID,
+        PBOOL,
+    ]
+    CheckTokenCapability.restype = BOOL
+except AttributeError:
+    pass
+
+try:
+    GetAppContainerAce = windll.kernel32.GetAppContainerAce
+    GetAppContainerAce.argtypes = [
+        PACL,
+        DWORD,
+        POINTER(PVOID),
+        POINTER(DWORD),
+    ]
+    GetAppContainerAce.restype = BOOL
+except AttributeError:
+    pass
+
+try:
+    CheckTokenMembershipEx = windll.kernel32.CheckTokenMembershipEx
+    CheckTokenMembershipEx.argtypes = [
+        HANDLE,
+        PSID,
+        DWORD,
+        PBOOL,
+    ]
+    CheckTokenMembershipEx.restype = BOOL
+except AttributeError:
+    pass
+
+ConvertToAutoInheritPrivateObjectSecurity = windll.advapi32.ConvertToAutoInheritPrivateObjectSecurity
+ConvertToAutoInheritPrivateObjectSecurity.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSECURITY_DESCRIPTOR),
+    POINTER(GUID),
+    BOOLEAN,
+    PGENERIC_MAPPING,
+]
+ConvertToAutoInheritPrivateObjectSecurity.restype = BOOL
+
+CopySid = windll.advapi32.CopySid
+CopySid.argtypes = [
+    DWORD,
+    PSID,
+    PSID,
+]
+CopySid.restype = BOOL
+
+CreatePrivateObjectSecurity = windll.advapi32.CreatePrivateObjectSecurity
+CreatePrivateObjectSecurity.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSECURITY_DESCRIPTOR),
+    BOOL,
+    HANDLE,
+    PGENERIC_MAPPING,
+]
+CreatePrivateObjectSecurity.restype = BOOL
+
+CreatePrivateObjectSecurityEx = windll.advapi32.CreatePrivateObjectSecurityEx
+CreatePrivateObjectSecurityEx.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSECURITY_DESCRIPTOR),
+    POINTER(GUID),
+    BOOL,
+    ULONG,
+    HANDLE,
+    PGENERIC_MAPPING,
+]
+CreatePrivateObjectSecurityEx.restype = BOOL
+
+CreatePrivateObjectSecurityWithMultipleInheritance = windll.advapi32.CreatePrivateObjectSecurityWithMultipleInheritance
+CreatePrivateObjectSecurityWithMultipleInheritance.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSECURITY_DESCRIPTOR),
+    POINTER(POINTER(GUID)),
+    ULONG,
+    BOOL,
+    ULONG,
+    HANDLE,
+    PGENERIC_MAPPING,
+]
+CreatePrivateObjectSecurityWithMultipleInheritance.restype = BOOL
+
+CreateRestrictedToken = windll.advapi32.CreateRestrictedToken
+CreateRestrictedToken.argtypes = [
+    HANDLE,
+    DWORD,
+    DWORD,
+    POINTER(SID_AND_ATTRIBUTES),
+    DWORD,
+    POINTER(LUID_AND_ATTRIBUTES),
+    DWORD,
+    POINTER(SID_AND_ATTRIBUTES),
+    PHANDLE,
+]
+CreateRestrictedToken.restype = BOOL
+
+CreateWellKnownSid = windll.advapi32.CreateWellKnownSid
+CreateWellKnownSid.argtypes = [
+    WELL_KNOWN_SID_TYPE,
+    PSID,
+    PSID,
+    POINTER(DWORD),
+]
+CreateWellKnownSid.restype = BOOL
+
+EqualDomainSid = windll.advapi32.EqualDomainSid
+EqualDomainSid.argtypes = [
+    PSID,
+    PSID,
+    POINTER(BOOL),
+]
+EqualDomainSid.restype = BOOL
+
+DeleteAce = windll.advapi32.DeleteAce
+DeleteAce.argtypes = [
+    PACL,
+    DWORD,
+]
+DeleteAce.restype = BOOL
+
+DestroyPrivateObjectSecurity = windll.advapi32.DestroyPrivateObjectSecurity
+DestroyPrivateObjectSecurity.argtypes = [
+    POINTER(PSECURITY_DESCRIPTOR),
+]
+DestroyPrivateObjectSecurity.restype = BOOL
+
+DuplicateToken = windll.advapi32.DuplicateToken
+DuplicateToken.argtypes = [
+    HANDLE,
+    SECURITY_IMPERSONATION_LEVEL,
+    PHANDLE,
+]
+DuplicateToken.restype = BOOL
+
+DuplicateTokenEx = windll.advapi32.DuplicateTokenEx
+DuplicateTokenEx.argtypes = [
+    HANDLE,
+    DWORD,
+    POINTER(SECURITY_ATTRIBUTES),
+    SECURITY_IMPERSONATION_LEVEL,
+    TOKEN_TYPE,
+    PHANDLE,
+]
+DuplicateTokenEx.restype = BOOL
+
+EqualPrefixSid = windll.advapi32.EqualPrefixSid
+EqualPrefixSid.argtypes = [
+    PSID,
+    PSID,
+]
+EqualPrefixSid.restype = BOOL
+
+EqualSid = windll.advapi32.EqualSid
+EqualSid.argtypes = [
+    PSID,
+    PSID,
+]
+EqualSid.restype = BOOL
+
+FindFirstFreeAce = windll.advapi32.FindFirstFreeAce
+FindFirstFreeAce.argtypes = [
+    PACL,
+    POINTER(LPVOID),
+]
+FindFirstFreeAce.restype = BOOL
+
+FreeSid = windll.advapi32.FreeSid
+FreeSid.argtypes = [
+    PSID,
+]
+FreeSid.restype = PVOID
+
+GetAce = windll.advapi32.GetAce
+GetAce.argtypes = [
+    PACL,
+    DWORD,
+    POINTER(LPVOID),
+]
+GetAce.restype = BOOL
+
+GetAclInformation = windll.advapi32.GetAclInformation
+GetAclInformation.argtypes = [
+    PACL,
+    LPVOID,
+    DWORD,
+    ACL_INFORMATION_CLASS,
+]
+GetAclInformation.restype = BOOL
+
+GetFileSecurityW = windll.advapi32.GetFileSecurityW
+GetFileSecurityW.argtypes = [
+    LPCWSTR,
+    SECURITY_INFORMATION,
+    PSECURITY_DESCRIPTOR,
+    DWORD,
+    POINTER(DWORD),
+]
+GetFileSecurityW.restype = BOOL
+
+GetKernelObjectSecurity = windll.advapi32.GetKernelObjectSecurity
+GetKernelObjectSecurity.argtypes = [HANDLE, SECURITY_INFORMATION, PSECURITY_DESCRIPTOR, DWORD, POINTER(DWORD)]
+GetKernelObjectSecurity.restype = BOOL
+
+GetLengthSid = windll.advapi32.GetLengthSid
+GetLengthSid.argtypes = [
+    PSID,
+]
+GetLengthSid.restype = DWORD
+
+GetPrivateObjectSecurity = windll.advapi32.GetPrivateObjectSecurity
+GetPrivateObjectSecurity.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    SECURITY_INFORMATION,
+    PSECURITY_DESCRIPTOR,
+    DWORD,
+    PDWORD,
+]
+GetPrivateObjectSecurity.restype = BOOL
+GetPrivateObjectSecurity.errcheck = nonzero
+
+GetSecurityDescriptorControl = windll.advapi32.GetSecurityDescriptorControl
+GetSecurityDescriptorControl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    POINTER(SECURITY_DESCRIPTOR_CONTROL),
+    POINTER(DWORD),
+]
+GetSecurityDescriptorControl.restype = BOOL
+
+GetSecurityDescriptorDacl = windll.advapi32.GetSecurityDescriptorDacl
+GetSecurityDescriptorDacl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    POINTER(BOOL),
+    POINTER(PACL),
+    POINTER(BOOL),
+]
+GetSecurityDescriptorDacl.restype = BOOL
+
+GetSecurityDescriptorGroup = windll.advapi32.GetSecurityDescriptorGroup
+GetSecurityDescriptorGroup.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSID),
+    POINTER(BOOL),
+]
+GetSecurityDescriptorGroup.restype = BOOL
+
+GetSecurityDescriptorLength = windll.advapi32.GetSecurityDescriptorLength
+GetSecurityDescriptorLength.argtypes = [
+    PSECURITY_DESCRIPTOR,
+]
+GetSecurityDescriptorLength.restype = DWORD
+
+GetSecurityDescriptorOwner = windll.advapi32.GetSecurityDescriptorOwner
+GetSecurityDescriptorOwner.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSID),
+    POINTER(BOOL),
+]
+GetSecurityDescriptorOwner.restype = BOOL
+
+GetSecurityDescriptorRMControl = windll.advapi32.GetSecurityDescriptorRMControl
+GetSecurityDescriptorRMControl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PUCHAR,
+]
+GetSecurityDescriptorRMControl.restype = DWORD
+
+GetSecurityDescriptorSacl = windll.advapi32.GetSecurityDescriptorSacl
+GetSecurityDescriptorSacl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    POINTER(BOOL),
+    POINTER(PACL),
+    POINTER(BOOL),
+]
+GetSecurityDescriptorSacl.restype = BOOL
+
+GetSidIdentifierAuthority = windll.advapi32.GetSidIdentifierAuthority
+GetSidIdentifierAuthority.argtypes = [
+    PSID,
+]
+GetSidIdentifierAuthority.restype = POINTER(SID_IDENTIFIER_AUTHORITY)
+
+GetSidLengthRequired = windll.advapi32.GetSidLengthRequired
+GetSidLengthRequired.argtypes = [
+    UCHAR,
+]
+GetSidLengthRequired.restype = DWORD
+
+GetSidSubAuthority = windll.advapi32.GetSidSubAuthority
+GetSidSubAuthority.argtypes = [
+    PSID,
+    DWORD,
+]
+GetSidSubAuthority.restype = PDWORD
+
+GetSidSubAuthorityCount = windll.advapi32.GetSidSubAuthorityCount
+GetSidSubAuthorityCount.argtypes = [
+    PSID,
+]
+GetSidSubAuthorityCount.restype = PUCHAR
+
+GetTokenInformation = windll.advapi32.GetTokenInformation
+GetTokenInformation.argtypes = [
+    HANDLE,
+    TOKEN_INFORMATION_CLASS,
+    LPVOID,
+    DWORD,
+    PDWORD,
+]
+GetTokenInformation.restype = BOOL
+
+GetWindowsAccountDomainSid = windll.advapi32.GetWindowsAccountDomainSid
+GetWindowsAccountDomainSid.argtypes = [
+    PSID,
+    PSID,
+    POINTER(DWORD),
+]
+GetWindowsAccountDomainSid.restype = BOOL
+
+ImpersonateAnonymousToken = windll.advapi32.ImpersonateAnonymousToken
+ImpersonateAnonymousToken.argtypes = [
+    HANDLE,
+]
+ImpersonateAnonymousToken.restype = BOOL
+
+ImpersonateLoggedOnUser = windll.advapi32.ImpersonateLoggedOnUser
+ImpersonateLoggedOnUser.argtypes = [
+    HANDLE,
+]
+ImpersonateLoggedOnUser.restype = BOOL
+
+ImpersonateSelf = windll.advapi32.ImpersonateSelf
+ImpersonateSelf.argtypes = [
+    SECURITY_IMPERSONATION_LEVEL,
+]
+ImpersonateSelf.restype = BOOL
+
+InitializeAcl = windll.advapi32.InitializeAcl
+InitializeAcl.argtypes = [
+    PACL,
+    DWORD,
+    DWORD,
+]
+InitializeAcl.restype = BOOL
+
+InitializeSecurityDescriptor = windll.advapi32.InitializeSecurityDescriptor
+InitializeSecurityDescriptor.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    DWORD,
+]
+InitializeSecurityDescriptor.restype = BOOL
+
+InitializeSid = windll.advapi32.InitializeSid
+InitializeSid.argtypes = [
+    PSID,
+    POINTER(SID_IDENTIFIER_AUTHORITY),
+    BYTE,
+]
+InitializeSid.restype = BOOL
+
+IsTokenRestricted = windll.advapi32.IsTokenRestricted
+IsTokenRestricted.argtypes = [
+    HANDLE,
+]
+IsTokenRestricted.restype = BOOL
+
+IsValidAcl = windll.advapi32.IsValidAcl
+IsValidAcl.argtypes = [
+    PACL,
+]
+IsValidAcl.restype = BOOL
+
+IsValidSecurityDescriptor = windll.advapi32.IsValidSecurityDescriptor
+IsValidSecurityDescriptor.argtypes = [
+    PSECURITY_DESCRIPTOR,
+]
+IsValidSecurityDescriptor.restype = BOOL
+
+IsValidSid = windll.advapi32.IsValidSid
+IsValidSid.argtypes = [
+    PSID,
+]
+IsValidSid.restype = BOOL
+
+IsWellKnownSid = windll.advapi32.IsWellKnownSid
+IsWellKnownSid.argtypes = [
+    PSID,
+    WELL_KNOWN_SID_TYPE,
+]
+IsWellKnownSid.restype = BOOL
+
+MakeAbsoluteSD = windll.advapi32.MakeAbsoluteSD
+MakeAbsoluteSD.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSECURITY_DESCRIPTOR,
+    LPDWORD,
+    PACL,
+    LPDWORD,
+    PACL,
+    LPDWORD,
+    PSID,
+    LPDWORD,
+    PSID,
+    LPDWORD,
+]
+MakeAbsoluteSD.restype = BOOL
+
+MakeSelfRelativeSD = windll.advapi32.MakeSelfRelativeSD
+MakeSelfRelativeSD.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSECURITY_DESCRIPTOR,
+    LPDWORD,
+]
+MakeSelfRelativeSD.restype = BOOL
+
+MapGenericMask = windll.advapi32.MapGenericMask
+MapGenericMask.argtypes = [
+    PDWORD,
+    PGENERIC_MAPPING,
+]
+MapGenericMask.restype = None
+
+ObjectCloseAuditAlarmW = windll.advapi32.ObjectCloseAuditAlarmW
+ObjectCloseAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    BOOL,
+]
+ObjectCloseAuditAlarmW.restype = BOOL
+
+ObjectDeleteAuditAlarmW = windll.advapi32.ObjectDeleteAuditAlarmW
+ObjectDeleteAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    BOOL,
+]
+ObjectDeleteAuditAlarmW.restype = BOOL
+
+ObjectOpenAuditAlarmW = windll.advapi32.ObjectOpenAuditAlarmW
+ObjectOpenAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    LPWSTR,
+    LPWSTR,
+    PSECURITY_DESCRIPTOR,
+    HANDLE,
+    DWORD,
+    DWORD,
+    PPRIVILEGE_SET,
+    BOOL,
+    BOOL,
+    POINTER(BOOL),
+]
+ObjectOpenAuditAlarmW.restype = BOOL
+
+ObjectPrivilegeAuditAlarmW = windll.advapi32.ObjectPrivilegeAuditAlarmW
+ObjectPrivilegeAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPVOID,
+    HANDLE,
+    DWORD,
+    PPRIVILEGE_SET,
+    BOOL,
+]
+ObjectPrivilegeAuditAlarmW.restype = BOOL
+
+PrivilegeCheck = windll.advapi32.PrivilegeCheck
+PrivilegeCheck.argtypes = [
+    HANDLE,
+    PPRIVILEGE_SET,
+    POINTER(BOOL),
+]
+PrivilegeCheck.restype = BOOL
+
+PrivilegedServiceAuditAlarmW = windll.advapi32.PrivilegedServiceAuditAlarmW
+PrivilegedServiceAuditAlarmW.argtypes = [
+    LPCWSTR,
+    LPCWSTR,
+    HANDLE,
+    PPRIVILEGE_SET,
+    BOOL,
+]
+PrivilegedServiceAuditAlarmW.restype = BOOL
+
+QuerySecurityAccessMask = windll.advapi32.QuerySecurityAccessMask
+QuerySecurityAccessMask.argtypes = [
+    SECURITY_INFORMATION,
+    POINTER(DWORD),
+]
+QuerySecurityAccessMask.restype = None
+
+RevertToSelf = windll.advapi32.RevertToSelf
+RevertToSelf.argtypes = []
+RevertToSelf.restype = BOOL
+
+SetAclInformation = windll.advapi32.SetAclInformation
+SetAclInformation.argtypes = [
+    PACL,
+    LPVOID,
+    DWORD,
+    ACL_INFORMATION_CLASS,
+]
+SetAclInformation.restype = BOOL
+
+SetFileSecurityW = windll.advapi32.SetFileSecurityW
+SetFileSecurityW.argtypes = [
+    LPCWSTR,
+    SECURITY_INFORMATION,
+    PSECURITY_DESCRIPTOR,
+]
+SetFileSecurityW.restype = BOOL
+
+SetKernelObjectSecurity = windll.advapi32.SetKernelObjectSecurity
+SetKernelObjectSecurity.argtypes = [
+    HANDLE,
+    SECURITY_INFORMATION,
+    PSECURITY_DESCRIPTOR,
+]
+SetKernelObjectSecurity.restype = BOOL
+
+SetPrivateObjectSecurity = windll.advapi32.SetPrivateObjectSecurity
+SetPrivateObjectSecurity.argtypes = [
+    SECURITY_INFORMATION,
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSECURITY_DESCRIPTOR),
+    PGENERIC_MAPPING,
+    HANDLE,
+]
+SetPrivateObjectSecurity.restype = BOOL
+
+SetPrivateObjectSecurityEx = windll.advapi32.SetPrivateObjectSecurityEx
+SetPrivateObjectSecurityEx.argtypes = [
+    SECURITY_INFORMATION,
+    PSECURITY_DESCRIPTOR,
+    POINTER(PSECURITY_DESCRIPTOR),
+    ULONG,
+    PGENERIC_MAPPING,
+    HANDLE,
+]
+SetPrivateObjectSecurityEx.restype = BOOL
+
+SetSecurityAccessMask = windll.advapi32.SetSecurityAccessMask
+SetSecurityAccessMask.argtypes = [
+    SECURITY_INFORMATION,
+    POINTER(DWORD),
+]
+SetSecurityAccessMask.restype = None
+
+SetSecurityDescriptorControl = windll.advapi32.SetSecurityDescriptorControl
+SetSecurityDescriptorControl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    SECURITY_DESCRIPTOR_CONTROL,
+    SECURITY_DESCRIPTOR_CONTROL,
+]
+SetSecurityDescriptorControl.restype = BOOL
+
+SetSecurityDescriptorDacl = windll.advapi32.SetSecurityDescriptorDacl
+SetSecurityDescriptorDacl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    BOOL,
+    PACL,
+    BOOL,
+]
+SetSecurityDescriptorDacl.restype = BOOL
+
+SetSecurityDescriptorGroup = windll.advapi32.SetSecurityDescriptorGroup
+SetSecurityDescriptorGroup.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSID,
+    BOOL,
+]
+SetSecurityDescriptorGroup.restype = BOOL
+
+SetSecurityDescriptorOwner = windll.advapi32.SetSecurityDescriptorOwner
+SetSecurityDescriptorOwner.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PSID,
+    BOOL,
+]
+SetSecurityDescriptorOwner.restype = BOOL
+
+SetSecurityDescriptorRMControl = windll.advapi32.SetSecurityDescriptorRMControl
+SetSecurityDescriptorRMControl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    PUCHAR,
+]
+SetSecurityDescriptorRMControl.restype = DWORD
+
+SetSecurityDescriptorSacl = windll.advapi32.SetSecurityDescriptorSacl
+SetSecurityDescriptorSacl.argtypes = [
+    PSECURITY_DESCRIPTOR,
+    BOOL,
+    PACL,
+    BOOL,
+]
+SetSecurityDescriptorSacl.restype = BOOL
+
+SetTokenInformation = windll.advapi32.SetTokenInformation
+SetTokenInformation.argtypes = [
+    HANDLE,
+    TOKEN_INFORMATION_CLASS,
+    LPVOID,
+    DWORD,
+]
+SetTokenInformation.restype = BOOL
+
+try:
+    SetCachedSigningLevel = windll.kernel32.SetCachedSigningLevel
+    SetCachedSigningLevel.argtypes = [
+        PHANDLE,
+        ULONG,
+        ULONG,
+        HANDLE,
+    ]
+    SetCachedSigningLevel.restype = BOOL
+except AttributeError:
+    pass
+
+try:
+    GetCachedSigningLevel = windll.kernel32.GetCachedSigningLevel
+    GetCachedSigningLevel.argtypes = [
+        HANDLE,
+        PULONG,
+        PULONG,
+        PUCHAR,
+        PULONG,
+        PULONG,
+    ]
+    GetCachedSigningLevel.restype = BOOL
+except AttributeError:
+    pass
+
+try:
+    CveEventWrite = windll.advapi32.CveEventWrite
+    CveEventWrite.argtypes = [
+        PCWSTR,
+        PCWSTR,
+    ]
+    CveEventWrite.restype = LONG
+except AttributeError:
+    pass
+
+try:
+    DeriveCapabilitySidsFromName = windll.kernelbase.DeriveCapabilitySidsFromName  # documented as kernel32.dll
+    DeriveCapabilitySidsFromName.argtypes = [
+        LPCWSTR,
+        POINTER(POINTER(PSID)),
+        POINTER(DWORD),
+        POINTER(POINTER(PSID)),
+        POINTER(DWORD),
+    ]
+    DeriveCapabilitySidsFromName.restype = BOOL
+except AttributeError:
+    pass

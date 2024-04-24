@@ -1,7 +1,7 @@
 from ctypes import POINTER, Structure
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WCHAR, WORD
 
-from .. import windll
+from .. import nonzero, windll
 from ..shared.minwindef import LPDWORD, UINT
 from ..shared.ntdef import CHAR
 from ..shared.windef import COLORREF
@@ -70,18 +70,22 @@ PCONSOLE_CURSOR_INFO = POINTER(CONSOLE_CURSOR_INFO)
 FillConsoleOutputCharacterA = windll.kernel32.FillConsoleOutputCharacterA
 FillConsoleOutputCharacterA.argtypes = [HANDLE, CHAR, DWORD, COORD, LPDWORD]
 FillConsoleOutputCharacterA.restype = BOOL
+FillConsoleOutputCharacterA.errcheck = nonzero
 
 FillConsoleOutputCharacterW = windll.kernel32.FillConsoleOutputCharacterW
 FillConsoleOutputCharacterW.argtypes = [HANDLE, WCHAR, DWORD, COORD, LPDWORD]
 FillConsoleOutputCharacterW.restype = BOOL
+FillConsoleOutputCharacterW.errcheck = nonzero
 
 FillConsoleOutputAttribute = windll.kernel32.FillConsoleOutputAttribute
 FillConsoleOutputAttribute.argtypes = [HANDLE, WORD, DWORD, COORD, LPDWORD]
 FillConsoleOutputAttribute.restype = BOOL
+FillConsoleOutputAttribute.errcheck = nonzero
 
 GenerateConsoleCtrlEvent = windll.kernel32.GenerateConsoleCtrlEvent
 GenerateConsoleCtrlEvent.argtypes = [DWORD, DWORD]
 GenerateConsoleCtrlEvent.restype = BOOL
+GenerateConsoleCtrlEvent.errcheck = nonzero
 
 CreateConsoleScreenBuffer = windll.kernel32.CreateConsoleScreenBuffer
 CreateConsoleScreenBuffer.argtypes = [DWORD, DWORD, POINTER(SECURITY_ATTRIBUTES), DWORD, LPVOID]
@@ -90,22 +94,27 @@ CreateConsoleScreenBuffer.restype = HANDLE
 SetConsoleActiveScreenBuffer = windll.kernel32.SetConsoleActiveScreenBuffer
 SetConsoleActiveScreenBuffer.argtypes = [HANDLE]
 SetConsoleActiveScreenBuffer.restype = BOOL
+SetConsoleActiveScreenBuffer.errcheck = nonzero
 
 FlushConsoleInputBuffer = windll.kernel32.FlushConsoleInputBuffer
 FlushConsoleInputBuffer.argtypes = [HANDLE]
 FlushConsoleInputBuffer.restype = BOOL
+FlushConsoleInputBuffer.errcheck = nonzero
 
 SetConsoleCP = windll.kernel32.SetConsoleCP
 SetConsoleCP.argtypes = [UINT]
 SetConsoleCP.restype = BOOL
+SetConsoleCP.errcheck = nonzero
 
 SetConsoleOutputCP = windll.kernel32.SetConsoleOutputCP
 SetConsoleOutputCP.argtypes = [UINT]
 SetConsoleOutputCP.restype = BOOL
+SetConsoleOutputCP.errcheck = nonzero
 
 GetConsoleCursorInfo = windll.kernel32.GetConsoleCursorInfo
 GetConsoleCursorInfo.argtypes = [HANDLE, PCONSOLE_CURSOR_INFO]
 GetConsoleCursorInfo.restype = BOOL
+GetConsoleCursorInfo.errcheck = nonzero
 
 SetConsoleCursorInfo = windll.kernel32.SetConsoleCursorInfo
 SetConsoleCursorInfo.argtypes = [HANDLE, POINTER(CONSOLE_CURSOR_INFO)]

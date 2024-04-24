@@ -1,5 +1,6 @@
 from ctypes import POINTER, Structure, c_int
 from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPVOID, UINT, WORD
+from warnings import warn
 
 from .. import windll
 
@@ -12,8 +13,6 @@ HORZRES = 8
 VERTRES = 10
 SRCCOPY = 0x00CC0020
 CAPTUREBLT = 0x40000000
-
-from warnings import warn
 
 warn("Don't use last parameter of `CreateDCA` or `CreateDCW`, as `DEVMODEA` and `DEVMODEW` are not defined correctly.")
 DEVMODEA = c_int

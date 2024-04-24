@@ -1,7 +1,7 @@
 from ctypes import POINTER, Structure
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, UINT, ULARGE_INTEGER
 
-from .. import nonzero, windll
+from .. import nonzero, validhandle, windll
 from ..shared.minwindef import FILETIME
 from ..shared.ntdef import ULONGLONG
 from .minwinbase import GET_FILEEX_INFO_LEVELS, LPOVERLAPPED, LPSECURITY_ATTRIBUTES
@@ -75,6 +75,7 @@ CreateFileA.restype = HANDLE
 CreateFileW = windll.kernel32.CreateFileW
 CreateFileW.argtypes = [LPCWSTR, DWORD, DWORD, LPSECURITY_ATTRIBUTES, DWORD, DWORD, HANDLE]
 CreateFileW.restype = HANDLE
+CreateFileW.errcheck = validhandle
 
 GetCompressedFileSizeA = windll.kernel32.GetCompressedFileSizeA
 GetCompressedFileSizeA.argtypes = [LPCSTR, POINTER(DWORD)]

@@ -7,6 +7,8 @@ windll = LibraryLoader(WinDLL)
 
 INVALID_HANDLE_VALUE = HANDLE(-1).value  # copied from cwinsdk.um.handleapi to prevent cyclic imports
 S_OK = 0  # copied from cwinsdk.shared.winerror
+MIDL_PASS = False
+STATUS_SUCCESS = 0  # copied from cwinsdk.shared.ntstatus
 
 
 class CEnum(c_int):
@@ -18,7 +20,6 @@ class WinApiError(OSError):
 
 
 def _value_with_length(values: Iterable) -> Iterator:
-
     for value in values:
         if hasattr(value, "_fields_"):
             value = dict(_struct2pairs(value))
@@ -31,7 +32,6 @@ def _value_with_length(values: Iterable) -> Iterator:
 
 
 def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
-
     for name, _ in struct._fields_:
         value = getattr(struct, name)
 
@@ -46,7 +46,6 @@ def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
 
 
 def struct2dict(struct: Structure) -> dict:
-
     return dict(_struct2pairs(struct))
 
 
@@ -67,6 +66,13 @@ def validhandle(result, func, arguments):
 def s_ok(result, func, arguments):
     if result != S_OK:
         raise WinError(result)  # no error code set in windows
+
+    return result
+
+
+def status_success(result, func, arguments):
+    if result != STATUS_SUCCESS:
+        raise WinError(result)
 
     return result
 

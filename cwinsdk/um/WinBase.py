@@ -1,16 +1,46 @@
 from ctypes import POINTER, Structure, Union, c_char
 from ctypes.wintypes import WCHAR  # CHAR not in py2
-from ctypes.wintypes import BOOL, BYTE, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, ULONG, WORD
+from ctypes.wintypes import (
+    BOOL,
+    BYTE,
+    DWORD,
+    HANDLE,
+    LARGE_INTEGER,
+    LPCSTR,
+    LPCWSTR,
+    LPSTR,
+    LPVOID,
+    LPWSTR,
+    ULONG,
+    WORD,
+)
 
 from .. import CEnum, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 from ..shared.basetsd import SIZE_T, ULONG64
+from ..shared.guiddef import GUID
 from ..shared.minwindef import ATOM
-from ..shared.ntdef import CHAR
-from .fileapi import *
-from .handleapi import *
-from .minwinbase import *
-from .winnt import *
+from ..shared.ntdef import CHAR, ULONGLONG
+from .minwinbase import FILE_INFO_BY_HANDLE_CLASS, LPSECURITY_ATTRIBUTES
+from .winnt import (
+    FILE_CASE_PRESERVED_NAMES,
+    FILE_CASE_SENSITIVE_SEARCH,
+    FILE_FILE_COMPRESSION,
+    FILE_ID_128,
+    FILE_PERSISTENT_ACLS,
+    FILE_SUPPORTS_ENCRYPTION,
+    FILE_UNICODE_ON_DISK,
+    FILE_VOLUME_IS_COMPRESSED,
+    LUID,
+    MAXLONG,
+    STATUS_ABANDONED_WAIT_0,
+    STATUS_USER_APC,
+    STATUS_WAIT_0,
+    THREAD_BASE_PRIORITY_IDLE,
+    THREAD_BASE_PRIORITY_LOWRT,
+    THREAD_BASE_PRIORITY_MAX,
+    THREAD_BASE_PRIORITY_MIN,
+)
 
 FILE_BEGIN = 0
 FILE_CURRENT = 1

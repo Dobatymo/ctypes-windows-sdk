@@ -1,4 +1,8 @@
+from ctypes import POINTER, Structure, Union
+from ctypes.wintypes import ULONG
+
 from .. import CEnum
+from ..shared.ntdef import NTSTATUS, PVOID
 
 
 class SECURITY_IMPERSONATION_LEVEL(CEnum):
@@ -89,3 +93,12 @@ FILE_ANY_ACCESS = 0x00000000
 FILE_SPECIAL_ACCESS = FILE_ANY_ACCESS
 FILE_READ_ACCESS = 0x00000001
 FILE_WRITE_ACCESS = 0x00000002
+
+
+class IO_STATUS_BLOCK_UNION(Union):
+    _fields_ = [("Status", NTSTATUS), ("Pointer", PVOID)]
+
+
+class IO_STATUS_BLOCK(Structure):
+    _anonymous_ = ("u",)
+    _fields_ = [("u", IO_STATUS_BLOCK_UNION), ("Information", POINTER(ULONG))]

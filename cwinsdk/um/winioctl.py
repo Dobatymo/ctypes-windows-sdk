@@ -1,7 +1,7 @@
 from ctypes import Structure, Union
 from ctypes.wintypes import BOOLEAN, BYTE, DWORD, LARGE_INTEGER, SHORT, WCHAR, WORD
 
-from .. import CEnum, windll
+from .. import CEnum
 from ..shared.basetsd import DWORD64
 from ..shared.guiddef import GUID
 from ..shared.ntddstor import STORAGE_BUS_TYPE
@@ -717,7 +717,6 @@ class STORAGE_TEMPERATURE_DATA_DESCRIPTOR(Structure):
 
 
 class DISK_GEOMETRY(Structure):
-
     _fields_ = [
         ("Cylinders", LARGE_INTEGER),
         ("MediaType", MEDIA_TYPE),

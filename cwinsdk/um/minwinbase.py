@@ -1,7 +1,7 @@
 from ctypes import POINTER, Structure, Union
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, WORD
 
-from .. import CEnum, windll
+from .. import CEnum
 from ..shared.basetsd import ULONG_PTR
 from ..shared.ntdef import PVOID
 

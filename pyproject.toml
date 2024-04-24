@@ -1,7 +1,17 @@
 [tool.black]
 line-length = 120
 
+[tool.ruff]
+line-length = 120
+
 [tool.isort]
 profile = "black"
-src_paths = ["cwinsdk"]
 line_length = 120
+
+[tool.mypy]
+allow_redefinition = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.bandit]
+skips = ["B101"]

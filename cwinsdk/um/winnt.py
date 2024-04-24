@@ -1,9 +1,9 @@
 from ctypes import CFUNCTYPE, POINTER, Structure, Union, c_char, c_long, c_short, sizeof
 from ctypes.wintypes import BYTE, DWORD, HANDLE, WCHAR, WORD
 
-from .. import CEnum, windll
+from .. import MIDL_PASS, CEnum
 from ..km.crt.excpt import EXCEPTION_DISPOSITION
-from ..shared.basetsd import DWORD64, KAFFINITY, PDWORD64, ULONG_PTR
+from ..shared.basetsd import DWORD64, KAFFINITY, LONG64, PDWORD64, ULONG_PTR
 from ..shared.guiddef import GUID
 from ..shared.ntdef import CHAR, LONGLONG, PVOID, PVOID64, ULONGLONG
 
@@ -17,9 +17,6 @@ ANYSIZE_ARRAY = 1
 PWCHAR = POINTER(WCHAR)
 LPWCH = POINTER(WCHAR)
 PWCH = POINTER(WCHAR)
-
-LPCWCH = POINTER(WCHAR)  # const
-PCWCH = POINTER(WCHAR)  # const
 
 NWPSTR = POINTER(WCHAR)
 LPWSTR = POINTER(WCHAR)
@@ -41,6 +38,18 @@ HRESULT = LONG
 
 PLONGLONG = POINTER(LONGLONG)
 PULONGLONG = POINTER(ULONGLONG)
+
+LPCWSTR = CPOINTER(WCHAR)
+PCWSTR = CPOINTER(WCHAR)
+PZPCWSTR = POINTER(PCWSTR)
+PCZPCWSTR = CPOINTER(PCWSTR)
+PCTSTR = LPCWSTR
+LPCTSTR = LPCWSTR
+
+PACCESS_TOKEN = PVOID
+PSECURITY_DESCRIPTOR = PVOID
+PSID = PVOID
+PCLAIMS_BLOB = PVOID
 
 # moved
 
@@ -217,7 +226,7 @@ class SID(Structure):
     ]
 
 
-PSID = POINTER(SID)
+PISID = POINTER(SID)
 
 # /moved
 
@@ -1839,16 +1848,25 @@ class SID_NAME_USE(CEnum):
  SidTypeComputer,
  SidTypeLabel,
  SidTypeLogonSession
+"""
+if MIDL_PASS:
 
-typedef struct _SID_AND_ATTRIBUTES {
-#ifdef MIDL_PASS
- ("Sid", PISID),
-#else
- ("Sid", PSID),
-#endif
- ("Attributes", DWORD),
- } SID_AND_ATTRIBUTES, * PSID_AND_ATTRIBUTES
+    class SID_AND_ATTRIBUTES(Structure):
+        _fields_ = [
+            ("Sid", PISID),
+            ("Attributes", DWORD),
+        ]
 
+else:
+
+    class SID_AND_ATTRIBUTES(Structure):
+        _fields_ = [
+            ("Sid", PSID),
+            ("Attributes", DWORD),
+        ]
+
+
+"""
 typedef SID_AND_ATTRIBUTES SID_AND_ATTRIBUTES_ARRAY[ANYSIZE_ARRAY]
 typedef SID_AND_ATTRIBUTES_ARRAY *PSID_AND_ATTRIBUTES_ARRAY
 
@@ -2128,131 +2146,133 @@ SECURITY_TRUSTED_INSTALLER_RID2 3418522649
 SECURITY_TRUSTED_INSTALLER_RID3 1831038044
 SECURITY_TRUSTED_INSTALLER_RID4 1853292631
 SECURITY_TRUSTED_INSTALLER_RID5 2271478464
+"""
 
-typedef enum {
 
- WinNullSid = 0,
- WinWorldSid = 1,
- WinLocalSid = 2,
- WinCreatorOwnerSid = 3,
- WinCreatorGroupSid = 4,
- WinCreatorOwnerServerSid = 5,
- WinCreatorGroupServerSid = 6,
- WinNtAuthoritySid = 7,
- WinDialupSid = 8,
- WinNetworkSid = 9,
- WinBatchSid = 10,
- WinInteractiveSid = 11,
- WinServiceSid = 12,
- WinAnonymousSid = 13,
- WinProxySid = 14,
- WinEnterpriseControllersSid = 15,
- WinSelfSid = 16,
- WinAuthenticatedUserSid = 17,
- WinRestrictedCodeSid = 18,
- WinTerminalServerSid = 19,
- WinRemoteLogonIdSid = 20,
- WinLogonIdsSid = 21,
- WinLocalSystemSid = 22,
- WinLocalServiceSid = 23,
- WinNetworkServiceSid = 24,
- WinBuiltinDomainSid = 25,
- WinBuiltinAdministratorsSid = 26,
- WinBuiltinUsersSid = 27,
- WinBuiltinGuestsSid = 28,
- WinBuiltinPowerUsersSid = 29,
- WinBuiltinAccountOperatorsSid = 30,
- WinBuiltinSystemOperatorsSid = 31,
- WinBuiltinPrintOperatorsSid = 32,
- WinBuiltinBackupOperatorsSid = 33,
- WinBuiltinReplicatorSid = 34,
- WinBuiltinPreWindows2000CompatibleAccessSid = 35,
- WinBuiltinRemoteDesktopUsersSid = 36,
- WinBuiltinNetworkConfigurationOperatorsSid = 37,
- WinAccountAdministratorSid = 38,
- WinAccountGuestSid = 39,
- WinAccountKrbtgtSid = 40,
- WinAccountDomainAdminsSid = 41,
- WinAccountDomainUsersSid = 42,
- WinAccountDomainGuestsSid = 43,
- WinAccountComputersSid = 44,
- WinAccountControllersSid = 45,
- WinAccountCertAdminsSid = 46,
- WinAccountSchemaAdminsSid = 47,
- WinAccountEnterpriseAdminsSid = 48,
- WinAccountPolicyAdminsSid = 49,
- WinAccountRasAndIasServersSid = 50,
- WinNTLMAuthenticationSid = 51,
- WinDigestAuthenticationSid = 52,
- WinSChannelAuthenticationSid = 53,
- WinThisOrganizationSid = 54,
- WinOtherOrganizationSid = 55,
- WinBuiltinIncomingForestTrustBuildersSid = 56,
- WinBuiltinPerfMonitoringUsersSid = 57,
- WinBuiltinPerfLoggingUsersSid = 58,
- WinBuiltinAuthorizationAccessSid = 59,
- WinBuiltinTerminalServerLicenseServersSid = 60,
- WinBuiltinDCOMUsersSid = 61,
- WinBuiltinIUsersSid = 62,
- WinIUserSid = 63,
- WinBuiltinCryptoOperatorsSid = 64,
- WinUntrustedLabelSid = 65,
- WinLowLabelSid = 66,
- WinMediumLabelSid = 67,
- WinHighLabelSid = 68,
- WinSystemLabelSid = 69,
- WinWriteRestrictedCodeSid = 70,
- WinCreatorOwnerRightsSid = 71,
- WinCacheablePrincipalsGroupSid = 72,
- WinNonCacheablePrincipalsGroupSid = 73,
- WinEnterpriseReadonlyControllersSid = 74,
- WinAccountReadonlyControllersSid = 75,
- WinBuiltinEventLogReadersGroup = 76,
- WinNewEnterpriseReadonlyControllersSid = 77,
- WinBuiltinCertSvcDComAccessGroup = 78,
- WinMediumPlusLabelSid = 79,
- WinLocalLogonSid = 80,
- WinConsoleLogonSid = 81,
- WinThisOrganizationCertificateSid = 82,
- WinApplicationPackageAuthoritySid = 83,
- WinBuiltinAnyPackageSid = 84,
- WinCapabilityInternetClientSid = 85,
- WinCapabilityInternetClientServerSid = 86,
- WinCapabilityPrivateNetworkClientServerSid = 87,
- WinCapabilityPicturesLibrarySid = 88,
- WinCapabilityVideosLibrarySid = 89,
- WinCapabilityMusicLibrarySid = 90,
- WinCapabilityDocumentsLibrarySid = 91,
- WinCapabilitySharedUserCertificatesSid = 92,
- WinCapabilityEnterpriseAuthenticationSid = 93,
- WinCapabilityRemovableStorageSid = 94,
- WinBuiltinRDSRemoteAccessServersSid = 95,
- WinBuiltinRDSEndpointServersSid = 96,
- WinBuiltinRDSManagementServersSid = 97,
- WinUserModeDriversSid = 98,
- WinBuiltinHyperVAdminsSid = 99,
- WinAccountCloneableControllersSid = 100,
- WinBuiltinAccessControlAssistanceOperatorsSid = 101,
- WinBuiltinRemoteManagementUsersSid = 102,
- WinAuthenticationAuthorityAssertedSid = 103,
- WinAuthenticationServiceAssertedSid = 104,
- WinLocalAccountSid = 105,
- WinLocalAccountAndAdministratorSid = 106,
- WinAccountProtectedUsersSid = 107,
- WinCapabilityAppointmentsSid = 108,
- WinCapabilityContactsSid = 109,
- WinAccountDefaultSystemManagedSid = 110,
- WinBuiltinDefaultSystemManagedGroupSid = 111,
- WinBuiltinStorageReplicaAdminsSid = 112,
- WinAccountKeyAdminsSid = 113,
- WinAccountEnterpriseKeyAdminsSid = 114,
- WinAuthenticationKeyTrustSid = 115,
- WinAuthenticationKeyPropertyMFASid = 116,
- WinAuthenticationKeyPropertyAttestationSid = 117,
- WinAuthenticationFreshKeyAuthSid = 118,
- WinBuiltinDeviceOwnersSid = 119,
-} WELL_KNOWN_SID_TYPE
+class WELL_KNOWN_SID_TYPE(CEnum):
+    WinNullSid = (0,)
+    WinWorldSid = (1,)
+    WinLocalSid = (2,)
+    WinCreatorOwnerSid = (3,)
+    WinCreatorGroupSid = (4,)
+    WinCreatorOwnerServerSid = (5,)
+    WinCreatorGroupServerSid = (6,)
+    WinNtAuthoritySid = (7,)
+    WinDialupSid = (8,)
+    WinNetworkSid = (9,)
+    WinBatchSid = (10,)
+    WinInteractiveSid = (11,)
+    WinServiceSid = (12,)
+    WinAnonymousSid = (13,)
+    WinProxySid = (14,)
+    WinEnterpriseControllersSid = (15,)
+    WinSelfSid = (16,)
+    WinAuthenticatedUserSid = (17,)
+    WinRestrictedCodeSid = (18,)
+    WinTerminalServerSid = (19,)
+    WinRemoteLogonIdSid = (20,)
+    WinLogonIdsSid = (21,)
+    WinLocalSystemSid = (22,)
+    WinLocalServiceSid = (23,)
+    WinNetworkServiceSid = (24,)
+    WinBuiltinDomainSid = (25,)
+    WinBuiltinAdministratorsSid = (26,)
+    WinBuiltinUsersSid = (27,)
+    WinBuiltinGuestsSid = (28,)
+    WinBuiltinPowerUsersSid = (29,)
+    WinBuiltinAccountOperatorsSid = (30,)
+    WinBuiltinSystemOperatorsSid = (31,)
+    WinBuiltinPrintOperatorsSid = (32,)
+    WinBuiltinBackupOperatorsSid = (33,)
+    WinBuiltinReplicatorSid = (34,)
+    WinBuiltinPreWindows2000CompatibleAccessSid = (35,)
+    WinBuiltinRemoteDesktopUsersSid = (36,)
+    WinBuiltinNetworkConfigurationOperatorsSid = (37,)
+    WinAccountAdministratorSid = (38,)
+    WinAccountGuestSid = (39,)
+    WinAccountKrbtgtSid = (40,)
+    WinAccountDomainAdminsSid = (41,)
+    WinAccountDomainUsersSid = (42,)
+    WinAccountDomainGuestsSid = (43,)
+    WinAccountComputersSid = (44,)
+    WinAccountControllersSid = (45,)
+    WinAccountCertAdminsSid = (46,)
+    WinAccountSchemaAdminsSid = (47,)
+    WinAccountEnterpriseAdminsSid = (48,)
+    WinAccountPolicyAdminsSid = (49,)
+    WinAccountRasAndIasServersSid = (50,)
+    WinNTLMAuthenticationSid = (51,)
+    WinDigestAuthenticationSid = (52,)
+    WinSChannelAuthenticationSid = (53,)
+    WinThisOrganizationSid = (54,)
+    WinOtherOrganizationSid = (55,)
+    WinBuiltinIncomingForestTrustBuildersSid = (56,)
+    WinBuiltinPerfMonitoringUsersSid = (57,)
+    WinBuiltinPerfLoggingUsersSid = (58,)
+    WinBuiltinAuthorizationAccessSid = (59,)
+    WinBuiltinTerminalServerLicenseServersSid = (60,)
+    WinBuiltinDCOMUsersSid = (61,)
+    WinBuiltinIUsersSid = (62,)
+    WinIUserSid = (63,)
+    WinBuiltinCryptoOperatorsSid = (64,)
+    WinUntrustedLabelSid = (65,)
+    WinLowLabelSid = (66,)
+    WinMediumLabelSid = (67,)
+    WinHighLabelSid = (68,)
+    WinSystemLabelSid = (69,)
+    WinWriteRestrictedCodeSid = (70,)
+    WinCreatorOwnerRightsSid = (71,)
+    WinCacheablePrincipalsGroupSid = (72,)
+    WinNonCacheablePrincipalsGroupSid = (73,)
+    WinEnterpriseReadonlyControllersSid = (74,)
+    WinAccountReadonlyControllersSid = (75,)
+    WinBuiltinEventLogReadersGroup = (76,)
+    WinNewEnterpriseReadonlyControllersSid = (77,)
+    WinBuiltinCertSvcDComAccessGroup = (78,)
+    WinMediumPlusLabelSid = (79,)
+    WinLocalLogonSid = (80,)
+    WinConsoleLogonSid = (81,)
+    WinThisOrganizationCertificateSid = (82,)
+    WinApplicationPackageAuthoritySid = (83,)
+    WinBuiltinAnyPackageSid = (84,)
+    WinCapabilityInternetClientSid = (85,)
+    WinCapabilityInternetClientServerSid = (86,)
+    WinCapabilityPrivateNetworkClientServerSid = (87,)
+    WinCapabilityPicturesLibrarySid = (88,)
+    WinCapabilityVideosLibrarySid = (89,)
+    WinCapabilityMusicLibrarySid = (90,)
+    WinCapabilityDocumentsLibrarySid = (91,)
+    WinCapabilitySharedUserCertificatesSid = (92,)
+    WinCapabilityEnterpriseAuthenticationSid = (93,)
+    WinCapabilityRemovableStorageSid = (94,)
+    WinBuiltinRDSRemoteAccessServersSid = (95,)
+    WinBuiltinRDSEndpointServersSid = (96,)
+    WinBuiltinRDSManagementServersSid = (97,)
+    WinUserModeDriversSid = (98,)
+    WinBuiltinHyperVAdminsSid = (99,)
+    WinAccountCloneableControllersSid = (100,)
+    WinBuiltinAccessControlAssistanceOperatorsSid = (101,)
+    WinBuiltinRemoteManagementUsersSid = (102,)
+    WinAuthenticationAuthorityAssertedSid = (103,)
+    WinAuthenticationServiceAssertedSid = (104,)
+    WinLocalAccountSid = (105,)
+    WinLocalAccountAndAdministratorSid = (106,)
+    WinAccountProtectedUsersSid = (107,)
+    WinCapabilityAppointmentsSid = (108,)
+    WinCapabilityContactsSid = (109,)
+    WinAccountDefaultSystemManagedSid = (110,)
+    WinBuiltinDefaultSystemManagedGroupSid = (111,)
+    WinBuiltinStorageReplicaAdminsSid = (112,)
+    WinAccountKeyAdminsSid = (113,)
+    WinAccountEnterpriseKeyAdminsSid = (114,)
+    WinAuthenticationKeyTrustSid = (115,)
+    WinAuthenticationKeyPropertyMFASid = (116,)
+    WinAuthenticationKeyPropertyAttestationSid = (117,)
+    WinAuthenticationFreshKeyAuthSid = (118,)
+    WinBuiltinDeviceOwnersSid = (119,)
 
+
+"""
 SYSTEM_LUID { 0x3e7, 0x0 }
 ANONYMOUS_LOGON_LUID { 0x3e6, 0x0 }
 LOCALSERVICE_LUID { 0x3e5, 0x0 }
@@ -2529,15 +2549,18 @@ typedef struct _SYSTEM_ALARM_CALLBACK_OBJECT_ACE {
  DWORD SidStart
 
 } SYSTEM_ALARM_CALLBACK_OBJECT_ACE, *PSYSTEM_ALARM_CALLBACK_OBJECT_ACE
+"""
 
-ACE_OBJECT_TYPE_PRESENT 0x1
-ACE_INHERITED_OBJECT_TYPE_PRESENT 0x2
+ACE_OBJECT_TYPE_PRESENT = 0x1
+ACE_INHERITED_OBJECT_TYPE_PRESENT = 0x2
 
-typedef enum _ACL_INFORMATION_CLASS {
- AclRevisionInformation = 1,
- AclSizeInformation
-} ACL_INFORMATION_CLASS
 
+class ACL_INFORMATION_CLASS(CEnum):
+    AclRevisionInformation = 1
+    AclSizeInformation = 2
+
+
+"""
 typedef struct _ACL_REVISION_INFORMATION {
  DWORD AclRevision
 } ACL_REVISION_INFORMATION
@@ -2837,69 +2860,70 @@ TOKEN_EXECUTE = STANDARD_RIGHTS_EXECUTE
 TOKEN_TRUST_CONSTRAINT_MASK = STANDARD_RIGHTS_READ | TOKEN_QUERY | TOKEN_QUERY_SOURCE
 TOKEN_ACCESS_PSEUDO_HANDLE_WIN8 = TOKEN_QUERY | TOKEN_QUERY_SOURCE
 TOKEN_ACCESS_PSEUDO_HANDLE = TOKEN_ACCESS_PSEUDO_HANDLE_WIN8
+
+
+class TOKEN_TYPE(CEnum):
+    TokenPrimary = 1
+    TokenImpersonation = 2
+
+
+class TOKEN_ELEVATION_TYPE(CEnum):
+    TokenElevationTypeDefault = 1
+    TokenElevationTypeFull = 2
+    TokenElevationTypeLimited = 3
+
+
+class TOKEN_INFORMATION_CLASS(CEnum):
+    TokenUser = 1
+    TokenGroups = 2
+    TokenPrivileges = 3
+    TokenOwner = 4
+    TokenPrimaryGroup = 5
+    TokenDefaultDacl = 6
+    TokenSource = 7
+    TokenType = 8
+    TokenImpersonationLevel = 9
+    TokenStatistics = 10
+    TokenRestrictedSids = 11
+    TokenSessionId = 12
+    TokenGroupsAndPrivileges = 13
+    TokenSessionReference = 14
+    TokenSandBoxInert = 15
+    TokenAuditPolicy = 16
+    TokenOrigin = 17
+    TokenElevationType = 18
+    TokenLinkedToken = 19
+    TokenElevation = 20
+    TokenHasRestrictions = 21
+    TokenAccessInformation = 22
+    TokenVirtualizationAllowed = 23
+    TokenVirtualizationEnabled = 24
+    TokenIntegrityLevel = 25
+    TokenUIAccess = 26
+    TokenMandatoryPolicy = 27
+    TokenLogonSid = 28
+    TokenIsAppContainer = 29
+    TokenCapabilities = 30
+    TokenAppContainerSid = 31
+    TokenAppContainerNumber = 32
+    TokenUserClaimAttributes = 33
+    TokenDeviceClaimAttributes = 34
+    TokenRestrictedUserClaimAttributes = 35
+    TokenRestrictedDeviceClaimAttributes = 36
+    TokenDeviceGroups = 37
+    TokenRestrictedDeviceGroups = 38
+    TokenSecurityAttributes = 39
+    TokenIsRestricted = 40
+    TokenProcessTrustLevel = 41
+    TokenPrivateNameSpace = 42
+    TokenSingletonAttributes = 43
+    TokenBnoIsolation = 44
+    TokenChildProcessFlags = 45
+    TokenIsLessPrivilegedAppContainer = 46
+    MaxTokenInfoClass = 47
+
+
 """
-typedef enum _TOKEN_TYPE {
- TokenPrimary = 1,
- TokenImpersonation
- } TOKEN_TYPE
-typedef TOKEN_TYPE *PTOKEN_TYPE
-
-typedef enum _TOKEN_ELEVATION_TYPE {
- TokenElevationTypeDefault = 1,
- TokenElevationTypeFull,
- TokenElevationTypeLimited,
-} TOKEN_ELEVATION_TYPE, *PTOKEN_ELEVATION_TYPE
-
-typedef enum _TOKEN_INFORMATION_CLASS {
- TokenUser = 1,
- TokenGroups,
- TokenPrivileges,
- TokenOwner,
- TokenPrimaryGroup,
- TokenDefaultDacl,
- TokenSource,
- TokenType,
- TokenImpersonationLevel,
- TokenStatistics,
- TokenRestrictedSids,
- TokenSessionId,
- TokenGroupsAndPrivileges,
- TokenSessionReference,
- TokenSandBoxInert,
- TokenAuditPolicy,
- TokenOrigin,
- TokenElevationType,
- TokenLinkedToken,
- TokenElevation,
- TokenHasRestrictions,
- TokenAccessInformation,
- TokenVirtualizationAllowed,
- TokenVirtualizationEnabled,
- TokenIntegrityLevel,
- TokenUIAccess,
- TokenMandatoryPolicy,
- TokenLogonSid,
- TokenIsAppContainer,
- TokenCapabilities,
- TokenAppContainerSid,
- TokenAppContainerNumber,
- TokenUserClaimAttributes,
- TokenDeviceClaimAttributes,
- TokenRestrictedUserClaimAttributes,
- TokenRestrictedDeviceClaimAttributes,
- TokenDeviceGroups,
- TokenRestrictedDeviceGroups,
- TokenSecurityAttributes,
- TokenIsRestricted,
- TokenProcessTrustLevel,
- TokenPrivateNameSpace,
- TokenSingletonAttributes,
- TokenBnoIsolation,
- TokenChildProcessFlags,
- TokenIsLessPrivilegedAppContainer,
- MaxTokenInfoClass
-} TOKEN_INFORMATION_CLASS, *PTOKEN_INFORMATION_CLASS
-
 typedef struct _TOKEN_USER {
  SID_AND_ATTRIBUTES User
 } TOKEN_USER, *PTOKEN_USER
@@ -2922,16 +2946,14 @@ typedef struct _SE_TOKEN_USER {
 TOKEN_USER_MAX_SIZE = sizeof(TOKEN_USER) + SECURITY_MAX_SID_SIZE
 
 #endif
-
-typedef struct _TOKEN_GROUPS {
- DWORD GroupCount
-#ifdef MIDL_PASS
- [size_is(GroupCount)] SID_AND_ATTRIBUTES Groups[*]
-#else
- SID_AND_ATTRIBUTES Groups[ANYSIZE_ARRAY]
-#endif
-} TOKEN_GROUPS, *PTOKEN_GROUPS
 """
+
+
+class TOKEN_GROUPS(Structure):
+    _fields_ = [
+        ("GroupCount", DWORD),
+        ("Groups", SID_AND_ATTRIBUTES * ANYSIZE_ARRAY),
+    ]
 
 
 class TOKEN_PRIVILEGES(Structure):
@@ -3090,68 +3112,73 @@ typedef struct _TOKEN_BNO_ISOLATION_INFORMATION {
  PWSTR IsolationPrefix
  BOOLEAN IsolationEnabled
 } TOKEN_BNO_ISOLATION_INFORMATION, *PTOKEN_BNO_ISOLATION_INFORMATION
+"""
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_INVALID 0x00
+CLAIM_SECURITY_ATTRIBUTE_TYPE_INVALID = 0x00
+CLAIM_SECURITY_ATTRIBUTE_TYPE_INT64 = 0x01
+CLAIM_SECURITY_ATTRIBUTE_TYPE_UINT64 = 0x02
+CLAIM_SECURITY_ATTRIBUTE_TYPE_STRING = 0x03
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_INT64 0x01
-CLAIM_SECURITY_ATTRIBUTE_TYPE_UINT64 0x02
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_STRING 0x03
+class CLAIM_SECURITY_ATTRIBUTE_FQBN_VALUE(Structure):
+    _fields_ = [
+        ("Version", DWORD64),
+        ("Name", PWSTR),
+    ]
 
-typedef struct _CLAIM_SECURITY_ATTRIBUTE_FQBN_VALUE {
- DWORD64 Version
- PWSTR Name
-} CLAIM_SECURITY_ATTRIBUTE_FQBN_VALUE, *PCLAIM_SECURITY_ATTRIBUTE_FQBN_VALUE
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_FQBN 0x04
+CLAIM_SECURITY_ATTRIBUTE_TYPE_FQBN = 0x04
+CLAIM_SECURITY_ATTRIBUTE_TYPE_SID = 0x05
+CLAIM_SECURITY_ATTRIBUTE_TYPE_BOOLEAN = 0x06
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_SID 0x05
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_BOOLEAN 0x06
+class CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_VALUE(Structure):
+    _fields_ = [
+        ("pValue", PVOID),
+        ("ValueLength", DWORD),
+    ]
 
-typedef struct _CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_VALUE {
- PVOID pValue
- DWORD ValueLength
-} CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_VALUE,
- *PCLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_VALUE
 
-CLAIM_SECURITY_ATTRIBUTE_TYPE_OCTET_STRING 0x10
+CLAIM_SECURITY_ATTRIBUTE_TYPE_OCTET_STRING = 0x10
+CLAIM_SECURITY_ATTRIBUTE_NON_INHERITABLE = 0x0001
+CLAIM_SECURITY_ATTRIBUTE_VALUE_CASE_SENSITIVE = 0x0002
+CLAIM_SECURITY_ATTRIBUTE_USE_FOR_DENY_ONLY = 0x0004
+CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT = 0x0008
+CLAIM_SECURITY_ATTRIBUTE_DISABLED = 0x0010
+CLAIM_SECURITY_ATTRIBUTE_MANDATORY = 0x0020
+CLAIM_SECURITY_ATTRIBUTE_VALID_FLAGS = (
+    CLAIM_SECURITY_ATTRIBUTE_NON_INHERITABLE
+    | CLAIM_SECURITY_ATTRIBUTE_VALUE_CASE_SENSITIVE
+    | CLAIM_SECURITY_ATTRIBUTE_USE_FOR_DENY_ONLY
+    | CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT
+    | CLAIM_SECURITY_ATTRIBUTE_DISABLED
+    | CLAIM_SECURITY_ATTRIBUTE_MANDATORY
+)
+CLAIM_SECURITY_ATTRIBUTE_CUSTOM_FLAGS = 0xFFFF0000
 
-CLAIM_SECURITY_ATTRIBUTE_NON_INHERITABLE 0x0001
 
-CLAIM_SECURITY_ATTRIBUTE_VALUE_CASE_SENSITIVE 0x0002
+class CLAIM_SECURITY_ATTRIBUTE_V1_Values(Union):
+    _fields_ = [
+        ("pInt64", POINTER(LONG64)),
+        ("pUint64", PDWORD64),
+        ("ppString", POINTER(PWSTR)),
+        ("pFqbn", POINTER(CLAIM_SECURITY_ATTRIBUTE_FQBN_VALUE)),
+        ("pOctetString", POINTER(CLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_VALUE)),
+    ]
 
-CLAIM_SECURITY_ATTRIBUTE_USE_FOR_DENY_ONLY 0x0004
 
-CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT 0x0008
+class CLAIM_SECURITY_ATTRIBUTE_V1(Structure):
+    _fields_ = [
+        ("Name", PWSTR),
+        ("ValueType", WORD),
+        ("Reserved", WORD),
+        ("Flags", DWORD),
+        ("ValueCount", DWORD),
+        ("Values", CLAIM_SECURITY_ATTRIBUTE_V1_Values),
+    ]
 
-CLAIM_SECURITY_ATTRIBUTE_DISABLED 0x0010
 
-CLAIM_SECURITY_ATTRIBUTE_MANDATORY 0x0020
-
-CLAIM_SECURITY_ATTRIBUTE_VALID_FLAGS = CLAIM_SECURITY_ATTRIBUTE_NON_INHERITABLE | CLAIM_SECURITY_ATTRIBUTE_VALUE_CASE_SENSITIVE | CLAIM_SECURITY_ATTRIBUTE_USE_FOR_DENY_ONLY | CLAIM_SECURITY_ATTRIBUTE_DISABLED_BY_DEFAULT | CLAIM_SECURITY_ATTRIBUTE_DISABLED | CLAIM_SECURITY_ATTRIBUTE_MANDATORY
-
-CLAIM_SECURITY_ATTRIBUTE_CUSTOM_FLAGS 0xFFFF0000
-
-typedef struct _CLAIM_SECURITY_ATTRIBUTE_V1 {
- PWSTR Name
-
- WORD ValueType
- WORD Reserved
-
- DWORD Flags
-
- DWORD ValueCount
-
- union {
- PLONG64 pInt64
- PDWORD64 pUint64
- PWSTR *ppString
- PCLAIM_SECURITY_ATTRIBUTE_FQBN_VALUE pFqbn
- PCLAIM_SECURITY_ATTRIBUTE_OCTET_STRING_VALUE pOctetString
- } Values
-} CLAIM_SECURITY_ATTRIBUTE_V1, *PCLAIM_SECURITY_ATTRIBUTE_V1
-
+"""
 typedef struct _CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1 {
  DWORD Name
 
@@ -3170,23 +3197,28 @@ typedef struct _CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1 {
  DWORD pOctetString[ANYSIZE_ARRAY]
  } Values
 } CLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1, *PCLAIM_SECURITY_ATTRIBUTE_RELATIVE_V1
+"""
 
-CLAIM_SECURITY_ATTRIBUTES_INFORMATION_VERSION_V1 1
+CLAIM_SECURITY_ATTRIBUTES_INFORMATION_VERSION_V1 = 1
+CLAIM_SECURITY_ATTRIBUTES_INFORMATION_VERSION = CLAIM_SECURITY_ATTRIBUTES_INFORMATION_VERSION_V1
 
-CLAIM_SECURITY_ATTRIBUTES_INFORMATION_VERSION CLAIM_SECURITY_ATTRIBUTES_INFORMATION_VERSION_V1
 
-typedef struct _CLAIM_SECURITY_ATTRIBUTES_INFORMATION {
+class CLAIM_SECURITY_ATTRIBUTES_INFORMATION_Attribute(Union):
+    _fields_ = [
+        ("pAttributeV1", POINTER(CLAIM_SECURITY_ATTRIBUTE_V1)),
+    ]
 
- WORD Version
 
- WORD Reserved
+class CLAIM_SECURITY_ATTRIBUTES_INFORMATION(Structure):
+    _fields_ = [
+        ("Version", WORD),
+        ("Reserved", WORD),
+        ("AttributeCount", DWORD),
+        ("Attribute", CLAIM_SECURITY_ATTRIBUTES_INFORMATION_Attribute),
+    ]
 
- DWORD AttributeCount
- union {
- PCLAIM_SECURITY_ATTRIBUTE_V1 pAttributeV1
- } Attribute
-} CLAIM_SECURITY_ATTRIBUTES_INFORMATION, *PCLAIM_SECURITY_ATTRIBUTES_INFORMATION
 
+"""
 SECURITY_DYNAMIC_TRACKING = TRUE
 SECURITY_STATIC_TRACKING = FALSE
 
@@ -3206,14 +3238,16 @@ typedef struct _SE_IMPERSONATION_STATE {
  BOOLEAN EffectiveOnly
  SECURITY_IMPERSONATION_LEVEL Level
 } SE_IMPERSONATION_STATE, *PSE_IMPERSONATION_STATE
+"""
 
-DISABLE_MAX_PRIVILEGE 0x1
-SANDBOX_INERT 0x2
-LUA_TOKEN 0x4
-WRITE_RESTRICTED 0x8
+DISABLE_MAX_PRIVILEGE = 0x1
+SANDBOX_INERT = 0x2
+LUA_TOKEN = 0x4
+WRITE_RESTRICTED = 0x8
 
-typedef DWORD SECURITY_INFORMATION, *PSECURITY_INFORMATION
+SECURITY_INFORMATION = DWORD
 
+"""
 OWNER_SECURITY_INFORMATION = 0x00000001
 GROUP_SECURITY_INFORMATION = 0x00000002
 DACL_SECURITY_INFORMATION = 0x00000004

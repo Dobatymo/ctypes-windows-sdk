@@ -2,7 +2,6 @@ from ctypes import POINTER
 from ctypes.wintypes import DWORD, HANDLE, UINT
 
 from .. import s_ok, windll
-from ..shared.guiddef import GUID
 from ..shared.ntdef import HRESULT, PWSTR
 from .shtypes import PCIDLIST_ABSOLUTE, PCUITEMID_CHILD_ARRAY, REFKNOWNFOLDERID
 
