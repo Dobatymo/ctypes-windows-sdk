@@ -107,7 +107,9 @@ class FILE_INFO_BY_HANDLE_CLASS(CEnum):
     FileIdExtdDirectoryRestartInfo = 20
     FileDispositionInfoEx = 21
     FileRenameInfoEx = 22
-    MaximumFileInfoByHandleClass = 23
+    FileCaseSensitiveInfo = 23
+    FileNormalizedNameInfo = 24
+    MaximumFileInfoByHandleClass = 25
 
 
 class GET_FILEEX_INFO_LEVELS(CEnum):

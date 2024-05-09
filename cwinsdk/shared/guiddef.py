@@ -9,6 +9,17 @@ class GUID(Structure):
         ("Data4", c_ubyte * 8),
     ]
 
+    def __str__(self) -> str:
+        return f"{self.Data1:08x}-{self.Data2:04x}-{self.Data3:04x}-{bytes(self.Data4)[:2].hex().zfill(4)}-{bytes(self.Data4)[2:].hex().zfill(12)}"
+
+    def __eq__(self, other) -> bool:
+        if isinstance(other, GUID):
+            return memoryview(self).cast("B") == memoryview(other).cast("B")
+        return NotImplemented
+
+    def __hash__(self):
+        return hash(bytes(self))
+
 
 IID = GUID
 LPIID = POINTER(IID)

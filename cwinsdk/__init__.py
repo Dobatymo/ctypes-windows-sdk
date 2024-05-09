@@ -12,7 +12,15 @@ STATUS_SUCCESS = 0  # copied from cwinsdk.shared.ntstatus
 
 
 class CEnum(c_int):
-    pass
+    def __hash__(self):
+        return hash(self.value)
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return self.value == other
+        elif isinstance(other, CEnum):
+            return self.value == other.value
+        return NotImplemented
 
 
 class WinApiError(OSError):

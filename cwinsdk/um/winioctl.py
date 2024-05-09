@@ -689,6 +689,25 @@ class DEVICE_TRIM_DESCRIPTOR(Structure):
     ]
 
 
+class STORAGE_ADAPTER_DESCRIPTOR(Structure):
+    _fields_ = [
+        ("Version", DWORD),
+        ("Size", DWORD),
+        ("MaximumTransferLength", DWORD),
+        ("MaximumPhysicalPages", DWORD),
+        ("AlignmentMask", DWORD),
+        ("AdapterUsesPio", BOOLEAN),
+        ("AdapterScansDown", BOOLEAN),
+        ("CommandQueueing", BOOLEAN),
+        ("AcceleratedTransfer", BOOLEAN),
+        ("BusType", BYTE),
+        ("BusMajorVersion", WORD),
+        ("BusMinorVersion", WORD),
+        ("SrbType", BYTE),
+        ("AddressType", BYTE),
+    ]
+
+
 class STORAGE_TEMPERATURE_INFO(Structure):
     _fields_ = [
         ("Index", WORD),
@@ -824,3 +843,14 @@ def DRIVE_LAYOUT_INFORMATION_EX(size=1):
         ]
 
     return _DRIVE_LAYOUT_INFORMATION_EX
+
+
+class STORAGE_DEVICE_NUMBER(Structure):
+    _fields_ = [
+        ("DeviceType", DEVICE_TYPE),
+        ("DeviceNumber", DWORD),
+        ("PartitionNumber", DWORD),
+    ]
+
+
+GUID_DEVINTERFACE_DISK = GUID(0x53F56307, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))

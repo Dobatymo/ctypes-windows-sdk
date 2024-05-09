@@ -15,11 +15,11 @@ from ctypes.wintypes import (
     WORD,
 )
 
-from .. import CEnum, windll
+from .. import CEnum, nonzero, validhandle, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 from ..shared.basetsd import SIZE_T, ULONG64
 from ..shared.guiddef import GUID
-from ..shared.minwindef import ATOM
+from ..shared.minwindef import ATOM, PDWORD
 from ..shared.ntdef import CHAR, ULONGLONG
 from .minwinbase import FILE_INFO_BY_HANDLE_CLASS, LPSECURITY_ATTRIBUTES
 from .winnt import (
@@ -31,6 +31,7 @@ from .winnt import (
     FILE_SUPPORTS_ENCRYPTION,
     FILE_UNICODE_ON_DISK,
     FILE_VOLUME_IS_COMPRESSED,
+    LPCH,
     LUID,
     MAXLONG,
     STATUS_ABANDONED_WAIT_0,
@@ -722,3 +723,62 @@ OpenFileById.restype = HANDLE
 ReOpenFile = windll.kernel32.ReOpenFile
 ReOpenFile.argtypes = [HANDLE, DWORD, DWORD, DWORD]
 ReOpenFile.restype = HANDLE
+
+FindFirstVolumeA = windll.kernel32.FindFirstVolumeA
+FindFirstVolumeA.argtypes = [LPSTR, DWORD]
+FindFirstVolumeA.restype = HANDLE
+FindFirstVolumeA.errcheck = validhandle
+
+FindNextVolumeA = windll.kernel32.FindNextVolumeA
+FindNextVolumeA.argtypes = [HANDLE, LPSTR, DWORD]
+FindNextVolumeA.restype = BOOL
+FindNextVolumeA.errcheck = nonzero
+
+FindFirstVolumeMountPointA = windll.kernel32.FindFirstVolumeMountPointA
+FindFirstVolumeMountPointA.argtypes = [LPCSTR, LPSTR, DWORD]
+FindFirstVolumeMountPointA.restype = HANDLE
+FindFirstVolumeMountPointA.errcheck = validhandle
+
+FindFirstVolumeMountPointW = windll.kernel32.FindFirstVolumeMountPointW
+FindFirstVolumeMountPointW.argtypes = [LPCWSTR, LPWSTR, DWORD]
+FindFirstVolumeMountPointW.restype = HANDLE
+FindFirstVolumeMountPointW.errcheck = validhandle
+
+FindNextVolumeMountPointA = windll.kernel32.FindNextVolumeMountPointA
+FindNextVolumeMountPointA.argtypes = [HANDLE, LPSTR, DWORD]
+FindNextVolumeMountPointA.restype = BOOL
+FindNextVolumeMountPointA.errcheck = nonzero
+
+FindNextVolumeMountPointW = windll.kernel32.FindNextVolumeMountPointW
+FindNextVolumeMountPointW.argtypes = [HANDLE, LPWSTR, DWORD]
+FindNextVolumeMountPointW.restype = BOOL
+FindNextVolumeMountPointA.errcheck = nonzero
+
+FindVolumeMountPointClose = windll.kernel32.FindVolumeMountPointClose
+FindVolumeMountPointClose.argtypes = [HANDLE]
+FindVolumeMountPointClose.restype = BOOL
+FindVolumeMountPointClose.errcheck = nonzero
+
+SetVolumeMountPointA = windll.kernel32.SetVolumeMountPointA
+SetVolumeMountPointA.argtypes = [LPCSTR, LPCSTR]
+SetVolumeMountPointA.restype = BOOL
+
+SetVolumeMountPointW = windll.kernel32.SetVolumeMountPointW
+SetVolumeMountPointW.argtypes = [LPCWSTR, LPCWSTR]
+SetVolumeMountPointW.restype = BOOL
+
+DeleteVolumeMountPointA = windll.kernel32.DeleteVolumeMountPointA
+DeleteVolumeMountPointA.argtypes = [LPCSTR]
+DeleteVolumeMountPointA.restype = BOOL
+
+GetVolumeNameForVolumeMountPointA = windll.kernel32.GetVolumeNameForVolumeMountPointA
+GetVolumeNameForVolumeMountPointA.argtypes = [LPCSTR, LPSTR, DWORD]
+GetVolumeNameForVolumeMountPointA.restype = BOOL
+
+GetVolumePathNameA = windll.kernel32.GetVolumePathNameA
+GetVolumePathNameA.argtypes = [LPCSTR, LPSTR, DWORD]
+GetVolumePathNameA.restype = BOOL
+
+GetVolumePathNamesForVolumeNameA = windll.kernel32.GetVolumePathNamesForVolumeNameA
+GetVolumePathNamesForVolumeNameA.argtypes = [LPCSTR, LPCH, DWORD, PDWORD]
+GetVolumePathNamesForVolumeNameA.restype = BOOL

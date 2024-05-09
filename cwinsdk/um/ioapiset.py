@@ -1,7 +1,7 @@
 from ctypes import POINTER
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, ULONG
 
-from .. import _not_available, windll
+from .. import _not_available, nonzero, windll
 from ..shared.basetsd import PULONG_PTR, ULONG_PTR
 from ..shared.minwindef import LPDWORD, PULONG
 from .minwinbase import LPOVERLAPPED, LPOVERLAPPED_ENTRY
@@ -25,6 +25,7 @@ PostQueuedCompletionStatus.restype = BOOL
 DeviceIoControl = windll.kernel32.DeviceIoControl
 DeviceIoControl.argtypes = [HANDLE, DWORD, LPVOID, DWORD, LPVOID, DWORD, LPDWORD, LPOVERLAPPED]
 DeviceIoControl.restype = BOOL
+DeviceIoControl.errcheck = nonzero
 
 GetOverlappedResult = windll.kernel32.GetOverlappedResult
 GetOverlappedResult.argtypes = [HANDLE, LPOVERLAPPED, LPDWORD, BOOL]

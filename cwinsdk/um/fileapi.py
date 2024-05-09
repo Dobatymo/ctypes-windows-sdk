@@ -1,10 +1,10 @@
 from ctypes import POINTER, Structure
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, UINT, ULARGE_INTEGER
 
-from .. import nonzero, validhandle, windll
-from ..shared.minwindef import FILETIME
-from ..shared.ntdef import ULONGLONG
-from .minwinbase import GET_FILEEX_INFO_LEVELS, LPOVERLAPPED, LPSECURITY_ATTRIBUTES
+from .. import CEnum, nonzero, validhandle, windll
+from ..shared.minwindef import FILETIME, PDWORD
+from ..shared.ntdef import LPWCH, PWSTR, ULONGLONG
+from .minwinbase import FILE_INFO_BY_HANDLE_CLASS, GET_FILEEX_INFO_LEVELS, LPOVERLAPPED, LPSECURITY_ATTRIBUTES
 
 CREATE_NEW = 1
 CREATE_ALWAYS = 2
@@ -48,6 +48,11 @@ class DISK_SPACE_INFORMATION(Structure):
         ("SectorsPerAllocationUnit", DWORD),
         ("BytesPerSector", DWORD),
     ]
+
+
+class STREAM_INFO_LEVELS(CEnum):
+    FindStreamInfoStandard = 0
+    FindStreamInfoMaxInfoLevel = 1
 
 
 # functions
@@ -118,6 +123,11 @@ GetFileInformationByHandle.argtypes = [HANDLE, POINTER(BY_HANDLE_FILE_INFORMATIO
 GetFileInformationByHandle.restype = BOOL
 GetFileInformationByHandle.errcheck = nonzero
 
+SetFileInformationByHandle = windll.kernel32.SetFileInformationByHandle
+SetFileInformationByHandle.argtypes = [HANDLE, FILE_INFO_BY_HANDLE_CLASS, LPVOID, DWORD]
+SetFileInformationByHandle.restype = BOOL
+SetFileInformationByHandle.errcheck = nonzero
+
 GetFileType = windll.kernel32.GetFileType
 GetFileType.argtypes = [HANDLE]
 GetFileType.restype = DWORD
@@ -157,3 +167,85 @@ GetFinalPathNameByHandleA.restype = DWORD
 GetFinalPathNameByHandleW = windll.kernel32.GetFinalPathNameByHandleW
 GetFinalPathNameByHandleW.argtypes = [HANDLE, LPWSTR, DWORD, DWORD]
 GetFinalPathNameByHandleW.restype = DWORD
+
+GetLogicalDrives = windll.kernel32.GetLogicalDrives
+GetLogicalDrives.argtypes = []
+GetLogicalDrives.restype = DWORD
+
+GetLogicalDriveStringsW = windll.kernel32.GetLogicalDriveStringsW
+GetLogicalDriveStringsW.argtypes = [DWORD, LPWSTR]
+GetLogicalDriveStringsW.restype = DWORD
+GetLogicalDriveStringsW.errcheck = nonzero
+
+FindFirstStreamW = windll.kernel32.FindFirstStreamW
+FindFirstStreamW.argtypes = [LPCWSTR, STREAM_INFO_LEVELS, LPVOID, DWORD]
+FindFirstStreamW.restype = HANDLE
+FindFirstStreamW.errcheck = validhandle
+
+FindNextStreamW = windll.kernel32.FindNextStreamW
+FindNextStreamW.argtypes = [HANDLE, LPVOID]
+FindNextStreamW.restype = BOOL
+FindNextStreamW.errcheck = nonzero
+
+GetTempPathA = windll.kernel32.GetTempPathA
+GetTempPathA.argtypes = [DWORD, LPSTR]
+GetTempPathA.restype = DWORD
+
+FindFirstFileNameW = windll.kernel32.FindFirstFileNameW
+FindFirstFileNameW.argtypes = [LPCWSTR, DWORD, POINTER(DWORD), PWSTR]
+FindFirstFileNameW.restype = HANDLE
+FindFirstFileNameW.errcheck = validhandle
+
+FindNextFileNameW = windll.kernel32.FindNextFileNameW
+FindNextFileNameW.argtypes = [HANDLE, POINTER(DWORD), PWSTR]
+FindNextFileNameW.restype = BOOL
+FindNextFileNameW.errcheck = nonzero
+
+GetVolumeInformationA = windll.kernel32.GetVolumeInformationA
+GetVolumeInformationA.argtypes = [LPCSTR, LPSTR, DWORD, POINTER(DWORD), POINTER(DWORD), POINTER(DWORD), LPSTR, DWORD]
+GetVolumeInformationA.restype = BOOL
+
+GetTempFileNameA = windll.kernel32.GetTempFileNameA
+GetTempFileNameA.argtypes = [LPCSTR, LPCSTR, UINT, LPSTR]
+GetTempFileNameA.restype = UINT
+
+SetFileApisToOEM = windll.kernel32.SetFileApisToOEM
+SetFileApisToOEM.argtypes = []
+SetFileApisToOEM.restype = None
+
+SetFileApisToANSI = windll.kernel32.SetFileApisToANSI
+SetFileApisToANSI.argtypes = []
+SetFileApisToANSI.restype = None
+
+GetTempPath2W = windll.kernel32.GetTempPath2W
+GetTempPath2W.argtypes = [DWORD, LPWSTR]
+GetTempPath2W.restype = DWORD
+
+GetTempPath2A = windll.kernel32.GetTempPath2A
+GetTempPath2A.argtypes = [DWORD, LPSTR]
+GetTempPath2A.restype = DWORD
+
+QueryDosDeviceW = windll.kernel32.QueryDosDeviceW
+QueryDosDeviceW.argtypes = [LPCWSTR, LPWSTR, DWORD]
+QueryDosDeviceW.restype = DWORD
+QueryDosDeviceW.errcheck = nonzero
+
+FindFirstVolumeW = windll.kernel32.FindFirstVolumeW
+FindFirstVolumeW.argtypes = [LPWSTR, DWORD]
+FindFirstVolumeW.restype = HANDLE
+FindFirstVolumeW.errcheck = validhandle
+
+FindNextVolumeW = windll.kernel32.FindNextVolumeW
+FindNextVolumeW.argtypes = [HANDLE, LPWSTR, DWORD]
+FindNextVolumeW.restype = BOOL
+FindNextVolumeW.errcheck = nonzero
+
+FindVolumeClose = windll.kernel32.FindVolumeClose
+FindVolumeClose.argtypes = [HANDLE]
+FindVolumeClose.restype = BOOL
+FindVolumeClose.errcheck = nonzero
+
+GetVolumePathNamesForVolumeNameW = windll.kernel32.GetVolumePathNamesForVolumeNameW
+GetVolumePathNamesForVolumeNameW.argtypes = [LPCWSTR, LPWCH, DWORD, PDWORD]
+GetVolumePathNamesForVolumeNameW.restype = BOOL
+GetVolumePathNamesForVolumeNameW.errcheck = nonzero

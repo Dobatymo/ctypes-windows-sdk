@@ -6,7 +6,7 @@ with open("README.md", encoding="utf-8") as fr:
 setup(
     author="Dobatymo",
     name="ctypes-windows-sdk",
-    version="0.0.11",
+    version="0.0.12",
     url="https://github.com/Dobatymo/ctypes-windows-sdk",
     description="Ctypes port of Windows SDK",
     long_description=long_description,
@@ -20,6 +20,6 @@ setup(
         "Topic :: Software Development",
         "Topic :: System :: Operating System",
     ],
-    packages=["cwinsdk", "cwinsdk/km", "cwinsdk/km/crt", "cwinsdk/shared", "cwinsdk/um"],
+    packages=["cwinsdk", "cwinsdk.km", "cwinsdk.km.crt", "cwinsdk.shared", "cwinsdk.um"],
     python_requires=">=3.7",
 )
