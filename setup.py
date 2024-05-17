@@ -6,7 +6,7 @@ with open("README.md", encoding="utf-8") as fr:
 setup(
     author="Dobatymo",
     name="ctypes-windows-sdk",
-    version="0.0.12",
+    version="0.0.13",
     url="https://github.com/Dobatymo/ctypes-windows-sdk",
     description="Ctypes port of Windows SDK",
     long_description=long_description,

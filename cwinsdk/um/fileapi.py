@@ -217,13 +217,19 @@ SetFileApisToANSI = windll.kernel32.SetFileApisToANSI
 SetFileApisToANSI.argtypes = []
 SetFileApisToANSI.restype = None
 
-GetTempPath2W = windll.kernel32.GetTempPath2W
-GetTempPath2W.argtypes = [DWORD, LPWSTR]
-GetTempPath2W.restype = DWORD
+try:  # Windows 10 Build 20348
+    GetTempPath2W = windll.kernel32.GetTempPath2W
+    GetTempPath2W.argtypes = [DWORD, LPWSTR]
+    GetTempPath2W.restype = DWORD
+except AttributeError:
+    pass
 
-GetTempPath2A = windll.kernel32.GetTempPath2A
-GetTempPath2A.argtypes = [DWORD, LPSTR]
-GetTempPath2A.restype = DWORD
+try:  # Windows 10 Build 20348
+    GetTempPath2A = windll.kernel32.GetTempPath2A
+    GetTempPath2A.argtypes = [DWORD, LPSTR]
+    GetTempPath2A.restype = DWORD
+except AttributeError:
+    pass
 
 QueryDosDeviceW = windll.kernel32.QueryDosDeviceW
 QueryDosDeviceW.argtypes = [LPCWSTR, LPWSTR, DWORD]

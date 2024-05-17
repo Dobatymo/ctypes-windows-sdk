@@ -1,5 +1,5 @@
 import platform
-from ctypes import LibraryLoader, Structure, WinDLL, WinError, c_int
+from ctypes import LibraryLoader, Structure, Union, WinDLL, WinError, c_int
 from ctypes.wintypes import HANDLE
 from typing import Any, Callable, Iterable, Iterator, Tuple
 
@@ -40,10 +40,20 @@ def _value_with_length(values: Iterable) -> Iterator:
 
 
 def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
-    for name, _ in struct._fields_:
+    for fieldinfo in struct._fields_:
+        if len(fieldinfo) == 2:
+            name, _ = fieldinfo
+        elif len(fieldinfo) == 3:
+            name, _, _ = fieldinfo
+        else:
+            raise ValueError("too many values to unpack (expected 2 or 3)")
+
         value = getattr(struct, name)
 
         if hasattr(value, "_fields_"):
+            if name in struct._anonymous_:
+                yield from _struct2pairs(value)
+                continue
             value = dict(_struct2pairs(value))
         elif hasattr(value, "_length_"):
             value = list(_value_with_length(value))
@@ -90,3 +100,29 @@ def _not_available(funcname: str) -> Callable:
         raise OSError(f"{funcname}() is not available on {platform.platform()}")
 
     return inner
+
+
+def make_struct(fields):
+    anonymous = []
+    for name, *_ in fields:
+        if name in ["u", "DUMMYSTRUCTNAME"]:
+            anonymous.append(name)
+
+    class _Structure(Structure):
+        _anonymous_ = anonymous
+        _fields_ = fields
+
+    return _Structure
+
+
+def make_union(fields):
+    anonymous = []
+    for name, *_ in fields:
+        if name in ["u", "DUMMYSTRUCTNAME"]:
+            anonymous.append(name)
+
+    class _Union(Union):
+        _anonymous_ = anonymous
+        _fields_ = fields
+
+    return _Union

@@ -546,20 +546,24 @@ class STORAGE_PROPERTY_ID(CEnum):
     StorageDeviceMediumProductType = 15
     StorageAdapterRpmbProperty = 16
     StorageAdapterCryptoProperty = 17
-    StorageDeviceIoCapabilityProperty = 18
-    StorageAdapterProtocolSpecificProperty = 19
-    StorageDeviceProtocolSpecificProperty = 20
-    StorageAdapterTemperatureProperty = 21
-    StorageDeviceTemperatureProperty = 22
-    StorageAdapterPhysicalTopologyProperty = 23
-    StorageDevicePhysicalTopologyProperty = 24
-    StorageDeviceAttributesProperty = 25
-    StorageDeviceManagementStatus = 26
-    StorageAdapterSerialNumberProperty = 27
-    StorageDeviceLocationProperty = 28
-    StorageDeviceNumaProperty = 29
-    StorageDeviceZonedDeviceProperty = 30
-    StorageDeviceUnsafeShutdownCount = 31
+    StorageDeviceIoCapabilityProperty = 48
+    StorageAdapterProtocolSpecificProperty = 49
+    StorageDeviceProtocolSpecificProperty = 50
+    StorageAdapterTemperatureProperty = 51
+    StorageDeviceTemperatureProperty = 52
+    StorageAdapterPhysicalTopologyProperty = 53
+    StorageDevicePhysicalTopologyProperty = 54
+    StorageDeviceAttributesProperty = 55
+    StorageDeviceManagementStatus = 56
+    StorageAdapterSerialNumberProperty = 57
+    StorageDeviceLocationProperty = 58
+    StorageDeviceNumaProperty = 59
+    StorageDeviceZonedDeviceProperty = 60
+    StorageDeviceUnsafeShutdownCount = 61
+    StorageDeviceEnduranceProperty = 62
+    StorageDeviceLedStateProperty = 63
+    StorageDeviceSelfEncryptionProperty = 64
+    StorageFruIdProperty = 65
 
 
 class MEDIA_TYPE(CEnum):
@@ -595,6 +599,42 @@ class PARTITION_STYLE(CEnum):
     PARTITION_STYLE_MBR = 0
     PARTITION_STYLE_GPT = 1
     PARTITION_STYLE_RAW = 2
+
+
+class STORAGE_PROTOCOL_NVME_DATA_TYPE(CEnum):
+    NVMeDataTypeUnknown = 0
+    NVMeDataTypeIdentify = 1
+    NVMeDataTypeLogPage = 2
+    NVMeDataTypeFeature = 3
+    NVMeDataTypeLogPageEx = 4
+    NVMeDataTypeFeatureEx = 5
+
+
+class STORAGE_PROTOCOL_TYPE(CEnum):
+    ProtocolTypeUnknown = 0x00
+    ProtocolTypeScsi = 0x01
+    ProtocolTypeAta = 0x02
+    ProtocolTypeNvme = 0x03
+    ProtocolTypeSd = 0x04
+    ProtocolTypeUfs = 0x05
+    ProtocolTypeProprietary = 0x7E
+    ProtocolTypeMaxReserved = 0x7F
+
+
+class STORAGE_PROTOCOL_ATA_DATA_TYPE(CEnum):
+    AtaDataTypeUnknown = 0
+    AtaDataTypeIdentify = 1  # Retrieved by command - IDENTIFY DEVICE
+    AtaDataTypeLogPage = 2  # Retrieved by command - READ LOG EXT
+
+
+class STORAGE_PROTOCOL_UFS_DATA_TYPE(CEnum):
+    UfsDataTypeUnknown = 0
+    UfsDataTypeQueryDescriptor = 1  # Retrieved by command - QUERY UPIU
+    UfsDataTypeQueryAttribute = 2  # Retrieved by command - QUERY UPIU
+    UfsDataTypeQueryFlag = 3  # Retrieved by command - QUERY UPIU
+    UfsDataTypeQueryDmeAttribute = 4  # Retrieved by command - QUERY UPIU
+    UfsDataTypeQueryDmePeerAttribute = 5  # Retrieved by command - QUERY UPIU
+    UfsDataTypeMax = 6
 
 
 class VERIFY_INFORMATION(Structure):
@@ -645,31 +685,50 @@ class STORAGE_READ_CAPACITY(Structure):
     ]
 
 
-class STORAGE_PROPERTY_QUERY(Structure):
-    # no pack
-    _fields_ = [
-        ("PropertyId", STORAGE_PROPERTY_ID),
-        ("QueryType", STORAGE_QUERY_TYPE),
-        ("AdditionalParameters", BYTE * 1),
-    ]
+def STORAGE_PROPERTY_QUERY_SIZE(size=1):
+    class _STORAGE_PROPERTY_QUERY(Structure):
+        # no pack
+        _fields_ = [
+            ("PropertyId", STORAGE_PROPERTY_ID),
+            ("QueryType", STORAGE_QUERY_TYPE),
+            ("AdditionalParameters", BYTE * size),
+        ]
+
+    return _STORAGE_PROPERTY_QUERY
 
 
-class STORAGE_DEVICE_DESCRIPTOR(Structure):
-    # no pack
+STORAGE_PROPERTY_QUERY = STORAGE_PROPERTY_QUERY_SIZE()
+
+
+def STORAGE_DEVICE_DESCRIPTOR_SIZE(size=1):
+    class _STORAGE_DEVICE_DESCRIPTOR(Structure):
+        # no pack
+        _fields_ = [
+            ("Version", DWORD),
+            ("Size", DWORD),
+            ("DeviceType", BYTE),
+            ("DeviceTypeModifier", BYTE),
+            ("RemovableMedia", BOOLEAN),
+            ("CommandQueueing", BOOLEAN),
+            ("VendorIdOffset", DWORD),
+            ("ProductIdOffset", DWORD),
+            ("ProductRevisionOffset", DWORD),
+            ("SerialNumberOffset", DWORD),
+            ("BusType", STORAGE_BUS_TYPE),
+            ("RawPropertiesLength", DWORD),
+            ("RawDeviceProperties", BYTE * size),
+        ]
+
+    return _STORAGE_DEVICE_DESCRIPTOR
+
+
+STORAGE_DEVICE_DESCRIPTOR = STORAGE_DEVICE_DESCRIPTOR_SIZE()
+
+
+class STORAGE_DESCRIPTOR_HEADER(Structure):
     _fields_ = [
         ("Version", DWORD),
         ("Size", DWORD),
-        ("DeviceType", BYTE),
-        ("DeviceTypeModifier", BYTE),
-        ("RemovableMedia", BOOLEAN),
-        ("CommandQueueing", BOOLEAN),
-        ("VendorIdOffset", DWORD),
-        ("ProductIdOffset", DWORD),
-        ("ProductRevisionOffset", DWORD),
-        ("SerialNumberOffset", DWORD),
-        ("BusType", STORAGE_BUS_TYPE),
-        ("RawPropertiesLength", DWORD),
-        ("RawDeviceProperties", BYTE * 1),
     ]
 
 
@@ -832,7 +891,7 @@ class DRIVE_LAYOUT_INFORMATION_EX_DUMMYUNIONNAME(Union):
     ]
 
 
-def DRIVE_LAYOUT_INFORMATION_EX(size=1):
+def DRIVE_LAYOUT_INFORMATION_EX_SIZE(size=1):
     class _DRIVE_LAYOUT_INFORMATION_EX(Structure):
         _anonymous_ = ("u",)
         _fields_ = [
@@ -845,11 +904,37 @@ def DRIVE_LAYOUT_INFORMATION_EX(size=1):
     return _DRIVE_LAYOUT_INFORMATION_EX
 
 
+DRIVE_LAYOUT_INFORMATION_EX = DRIVE_LAYOUT_INFORMATION_EX_SIZE()
+
+
 class STORAGE_DEVICE_NUMBER(Structure):
     _fields_ = [
         ("DeviceType", DEVICE_TYPE),
         ("DeviceNumber", DWORD),
         ("PartitionNumber", DWORD),
+    ]
+
+
+class STORAGE_PROTOCOL_SPECIFIC_DATA(Structure):
+    _fields_ = [
+        ("ProtocolType", STORAGE_PROTOCOL_TYPE),
+        ("DataType", DWORD),
+        ("ProtocolDataRequestValue", DWORD),
+        ("ProtocolDataRequestSubValue", DWORD),
+        ("ProtocolDataOffset", DWORD),
+        ("ProtocolDataLength", DWORD),
+        ("FixedProtocolReturnData", DWORD),
+        ("ProtocolDataRequestSubValue2", DWORD),
+        ("ProtocolDataRequestSubValue3", DWORD),
+        ("ProtocolDataRequestSubValue4", DWORD),
+    ]
+
+
+class STORAGE_PROTOCOL_DATA_DESCRIPTOR(Structure):
+    _fields_ = [
+        ("Version", DWORD),
+        ("Size", DWORD),
+        ("ProtocolSpecificData", STORAGE_PROTOCOL_SPECIFIC_DATA),
     ]
 
 
