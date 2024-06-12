@@ -1,7 +1,15 @@
+"""Ctypes port of Windows SDK"""
+
 import platform
 from ctypes import LibraryLoader, Structure, Union, WinDLL, WinError, c_int
 from ctypes.wintypes import HANDLE
-from typing import Any, Callable, Iterable, Iterator, Tuple
+from enum import IntEnum
+from typing import Any, Callable, Iterable, Iterator, Tuple, Type
+
+from .shared.guiddef import GUID
+from .wintypes import BOOL, BOOLEAN
+
+__version__ = "0.0.13"
 
 windll = LibraryLoader(WinDLL)
 
@@ -22,6 +30,19 @@ class CEnum(c_int):
             return self.value == other.value
         return NotImplemented
 
+    @classmethod
+    def enum(cls):
+        try:
+            return cls._enum
+        except AttributeError:
+            name = cls.__name__
+            values = tuple((name, value) for name, value in vars(cls).items() if not name.startswith("_"))
+            cls._enum = IntEnum(name, values)
+            return cls._enum
+
+    def to_enum(self) -> IntEnum:
+        return self.enum()(self.value)
+
 
 class WinApiError(OSError):
     pass
@@ -40,6 +61,7 @@ def _value_with_length(values: Iterable) -> Iterator:
 
 
 def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
+    anonymous = getattr(struct, "_anonymous_", ()) + ("DUMMYSTRUCTNAME", "DUMMYUNIONNAME")
     for fieldinfo in struct._fields_:
         if len(fieldinfo) == 2:
             name, _ = fieldinfo
@@ -50,8 +72,14 @@ def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
 
         value = getattr(struct, name)
 
-        if hasattr(value, "_fields_"):
-            if name in struct._anonymous_:
+        if isinstance(value, (bool, int, GUID)):  # pass-through already converted types, also catched IntEnum
+            pass
+        elif isinstance(value, CEnum):
+            value = value.to_enum()
+        elif isinstance(value, (BOOL, BOOLEAN)):
+            value = bool(value.value)
+        elif hasattr(value, "_fields_"):
+            if name in anonymous:
                 yield from _struct2pairs(value)
                 continue
             value = dict(_struct2pairs(value))
@@ -59,6 +87,8 @@ def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
             value = list(_value_with_length(value))
         elif hasattr(value, "value"):
             value = value.value
+        else:
+            assert False, (name, value, type(value))
 
         yield name, value
 
@@ -68,6 +98,13 @@ def struct2dict(struct: Structure) -> dict:
 
 
 def nonzero(result, func, arguments):
+    if result == 0:
+        raise WinError()
+
+    return result
+
+
+def nonnull(result, func, arguments):
     if result == 0:
         raise WinError()
 
@@ -102,27 +139,33 @@ def _not_available(funcname: str) -> Callable:
     return inner
 
 
-def make_struct(fields):
+def make_struct(fields, pack: int = 0) -> Type[Structure]:
     anonymous = []
     for name, *_ in fields:
-        if name in ["u", "DUMMYSTRUCTNAME"]:
+        if name in ["DUMMYSTRUCTNAME"]:
             anonymous.append(name)
 
     class _Structure(Structure):
-        _anonymous_ = anonymous
+        _pack_ = pack
+        _anonymous_ = tuple(anonymous)
         _fields_ = fields
 
     return _Structure
 
 
-def make_union(fields):
+def make_union(fields, pack: int = 0) -> Type[Union]:
     anonymous = []
     for name, *_ in fields:
-        if name in ["u", "DUMMYSTRUCTNAME"]:
+        if name in ["DUMMYUNIONNAME"]:
             anonymous.append(name)
 
     class _Union(Union):
-        _anonymous_ = anonymous
+        _pack_ = pack
+        _anonymous_ = tuple(anonymous)
         _fields_ = fields
 
     return _Union
+
+
+def DECLSPEC_ALIGN(n: int) -> None:
+    pass

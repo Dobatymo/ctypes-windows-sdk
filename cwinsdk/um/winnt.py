@@ -6,6 +6,7 @@ from ..km.crt.excpt import EXCEPTION_DISPOSITION
 from ..shared.basetsd import DWORD64, KAFFINITY, LONG64, PDWORD64, SIZE_T, ULONG_PTR
 from ..shared.guiddef import GUID
 from ..shared.ntdef import CHAR, LONGLONG, PVOID, PVOID64, ULONGLONG
+from ..wintypes import BOOLEAN  # noqa: F401
 
 SHORT = c_short
 LONG = c_long
@@ -4261,7 +4262,7 @@ class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_DUMMYUNIONNAME(Union):
 
 
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION(Structure):
-    _anonymous_ = ["Dummy"]
+    _anonymous_ = ("Dummy",)
     _fields_ = [
         ("ProcessorMask", ULONG_PTR),
         ("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
@@ -4343,7 +4344,7 @@ class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX_DUMMYUNIONNAME(Union):
 
 
 class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Structure):
-    _anonymous_ = ["Dummy"]
+    _anonymous_ = ("Dummy",)
     _fields_ = [
         ("Relationship", LOGICAL_PROCESSOR_RELATIONSHIP),
         ("Size", DWORD),

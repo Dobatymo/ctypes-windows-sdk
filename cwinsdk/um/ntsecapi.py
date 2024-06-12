@@ -1,8 +1,9 @@
 from ctypes import POINTER, Structure, Union
-from ctypes.wintypes import BOOLEAN, LARGE_INTEGER, ULONG
+from ctypes.wintypes import LARGE_INTEGER, ULONG
 
 from .. import CEnum, windll
 from ..shared.ntdef import NTSTATUS, PVOID, UCHAR
+from ..wintypes import BOOLEAN
 from .lsalookup import LSA_UNICODE_STRING
 from .winnt import ACCESS_MASK, PSID
 

@@ -1,11 +1,12 @@
 from ctypes import POINTER
-from ctypes.wintypes import BOOL, BOOLEAN, BYTE, DWORD, HANDLE, LONG, LPCWSTR, LPVOID, LPWSTR, ULONG
+from ctypes.wintypes import BYTE, DWORD, HANDLE, LONG, LPCWSTR, LPVOID, LPWSTR, ULONG
 
 from .. import nonzero, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 from ..shared.guiddef import GUID
 from ..shared.minwindef import LPBOOL, LPDWORD, PBOOL, PDWORD, PUCHAR, PULONG, UCHAR
 from ..shared.ntdef import PVOID
+from ..wintypes import BOOL, BOOLEAN
 from .minwinbase import SECURITY_ATTRIBUTES
 from .winnt import (
     ACL_INFORMATION_CLASS,

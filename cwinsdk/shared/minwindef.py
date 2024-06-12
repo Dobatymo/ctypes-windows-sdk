@@ -1,6 +1,7 @@
 from ctypes import POINTER, Structure, c_float, c_int, c_long, c_ubyte, c_uint, c_ulong, c_ushort, c_void_p
 from ctypes.wintypes import HANDLE
 
+from ..wintypes import BOOL
 from .basetsd import LONG_PTR, UINT_PTR
 
 CPOINTER = POINTER
@@ -15,7 +16,6 @@ PUCHAR = POINTER(UCHAR)
 MAX_PATH = 260
 
 DWORD = c_ulong
-BOOL = c_int
 BYTE = c_ubyte
 WORD = c_ushort
 FLOAT = c_float

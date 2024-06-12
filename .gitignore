@@ -5,3 +5,6 @@ __pycache__/
 *.egg-info
 build/
 dist/
+
+transpile/shared/
+transpile/um/

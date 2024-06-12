@@ -1,8 +1,9 @@
 from ctypes import POINTER, Structure
-from ctypes.wintypes import BOOL, CHAR, DWORD, HWND, WCHAR
+from ctypes.wintypes import BOOL, CHAR, DWORD, HWND, PBYTE, WCHAR
 
 from .. import nonzero, validhandle, windll
 from ..shared.basetsd import ULONG_PTR
+from ..shared.devpropdef import DEVPROPKEY, DEVPROPTYPE
 from ..shared.guiddef import GUID
 from ..shared.minwindef import PDWORD
 from ..shared.ntdef import PCSTR, PSTR, PVOID, PWSTR
@@ -10,6 +11,8 @@ from .winnt import ANYSIZE_ARRAY, PCWSTR
 
 HDSKSPC = PVOID
 HDEVINFO = PVOID
+
+LINE_LEN = 256
 
 
 class SP_DEVINFO_DATA(Structure):
@@ -89,6 +92,7 @@ SetupDiGetINFClassW.restype = BOOL
 SetupDiEnumDeviceInfo = windll.setupapi.SetupDiEnumDeviceInfo
 SetupDiEnumDeviceInfo.argtypes = [HDEVINFO, DWORD, POINTER(SP_DEVINFO_DATA)]
 SetupDiEnumDeviceInfo.restype = BOOL
+SetupDiEnumDeviceInfo.errcheck = nonzero
 
 SetupDiDestroyDeviceInfoList = windll.setupapi.SetupDiDestroyDeviceInfoList
 SetupDiDestroyDeviceInfoList.argtypes = [HDEVINFO]
@@ -128,3 +132,32 @@ SetupDiGetDeviceInterfaceDetailW.argtypes = [
 ]
 SetupDiGetDeviceInterfaceDetailW.restype = BOOL
 SetupDiGetDeviceInterfaceDetailW.errcheck = nonzero
+
+
+SetupDiGetClassDescriptionA = windll.setupapi.SetupDiGetClassDescriptionA
+SetupDiGetClassDescriptionA.argtypes = [POINTER(GUID), PSTR, DWORD, PDWORD]
+SetupDiGetClassDescriptionA.restype = BOOL
+SetupDiGetClassDescriptionA.errcheck = nonzero
+
+SetupDiGetClassDescriptionW = windll.setupapi.SetupDiGetClassDescriptionW
+SetupDiGetClassDescriptionW.argtypes = [POINTER(GUID), PWSTR, DWORD, PDWORD]
+SetupDiGetClassDescriptionW.restype = BOOL
+SetupDiGetClassDescriptionW.errcheck = nonzero
+
+SetupDiGetDevicePropertyKeys = windll.setupapi.SetupDiGetDevicePropertyKeys
+SetupDiGetDevicePropertyKeys.argtypes = [HDEVINFO, POINTER(SP_DEVINFO_DATA), POINTER(DEVPROPKEY), DWORD, PDWORD, DWORD]
+SetupDiGetDevicePropertyKeys.restype = BOOL
+
+SetupDiGetDevicePropertyW = windll.setupapi.SetupDiGetDevicePropertyW
+SetupDiGetDevicePropertyW.argtypes = [
+    HDEVINFO,
+    POINTER(SP_DEVINFO_DATA),
+    POINTER(DEVPROPKEY),
+    POINTER(DEVPROPTYPE),
+    PBYTE,
+    DWORD,
+    PDWORD,
+    DWORD,
+]
+SetupDiGetDevicePropertyW.restype = BOOL
+SetupDiGetDevicePropertyW.errcheck = nonzero

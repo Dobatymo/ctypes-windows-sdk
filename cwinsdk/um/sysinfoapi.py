@@ -26,7 +26,7 @@ class SYSTEM_INFO_DUMMYSTRUCTNAME(Structure):
 
 
 class SYSTEM_INFO_DUMMYUNIONNAME(Union):
-    _anonymous_ = ["dummy"]
+    _anonymous_ = ("dummy",)
     _fields_ = [
         ("dwOemId", DWORD),
         ("dummy", SYSTEM_INFO_DUMMYSTRUCTNAME),
@@ -34,7 +34,7 @@ class SYSTEM_INFO_DUMMYUNIONNAME(Union):
 
 
 class SYSTEM_INFO(Structure):
-    _anonymous_ = ["dummy"]
+    _anonymous_ = ("dummy",)
     _fields_ = [
         ("dummy", SYSTEM_INFO_DUMMYUNIONNAME),
         ("dwPageSize", DWORD),

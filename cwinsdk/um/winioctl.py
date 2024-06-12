@@ -1,11 +1,12 @@
-from ctypes import Structure, Union
-from ctypes.wintypes import BOOLEAN, BYTE, DWORD, LARGE_INTEGER, SHORT, WCHAR, WORD
+from ctypes import POINTER, Structure, Union
+from ctypes.wintypes import BYTE, DWORD, LARGE_INTEGER, SHORT, WCHAR, WORD
 
-from .. import CEnum
+from .. import CEnum, make_struct, make_union
 from ..shared.basetsd import DWORD64
 from ..shared.guiddef import GUID
 from ..shared.ntddstor import STORAGE_BUS_TYPE
-from .winnt import ANYSIZE_ARRAY, FILE_READ_DATA, FILE_WRITE_DATA
+from ..wintypes import BOOLEAN
+from .winnt import ANYSIZE_ARRAY, DWORDLONG, FILE_READ_DATA, FILE_WRITE_DATA
 
 
 def CTL_CODE(DeviceType, Function, Method, Access):
@@ -645,7 +646,6 @@ class VERIFY_INFORMATION(Structure):
 
 
 class GETVERSIONINPARAMS(Structure):
-    __slots__ = ()
     _pack_ = 1
     _fields_ = [
         ("bVersion", BYTE),
@@ -939,3 +939,519 @@ class STORAGE_PROTOCOL_DATA_DESCRIPTOR(Structure):
 
 
 GUID_DEVINTERFACE_DISK = GUID(0x53F56307, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_CDROM = GUID(0x53F56308, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_PARTITION = GUID(0x53F5630A, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_TAPE = GUID(0x53F5630B, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_WRITEONCEDISK = GUID(0x53F5630C, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_VOLUME = GUID(0x53F5630D, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_MEDIUMCHANGER = GUID(0x53F56310, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_FLOPPY = GUID(0x53F56311, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_CDCHANGER = GUID(0x53F56312, 0xB6BF, 0x11D0, (0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_STORAGEPORT = GUID(0x2ACCFE60, 0xC130, 0x11D2, (0xB0, 0x82, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B))
+GUID_DEVINTERFACE_VMLUN = GUID(0x6F416619, 0x9F29, 0x42A5, (0xB2, 0x0B, 0x37, 0xE2, 0x19, 0xCA, 0x02, 0xB0))
+GUID_DEVINTERFACE_SES = GUID(0x1790C9EC, 0x47D5, 0x4DF3, (0xB5, 0xAF, 0x9A, 0xDF, 0x3C, 0xF2, 0x3E, 0x48))
+GUID_DEVINTERFACE_ZNSDISK = GUID(0xB87941C5, 0xFFDB, 0x43C7, (0xB6, 0xB1, 0x20, 0xB6, 0x32, 0xF0, 0xB1, 0x09))
+
+
+class FILESYSTEM_STATISTICS(Structure):
+    _fields_ = [
+        ("FileSystemType", WORD),
+        ("Version", WORD),  # currently version 1
+        ("SizeOfCompleteStructure", DWORD),  # must by a multiple of 64 bytes
+        ("UserFileReads", DWORD),
+        ("UserFileReadBytes", DWORD),
+        ("UserDiskReads", DWORD),
+        ("UserFileWrites", DWORD),
+        ("UserFileWriteBytes", DWORD),
+        ("UserDiskWrites", DWORD),
+        ("MetaDataReads", DWORD),
+        ("MetaDataReadBytes", DWORD),
+        ("MetaDataDiskReads", DWORD),
+        ("MetaDataWrites", DWORD),
+        ("MetaDataWriteBytes", DWORD),
+        ("MetaDataDiskWrites", DWORD),
+        #  The file system's private structure is appended here.
+    ]
+
+
+PFILESYSTEM_STATISTICS = POINTER(FILESYSTEM_STATISTICS)
+
+# values for FS_STATISTICS.FileSystemType
+
+FILESYSTEM_STATISTICS_TYPE_NTFS = 1
+FILESYSTEM_STATISTICS_TYPE_FAT = 2
+FILESYSTEM_STATISTICS_TYPE_EXFAT = 3
+FILESYSTEM_STATISTICS_TYPE_REFS = 4
+
+#  File System Specific Statistics Data
+
+
+class FAT_STATISTICS(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ("CreateHits", DWORD),
+        ("SuccessfulCreates", DWORD),
+        ("FailedCreates", DWORD),
+        ("NonCachedReads", DWORD),
+        ("NonCachedReadBytes", DWORD),
+        ("NonCachedWrites", DWORD),
+        ("NonCachedWriteBytes", DWORD),
+        ("NonCachedDiskReads", DWORD),
+        ("NonCachedDiskWrites", DWORD),
+    ]
+
+
+PFAT_STATISTICS = POINTER(FAT_STATISTICS)
+
+
+class EXFAT_STATISTICS(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ("CreateHits", DWORD),
+        ("SuccessfulCreates", DWORD),
+        ("FailedCreates", DWORD),
+        ("NonCachedReads", DWORD),
+        ("NonCachedReadBytes", DWORD),
+        ("NonCachedWrites", DWORD),
+        ("NonCachedWriteBytes", DWORD),
+        ("NonCachedDiskReads", DWORD),
+        ("NonCachedDiskWrites", DWORD),
+    ]
+
+
+PEXFAT_STATISTICS = POINTER(EXFAT_STATISTICS)
+
+
+class NTFS_STATISTICS(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ("LogFileFullExceptions", DWORD),
+        ("OtherExceptions", DWORD),
+        # Other meta data io's
+        ("MftReads", DWORD),
+        ("MftReadBytes", DWORD),
+        ("MftWrites", DWORD),
+        ("MftWriteBytes", DWORD),
+        (
+            "MftWritesUserLevel",
+            make_struct(
+                [
+                    ("Write", WORD),
+                    ("Create", WORD),
+                    ("SetInfo", WORD),
+                    ("Flush", WORD),
+                ],
+                1,
+            ),
+        ),
+        ("MftWritesFlushForLogFileFull", WORD),
+        ("MftWritesLazyWriter", WORD),
+        ("MftWritesUserRequest", WORD),
+        ("Mft2Writes", DWORD),
+        ("Mft2WriteBytes", DWORD),
+        (
+            "Mft2WritesUserLevel",
+            make_struct(
+                [
+                    ("Write", WORD),
+                    ("Create", WORD),
+                    ("SetInfo", WORD),
+                    ("Flush", WORD),
+                ],
+                1,
+            ),
+        ),
+        ("Mft2WritesFlushForLogFileFull", WORD),
+        ("Mft2WritesLazyWriter", WORD),
+        ("Mft2WritesUserRequest", WORD),
+        ("RootIndexReads", DWORD),
+        ("RootIndexReadBytes", DWORD),
+        ("RootIndexWrites", DWORD),
+        ("RootIndexWriteBytes", DWORD),
+        ("BitmapReads", DWORD),
+        ("BitmapReadBytes", DWORD),
+        ("BitmapWrites", DWORD),
+        ("BitmapWriteBytes", DWORD),
+        ("BitmapWritesFlushForLogFileFull", WORD),
+        ("BitmapWritesLazyWriter", WORD),
+        ("BitmapWritesUserRequest", WORD),
+        (
+            "BitmapWritesUserLevel",
+            make_struct(
+                [
+                    ("Write", WORD),
+                    ("Create", WORD),
+                    ("SetInfo", WORD),
+                ],
+                1,
+            ),
+        ),
+        ("MftBitmapReads", DWORD),
+        ("MftBitmapReadBytes", DWORD),
+        ("MftBitmapWrites", DWORD),
+        ("MftBitmapWriteBytes", DWORD),
+        ("MftBitmapWritesFlushForLogFileFull", WORD),
+        ("MftBitmapWritesLazyWriter", WORD),
+        ("MftBitmapWritesUserRequest", WORD),
+        (
+            "MftBitmapWritesUserLevel",
+            make_struct(
+                [
+                    ("Write", WORD),
+                    ("Create", WORD),
+                    ("SetInfo", WORD),
+                    ("Flush", WORD),
+                ],
+                1,
+            ),
+        ),
+        ("UserIndexReads", DWORD),
+        ("UserIndexReadBytes", DWORD),
+        ("UserIndexWrites", DWORD),
+        ("UserIndexWriteBytes", DWORD),
+        # Additions for NT 5.0
+        ("LogFileReads", DWORD),
+        ("LogFileReadBytes", DWORD),
+        ("LogFileWrites", DWORD),
+        ("LogFileWriteBytes", DWORD),
+        (
+            "Allocate",
+            make_struct(
+                [
+                    ("Calls", DWORD),  # number of individual calls to allocate clusters
+                    ("Clusters", DWORD),  # number of clusters allocated
+                    ("Hints", DWORD),  # number of times a hint was specified
+                    ("RunsReturned", DWORD),  # number of runs used to satisfy all the requests
+                    ("HintsHonored", DWORD),  # number of times the hint was useful
+                    ("HintsClusters", DWORD),  # number of clusters allocated via the hint
+                    ("Cache", DWORD),  # number of times the cache was useful other than the hint
+                    ("CacheClusters", DWORD),  # number of clusters allocated via the cache other than the hint
+                    ("CacheMiss", DWORD),  # number of times the cache wasn't useful
+                    ("CacheMissClusters", DWORD),  # number of clusters allocated without the cache
+                ],
+                1,
+            ),
+        ),
+        #  Additions for Windows 8.1
+        ("DiskResourcesExhausted", DWORD),
+        #  All future expansion of this structure needs to be in NTFS_STATISTICS_EX starting Windows 10
+    ]
+
+
+PNTFS_STATISTICS = POINTER(NTFS_STATISTICS)
+
+
+class FILESYSTEM_STATISTICS_EX(Structure):
+    _pack_ = 1
+    _fields_ = [
+        ("FileSystemType", WORD),
+        ("Version", WORD),  # currently version 1
+        ("SizeOfCompleteStructure", DWORD),  # must by a multiple of 64 bytes
+        ("UserFileReads", DWORDLONG),
+        ("UserFileReadBytes", DWORDLONG),
+        ("UserDiskReads", DWORDLONG),
+        ("UserFileWrites", DWORDLONG),
+        ("UserFileWriteBytes", DWORDLONG),
+        ("UserDiskWrites", DWORDLONG),
+        ("MetaDataReads", DWORDLONG),
+        ("MetaDataReadBytes", DWORDLONG),
+        ("MetaDataDiskReads", DWORDLONG),
+        ("MetaDataWrites", DWORDLONG),
+        ("MetaDataWriteBytes", DWORDLONG),
+        ("MetaDataDiskWrites", DWORDLONG),
+        #  The file system's private structure is appended here.
+    ]
+
+
+PFILESYSTEM_STATISTICS_EX = POINTER(FILESYSTEM_STATISTICS_EX)
+
+
+class NTFS_STATISTICS_EX(Structure):
+    _fields_ = [
+        ("LogFileFullExceptions", DWORD),
+        ("OtherExceptions", DWORD),
+        # Other meta data io's
+        ("MftReads", DWORDLONG),
+        ("MftReadBytes", DWORDLONG),
+        ("MftWrites", DWORDLONG),
+        ("MftWriteBytes", DWORDLONG),
+        (
+            "MftWritesUserLevel",
+            make_struct(
+                [
+                    ("Write", DWORD),
+                    ("Create", DWORD),
+                    ("SetInfo", DWORD),
+                    ("Flush", DWORD),
+                ],
+                1,
+            ),
+        ),
+        ("MftWritesFlushForLogFileFull", DWORD),
+        ("MftWritesLazyWriter", DWORD),
+        ("MftWritesUserRequest", DWORD),
+        ("Mft2Writes", DWORDLONG),
+        ("Mft2WriteBytes", DWORDLONG),
+        (
+            "Mft2WritesUserLevel",
+            make_struct(
+                [
+                    ("Write", DWORD),
+                    ("Create", DWORD),
+                    ("SetInfo", DWORD),
+                    ("Flush", DWORD),
+                ],
+                1,
+            ),
+        ),
+        ("Mft2WritesFlushForLogFileFull", DWORD),
+        ("Mft2WritesLazyWriter", DWORD),
+        ("Mft2WritesUserRequest", DWORD),
+        ("RootIndexReads", DWORDLONG),
+        ("RootIndexReadBytes", DWORDLONG),
+        ("RootIndexWrites", DWORDLONG),
+        ("RootIndexWriteBytes", DWORDLONG),
+        ("BitmapReads", DWORDLONG),
+        ("BitmapReadBytes", DWORDLONG),
+        ("BitmapWrites", DWORDLONG),
+        ("BitmapWriteBytes", DWORDLONG),
+        ("BitmapWritesFlushForLogFileFull", DWORD),
+        ("BitmapWritesLazyWriter", DWORD),
+        ("BitmapWritesUserRequest", DWORD),
+        (
+            "BitmapWritesUserLevel",
+            make_struct(
+                [
+                    ("Write", DWORD),
+                    ("Create", DWORD),
+                    ("SetInfo", DWORD),
+                    ("Flush", DWORD),
+                ],
+                1,
+            ),
+        ),
+        ("MftBitmapReads", DWORDLONG),
+        ("MftBitmapReadBytes", DWORDLONG),
+        ("MftBitmapWrites", DWORDLONG),
+        ("MftBitmapWriteBytes", DWORDLONG),
+        ("MftBitmapWritesFlushForLogFileFull", DWORD),
+        ("MftBitmapWritesLazyWriter", DWORD),
+        ("MftBitmapWritesUserRequest", DWORD),
+        (
+            "MftBitmapWritesUserLevel",
+            make_struct(
+                [
+                    ("Write", DWORD),
+                    ("Create", DWORD),
+                    ("SetInfo", DWORD),
+                    ("Flush", DWORD),
+                ],
+                1,
+            ),
+        ),
+        ("UserIndexReads", DWORDLONG),
+        ("UserIndexReadBytes", DWORDLONG),
+        ("UserIndexWrites", DWORDLONG),
+        ("UserIndexWriteBytes", DWORDLONG),
+        # Additions for NT 5.0
+        ("LogFileReads", DWORDLONG),
+        ("LogFileReadBytes", DWORDLONG),
+        ("LogFileWrites", DWORDLONG),
+        ("LogFileWriteBytes", DWORDLONG),
+        (
+            "Allocate",
+            make_struct(
+                [
+                    ("Calls", DWORD),  # number of individual calls to allocate clusters
+                    ("RunsReturned", DWORD),  # number of runs used to satisfy all the requests
+                    ("Hints", DWORD),  # number of times a hint was specified
+                    ("HintsHonored", DWORD),  # number of times the hint was useful
+                    ("Cache", DWORD),  # number of times the cache was useful other than the hint
+                    ("CacheMiss", DWORD),  # number of times the cache wasn't useful
+                    ("Clusters", DWORDLONG),  # number of clusters allocated
+                    ("HintsClusters", DWORDLONG),  # number of clusters allocated via the hint
+                    ("CacheClusters", DWORDLONG),  # number of clusters allocated via the cache other than the hint
+                    ("CacheMissClusters", DWORDLONG),  # number of clusters allocated without the cache
+                ],
+                1,
+            ),
+        ),
+        #  Additions for Windows 8.1
+        ("DiskResourcesExhausted", DWORD),
+        #  Additions for Windows 10
+        ("VolumeTrimCount", DWORDLONG),
+        ("VolumeTrimTime", DWORDLONG),
+        ("VolumeTrimByteCount", DWORDLONG),
+        ("FileLevelTrimCount", DWORDLONG),
+        ("FileLevelTrimTime", DWORDLONG),
+        ("FileLevelTrimByteCount", DWORDLONG),
+        ("VolumeTrimSkippedCount", DWORDLONG),
+        ("VolumeTrimSkippedByteCount", DWORDLONG),
+        #  Additions for NtfsFillStatInfoFromMftRecord
+        ("NtfsFillStatInfoFromMftRecordCalledCount", DWORDLONG),
+        ("NtfsFillStatInfoFromMftRecordBailedBecauseOfAttributeListCount", DWORDLONG),
+        ("NtfsFillStatInfoFromMftRecordBailedBecauseOfNonResReparsePointCount", DWORDLONG),
+    ]
+
+
+PNTFS_STATISTICS_EX = POINTER(NTFS_STATISTICS_EX)
+
+
+class NTFS_VOLUME_DATA_BUFFER(Structure):
+    _fields_ = [
+        ("VolumeSerialNumber", LARGE_INTEGER),
+        ("NumberSectors", LARGE_INTEGER),
+        ("TotalClusters", LARGE_INTEGER),
+        ("FreeClusters", LARGE_INTEGER),
+        ("TotalReserved", LARGE_INTEGER),
+        ("BytesPerSector", DWORD),
+        ("BytesPerCluster", DWORD),
+        ("BytesPerFileRecordSegment", DWORD),
+        ("ClustersPerFileRecordSegment", DWORD),
+        ("MftValidDataLength", LARGE_INTEGER),
+        ("MftStartLcn", LARGE_INTEGER),
+        ("Mft2StartLcn", LARGE_INTEGER),
+        ("MftZoneStart", LARGE_INTEGER),
+        ("MftZoneEnd", LARGE_INTEGER),
+    ]
+
+
+class NTFS_EXTENDED_VOLUME_DATA(Structure):
+    _fields_ = [
+        ("ByteCount", DWORD),
+        ("MajorVersion", WORD),
+        ("MinorVersion", WORD),
+        ("BytesPerPhysicalSector", DWORD),
+        ("LfsMajorVersion", WORD),
+        ("LfsMinorVersion", WORD),
+        ("MaxDeviceTrimExtentCount", DWORD),
+        ("MaxDeviceTrimByteCount", DWORD),
+        ("MaxVolumeTrimExtentCount", DWORD),
+        ("MaxVolumeTrimByteCount", DWORD),
+    ]
+
+
+# partition type
+GPT_ATTRIBUTE_PLATFORM_REQUIRED = 0x0000000000000001
+GPT_ATTRIBUTE_NO_BLOCK_IO_PROTOCOL = 0x0000000000000002
+GPT_ATTRIBUTE_LEGACY_BIOS_BOOTABLE = 0x0000000000000004
+# PartitionType is PARTITION_BASIC_DATA_GUID.
+GPT_BASIC_DATA_ATTRIBUTE_NO_DRIVE_LETTER = 0x8000000000000000
+GPT_BASIC_DATA_ATTRIBUTE_HIDDEN = 0x4000000000000000
+GPT_BASIC_DATA_ATTRIBUTE_SHADOW_COPY = 0x2000000000000000
+GPT_BASIC_DATA_ATTRIBUTE_READ_ONLY = 0x1000000000000000
+GPT_BASIC_DATA_ATTRIBUTE_OFFLINE = 0x0800000000000000
+GPT_BASIC_DATA_ATTRIBUTE_DAX = 0x0400000000000000
+GPT_BASIC_DATA_ATTRIBUTE_SERVICE = 0x0200000000000000
+# PartitionType is PARTITION_SPACES_GUID.
+GPT_SPACES_ATTRIBUTE_NO_METADATA = 0x8000000000000000
+
+VOLUME_IS_DIRTY = 0x00000001
+VOLUME_UPGRADE_SCHEDULED = 0x00000002
+VOLUME_SESSION_OPEN = 0x00000004
+
+IOCTL_DISK_UPDATE_DRIVE_SIZE = CTL_CODE(IOCTL_DISK_BASE, 0x0032, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+IOCTL_DISK_GROW_PARTITION = CTL_CODE(IOCTL_DISK_BASE, 0x0034, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+
+IOCTL_DISK_GET_CACHE_INFORMATION = CTL_CODE(IOCTL_DISK_BASE, 0x0035, METHOD_BUFFERED, FILE_READ_ACCESS)
+IOCTL_DISK_SET_CACHE_INFORMATION = CTL_CODE(
+    IOCTL_DISK_BASE, 0x0036, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS
+)
+IOCTL_DISK_GET_WRITE_CACHE_STATE = CTL_CODE(IOCTL_DISK_BASE, 0x0037, METHOD_BUFFERED, FILE_READ_ACCESS)
+IOCTL_DISK_DELETE_DRIVE_LAYOUT = CTL_CODE(
+    IOCTL_DISK_BASE, 0x0040, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS
+)
+
+
+class DISK_CACHE_RETENTION_PRIORITY(CEnum):
+    EqualPriority = 0
+    KeepPrefetchedData = 1
+    KeepReadData = 2
+
+
+class DISK_CACHE_INFORMATION(Structure):
+    _anonymous_ = ("DUMMYUNIONNAME",)
+    _fields_ = [
+        ("ParametersSavable", BOOLEAN),
+        ("ReadCacheEnabled", BOOLEAN),
+        ("WriteCacheEnabled", BOOLEAN),
+        ("ReadRetentionPriority", DISK_CACHE_RETENTION_PRIORITY),
+        ("WriteRetentionPriority", DISK_CACHE_RETENTION_PRIORITY),
+        ("DisablePrefetchTransferLength", WORD),
+        ("PrefetchScalar", BOOLEAN),
+        (
+            "DUMMYUNIONNAME",
+            make_union(
+                [
+                    (
+                        "ScalarPrefetch",
+                        make_struct(
+                            [
+                                ("Minimum", WORD),
+                                ("Maximum", WORD),
+                                # The maximum number of blocks which will be prefetched - useful
+                                # with the scalar limits to set definite upper limits.
+                                ("MaximumBlocks", WORD),
+                            ]
+                        ),
+                    ),
+                    (
+                        "BlockPrefetch",
+                        make_struct(
+                            [
+                                ("Minimum", WORD),
+                                ("Maximum", WORD),
+                            ]
+                        ),
+                    ),
+                ]
+            ),
+        ),
+    ]
+
+
+# IOCTL_STORAGE_FIRMWARE_GET_INFO
+class STORAGE_HW_FIRMWARE_INFO_QUERY(Structure):
+    _fields_ = [
+        ("Version", DWORD),  # sizeof(STORAGE_FIRMWARE_INFO_QUERY)
+        ("Size", DWORD),  # Whole size of the buffer (in case this data structure being extended to be variable length)
+        ("Flags", DWORD),
+        ("Reserved", DWORD),
+    ]
+
+
+STORAGE_HW_FIRMWARE_INVALID_SLOT = 0xFF
+
+STORAGE_HW_FIRMWARE_REVISION_LENGTH = 16
+
+
+class STORAGE_HW_FIRMWARE_SLOT_INFO(Structure):
+    _fields_ = [
+        ("Version", DWORD),  # sizeof(STORAGE_HW_FIRMWARE_SLOT_INFO)
+        ("Size", DWORD),  # size the data contained in STORAGE_HW_FIRMWARE_SLOT_INFO.
+        ("SlotNumber", BYTE),
+        ("ReadOnly", BYTE, 1),
+        ("Reserved0", BYTE, 7),
+        ("Reserved1", BYTE * 6),
+        ("Revision", BYTE * STORAGE_HW_FIRMWARE_REVISION_LENGTH),
+    ]
+
+
+class STORAGE_HW_FIRMWARE_INFO(Structure):
+    _fields_ = [
+        ("Version", DWORD),  # sizeof(STORAGE_HW_FIRMWARE_INFO)
+        ("Size", DWORD),  # size of the whole buffer including slot[]
+        ("SupportUpgrade", BYTE, 1),
+        ("Reserved0", BYTE, 7),
+        ("SlotCount", BYTE),
+        ("ActiveSlot", BYTE),
+        ("PendingActivateSlot", BYTE),
+        ("FirmwareShared", BOOLEAN),  # The firmware applies to both device and adapter. For example: PCIe SSD.
+        ("Reserved", BYTE * 3),
+        (
+            "ImagePayloadAlignment",
+            DWORD,
+        ),  # Number of bytes. Max: PAGE_SIZE. The transfer size should be multiple of this unit size. Some protocol requires at least sector size. 0 means the value is not valid.
+        ("ImagePayloadMaxSize", DWORD),  # for a single command.
+        ("Slot", STORAGE_HW_FIRMWARE_SLOT_INFO * ANYSIZE_ARRAY),
+    ]

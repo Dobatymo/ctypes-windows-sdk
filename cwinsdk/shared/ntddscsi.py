@@ -1,6 +1,7 @@
-from ctypes import Structure
-from ctypes.wintypes import ULONG, USHORT
+from ctypes import POINTER, Structure
+from ctypes.wintypes import LPVOID, ULONG, USHORT
 
+from ..um.winnt import ANYSIZE_ARRAY
 from .basetsd import ULONG_PTR
 from .devioctl import (
     CTL_CODE,
@@ -15,7 +16,7 @@ from .ntdef import PVOID, UCHAR
 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER
 FILE_DEVICE_SCSI = 0x0000001B
 
-DD_SCSI_DEVICE_NAME = rb"\Device\ScsiPort"
+DD_SCSI_DEVICE_NAME = b"\\Device\\ScsiPort"
 
 IOCTL_SCSI_PASS_THROUGH = CTL_CODE(IOCTL_SCSI_BASE, 0x0401, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
 IOCTL_SCSI_MINIPORT = CTL_CODE(IOCTL_SCSI_BASE, 0x0402, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
@@ -64,7 +65,6 @@ MPIO_IOCTL_FLAG_INVOLVE_DSM = 4
 
 
 class SRB_IO_CONTROL(Structure):
-    __slots__ = ()
     _fields_ = [
         ("HeaderLength", ULONG),
         ("Signature", UCHAR * 8),
@@ -75,8 +75,10 @@ class SRB_IO_CONTROL(Structure):
     ]
 
 
+PSRB_IO_CONTROL = POINTER(SRB_IO_CONTROL)
+
+
 class SCSI_PASS_THROUGH(Structure):
-    __slots__ = ()
     _fields_ = [
         ("Length", USHORT),
         ("ScsiStatus", UCHAR),
@@ -94,8 +96,10 @@ class SCSI_PASS_THROUGH(Structure):
     ]
 
 
+PSCSI_PASS_THROUGH = POINTER(SCSI_PASS_THROUGH)
+
+
 class SCSI_PASS_THROUGH_DIRECT(Structure):
-    __slots__ = ()
     _fields_ = [
         ("Length", USHORT),
         ("ScsiStatus", UCHAR),
@@ -111,3 +115,67 @@ class SCSI_PASS_THROUGH_DIRECT(Structure):
         ("SenseInfoOffset", ULONG),
         ("Cdb", UCHAR * 16),
     ]
+
+
+PSCSI_PASS_THROUGH_DIRECT = POINTER(SCSI_PASS_THROUGH_DIRECT)
+
+
+class SCSI_PASS_THROUGH_EX(Structure):
+    _fields_ = [
+        ("Version", ULONG),
+        ("Length", ULONG),  # size of the structure
+        ("CdbLength", ULONG),  # non-zero value should be set by caller
+        ("StorAddressLength", ULONG),  # non-zero value should be set by caller
+        ("ScsiStatus", UCHAR),
+        ("SenseInfoLength", UCHAR),  # optional, can be zero
+        ("DataDirection", UCHAR),  # data transfer direction
+        ("Reserved", UCHAR),  # padding
+        ("TimeOutValue", ULONG),
+        ("StorAddressOffset", ULONG),  # a value bigger than (structure size + CdbLength) should be set by caller
+        ("SenseInfoOffset", ULONG),
+        ("DataOutTransferLength", ULONG),  # optional, can be zero
+        ("DataInTransferLength", ULONG),  # optional, can be zero
+        ("DataOutBufferOffset", ULONG_PTR),
+        ("DataInBufferOffset", ULONG_PTR),
+        ("Cdb", UCHAR * ANYSIZE_ARRAY),
+    ]
+
+
+PSCSI_PASS_THROUGH_EX = POINTER(SCSI_PASS_THROUGH_EX)
+
+
+class SCSI_PASS_THROUGH_DIRECT_EX(Structure):
+    _fields_ = [
+        ("Version", ULONG),
+        ("Length", ULONG),  # size of the structure
+        ("CdbLength", ULONG),  # non-zero value should be set by caller
+        ("StorAddressLength", ULONG),  # non-zero value should be set by caller
+        ("ScsiStatus", UCHAR),
+        ("SenseInfoLength", UCHAR),  # optional, can be zero
+        ("DataDirection", UCHAR),  # data transfer direction
+        ("Reserved", UCHAR),  # padding
+        ("TimeOutValue", ULONG),
+        ("StorAddressOffset", ULONG),  # a value bigger than (structure size + CdbLength) should be set by caller
+        ("SenseInfoOffset", ULONG),
+        ("DataOutTransferLength", ULONG),  # optional, can be zero
+        ("DataInTransferLength", ULONG),  # optional, can be zero
+        ("DataOutBuffer", LPVOID),
+        ("DataInBuffer", LPVOID),
+        ("Cdb", UCHAR * ANYSIZE_ARRAY),
+    ]
+
+
+PSCSI_PASS_THROUGH_DIRECT_EX = POINTER(SCSI_PASS_THROUGH_DIRECT_EX)
+
+
+class SCSI_ADDRESS(Structure):
+    _fields_ = [
+        ("Length", ULONG),
+        ("PortNumber", UCHAR),
+        ("PathId", UCHAR),
+        ("TargetId", UCHAR),
+        ("Lun", UCHAR),
+    ]
+
+
+PSCSI_ADDRESS = POINTER(SCSI_ADDRESS)

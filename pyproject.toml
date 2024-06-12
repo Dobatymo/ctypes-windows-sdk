@@ -1,8 +1,52 @@
+[build-system]
+build-backend = "flit_core.buildapi"
+requires = [
+  "flit-core>=3.2,<4",
+]
+
+[project]
+name = "ctypes-windows-sdk"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Dobatymo", email = "Dobatymo@users.noreply.github.com" },
+]
+requires-python = ">=3.7"
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: ISC License (ISCL)",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development",
+  "Topic :: System :: Operating System",
+
+]
+dynamic = [
+  "description",
+  "version",
+]
+
+urls.Homepage = "https://github.com/Dobatymo/ctypes-windows-sdk"
+
+[tool.flit.module]
+name = "cwinsdk"
+
 [tool.black]
 line-length = 120
 
 [tool.ruff]
 line-length = 120
+
+lint.per-file-ignores."cwinsdk/windows.py" = [
+  "F403",
+]
 
 [tool.isort]
 profile = "black"
@@ -14,4 +58,6 @@ warn_unused_configs = true
 warn_unused_ignores = true
 
 [tool.bandit]
-skips = ["B101"]
+skips = [
+  "B101",
+]

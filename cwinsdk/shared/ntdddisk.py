@@ -39,7 +39,6 @@ ENABLE_DISABLE_AUTO_OFFLINE = 0xDB
 
 
 class GETVERSIONINPARAMS(Structure):
-    __slots__ = ()
     _pack_ = 1
     _fields_ = [
         ("bVersion", UCHAR),
@@ -52,7 +51,6 @@ class GETVERSIONINPARAMS(Structure):
 
 
 class IDEREGS(Structure):
-    __slots__ = ()
     _pack_ = 1
     _fields_ = [
         ("bFeaturesReg", UCHAR),
@@ -67,7 +65,6 @@ class IDEREGS(Structure):
 
 
 class SENDCMDINPARAMS(Structure):
-    __slots__ = ()
     _pack_ = 1
     _fields_ = [
         ("cBufferSize", ULONG),
@@ -80,7 +77,6 @@ class SENDCMDINPARAMS(Structure):
 
 
 class DRIVERSTATUS(Structure):
-    __slots__ = ()
     _pack_ = 1
     _fields_ = [
         ("bDriverError", UCHAR),
@@ -90,8 +86,22 @@ class DRIVERSTATUS(Structure):
     ]
 
 
+# bDriverError values
+
+SMART_NO_ERROR = 0  # No error
+SMART_IDE_ERROR = 1  # Error from IDE controller
+SMART_INVALID_FLAG = 2  # Invalid command flag
+SMART_INVALID_COMMAND = 3  # Invalid command byte
+SMART_INVALID_BUFFER = 4  # Bad buffer (null, invalid addr..)
+SMART_INVALID_DRIVE = 5  # Drive number not valid
+SMART_INVALID_IOCTL = 6  # Invalid IOCTL
+SMART_ERROR_NO_MEM = 7  # Could not lock user's buffer
+SMART_INVALID_REGISTER = 8  # Some IDE Register not valid
+SMART_NOT_SUPPORTED = 9  # Invalid cmd flag set
+SMART_NO_IDE_DEVICE = 10  # Cmd issued to device not present
+
+
 class SENDCMDOUTPARAMS(Structure):
-    __slots__ = ()
     _pack_ = 1
     _fields_ = [
         ("cBufferSize", ULONG),

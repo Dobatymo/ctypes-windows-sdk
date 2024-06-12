@@ -1,8 +1,8 @@
 from ctypes import POINTER, Structure, c_int
-from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPVOID, UINT, WORD
-from warnings import warn
+from ctypes.wintypes import BOOL, BYTE, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPVOID, SHORT, UINT, WCHAR, WORD
 
-from .. import windll
+from .. import make_struct, make_union, windll
+from ..shared.windef import POINTL
 
 HDC = HANDLE
 HGDIOBJ = HANDLE
@@ -14,9 +14,152 @@ VERTRES = 10
 SRCCOPY = 0x00CC0020
 CAPTUREBLT = 0x40000000
 
-warn("Don't use last parameter of `CreateDCA` or `CreateDCW`, as `DEVMODEA` and `DEVMODEW` are not defined correctly.")
-DEVMODEA = c_int
-DEVMODEW = c_int
+CCHDEVICENAME = 32
+CCHFORMNAME = 32
+
+
+class DEVMODEA(Structure):
+    _anonymous_ = ("DUMMYUNIONNAME", "DUMMYUNIONNAME2")
+    _fields_ = [
+        ("dmDeviceName", BYTE * CCHDEVICENAME),
+        ("dmSpecVersion", WORD),
+        ("dmDriverVersion", WORD),
+        ("dmSize", WORD),
+        ("dmDriverExtra", WORD),
+        ("dmFields", DWORD),
+        (
+            "DUMMYUNIONNAME",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("dmOrientation", SHORT),
+                                ("dmPaperSize", SHORT),
+                                ("dmPaperLength", SHORT),
+                                ("dmPaperWidth", SHORT),
+                                ("dmScale", SHORT),
+                                ("dmCopies", SHORT),
+                                ("dmDefaultSource", SHORT),
+                                ("dmPrintQuality", SHORT),
+                            ]
+                        ),
+                    ),
+                    (
+                        "DUMMYSTRUCTNAME2",
+                        make_struct(
+                            [
+                                ("dmPosition", POINTL),
+                                ("dmDisplayOrientation", DWORD),
+                                ("dmDisplayFixedOutput", DWORD),
+                            ]
+                        ),
+                    ),
+                ]
+            ),
+        ),
+        ("dmColor", SHORT),
+        ("dmDuplex", SHORT),
+        ("dmYResolution", SHORT),
+        ("dmTTOption", SHORT),
+        ("dmCollate", SHORT),
+        ("dmFormName", BYTE * CCHFORMNAME),
+        ("dmLogPixels", WORD),
+        ("dmBitsPerPel", DWORD),
+        ("dmPelsWidth", DWORD),
+        ("dmPelsHeight", DWORD),
+        (
+            "DUMMYUNIONNAME2",
+            make_union(
+                [
+                    ("dmDisplayFlags", DWORD),
+                    ("dmNup", DWORD),
+                ]
+            ),
+        ),
+        ("dmDisplayFrequency", DWORD),
+        ("dmICMMethod", DWORD),
+        ("dmICMIntent", DWORD),
+        ("dmMediaType", DWORD),
+        ("dmDitherType", DWORD),
+        ("dmReserved1", DWORD),
+        ("dmReserved2", DWORD),
+        ("dmPanningWidth", DWORD),
+        ("dmPanningHeight", DWORD),
+    ]
+
+
+class DEVMODEW(Structure):
+    _anonymous_ = ("DUMMYUNIONNAME", "DUMMYUNIONNAME2")
+    _fields_ = [
+        ("dmDeviceName", WCHAR * CCHDEVICENAME),
+        ("dmSpecVersion", WORD),
+        ("dmDriverVersion", WORD),
+        ("dmSize", WORD),
+        ("dmDriverExtra", WORD),
+        ("dmFields", DWORD),
+        (
+            "DUMMYUNIONNAME",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("dmOrientation", SHORT),
+                                ("dmPaperSize", SHORT),
+                                ("dmPaperLength", SHORT),
+                                ("dmPaperWidth", SHORT),
+                                ("dmScale", SHORT),
+                                ("dmCopies", SHORT),
+                                ("dmDefaultSource", SHORT),
+                                ("dmPrintQuality", SHORT),
+                            ]
+                        ),
+                    ),
+                    (
+                        "DUMMYSTRUCTNAME2",
+                        make_struct(
+                            [
+                                ("dmPosition", POINTL),
+                                ("dmDisplayOrientation", DWORD),
+                                ("dmDisplayFixedOutput", DWORD),
+                            ]
+                        ),
+                    ),
+                ]
+            ),
+        ),
+        ("dmColor", SHORT),
+        ("dmDuplex", SHORT),
+        ("dmYResolution", SHORT),
+        ("dmTTOption", SHORT),
+        ("dmCollate", SHORT),
+        ("dmFormName", WCHAR * CCHFORMNAME),
+        ("dmLogPixels", WORD),
+        ("dmBitsPerPel", DWORD),
+        ("dmPelsWidth", DWORD),
+        ("dmPelsHeight", DWORD),
+        (
+            "DUMMYUNIONNAME2",
+            make_union(
+                [
+                    ("dmDisplayFlags", DWORD),
+                    ("dmNup", DWORD),
+                ]
+            ),
+        ),
+        ("dmDisplayFrequency", DWORD),
+        ("dmICMMethod", DWORD),
+        ("dmICMIntent", DWORD),
+        ("dmMediaType", DWORD),
+        ("dmDitherType", DWORD),
+        ("dmReserved1", DWORD),
+        ("dmReserved2", DWORD),
+        ("dmPanningWidth", DWORD),
+        ("dmPanningHeight", DWORD),
+    ]
 
 
 class RGBQUAD(Structure):

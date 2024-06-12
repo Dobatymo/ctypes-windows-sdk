@@ -43,6 +43,7 @@ try:  # only windows 8+
     GetOverlappedResultEx = windll.kernel32.GetOverlappedResultEx
     GetOverlappedResultEx.argtypes = [HANDLE, LPOVERLAPPED, LPDWORD, DWORD, BOOL]
     GetOverlappedResultEx.restype = BOOL
+    GetOverlappedResultEx.errcheck = nonzero
 except AttributeError:
     GetOverlappedResultEx = _not_available("GetOverlappedResultEx")
 

@@ -1,4 +1,8 @@
+from ctypes import POINTER, Structure
+from ctypes.wintypes import ULONG
+
 from .. import CEnum
+from .ntdef import UCHAR
 
 
 class STORAGE_BUS_TYPE(CEnum):
@@ -19,5 +23,26 @@ class STORAGE_BUS_TYPE(CEnum):
     BusTypeVirtual = 0xE
     BusTypeFileBackedVirtual = 0xF
     BusTypeSpaces = 0x10
-    BusTypeMax = 0x11
+    BusTypeNvme = 0x11
+    BusTypeSCM = 0x12
+    BusTypeUfs = 0x13
+    BusTypeNvmeof = 0x14
+    BusTypeMax = 0x15
     BusTypeMaxReserved = 0x7F
+
+
+# IOCTL_STORAGE_PREDICT_FAILURE
+# input - none
+# output - STORAGE_PREDICT_FAILURE structure
+#          PredictFailure returns zero if no failure predicted and non zero
+#                         if a failure is predicted.
+#          VendorSpecific returns 512 bytes of vendor specific information
+#                         if a failure is predicted
+class STORAGE_PREDICT_FAILURE(Structure):
+    _fields_ = [
+        ("PredictFailure", ULONG),
+        ("VendorSpecific", UCHAR * 512),
+    ]
+
+
+PSTORAGE_PREDICT_FAILURE = POINTER(STORAGE_PREDICT_FAILURE)

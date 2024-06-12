@@ -4,8 +4,8 @@ from .. import windll
 from ..shared.basetsd import SIZE_T
 from ..shared.guiddef import LPIID, REFCLSID, REFIID
 from ..shared.ntdef import HRESULT
-from ..shared.WTypesbase import LPCOLESTR
-from .Unknwn import LPUNKNOWN
+from ..shared.wtypesbase import LPCOLESTR
+from .unknwn import LPUNKNOWN
 
 CoCreateInstance = windll.ole32.CoCreateInstance
 CoCreateInstance.argtypes = [REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID]

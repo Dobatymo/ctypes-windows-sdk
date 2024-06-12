@@ -1,6 +1,7 @@
-from ctypes.wintypes import BOOLEAN, LPCSTR, LPCWSTR, LPSTR, LPWSTR
+from ctypes.wintypes import LPCSTR, LPCWSTR, LPSTR, LPWSTR
 
 from .. import CEnum, windll
+from ..wintypes import BOOLEAN
 from .minwindef import PULONG
 
 
