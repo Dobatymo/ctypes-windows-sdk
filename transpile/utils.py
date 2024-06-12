@@ -691,17 +691,16 @@ required_imports = {
     ],
     Path("shared/ntddscsi.h"): [],
     Path("shared/nvme.h"): [
-        ["cwinsdk.shared.ntdef", ["LPWCH", "PWSTR", "ULONGLONG", "UCHAR", "PVOID"]],
-        ["cwinsdk.um.winnt", ["ANYSIZE_ARRAY"]],
+        ["cwinsdk.shared.ntdef", ["ANYSIZE_ARRAY", "LPWCH", "PWSTR", "ULONGLONG", "UCHAR", "PVOID"]],
         ["cwinsdk.shared.guiddef", ["GUID"]],
     ],
     Path("shared/scsi.h"): [
         ["cwinsdk", ["DECLSPEC_ALIGN"]],
-        ["cwinsdk.shared.ntdef", ["UCHAR", "ULONGLONG"]],
-        ["cwinsdk.um.winnt", ["ANYSIZE_ARRAY"]],
+        ["cwinsdk.shared.ntdef", ["ANYSIZE_ARRAY", "UCHAR", "ULONGLONG"]],
     ],
     Path("shared/ntddscsi.h"): [],
     Path("shared/winioctl.h"): [],
+    Path("km/ata.h"): [["cwinsdk.shared.ntdef", ["UCHAR", "ULONGLONG", "ANYSIZE_ARRAY"]]],
 }
 
 

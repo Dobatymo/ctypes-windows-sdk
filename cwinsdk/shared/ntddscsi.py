@@ -1,7 +1,6 @@
 from ctypes import POINTER, Structure
 from ctypes.wintypes import LPVOID, ULONG, USHORT
 
-from ..um.winnt import ANYSIZE_ARRAY
 from .basetsd import ULONG_PTR
 from .devioctl import (
     CTL_CODE,
@@ -11,7 +10,7 @@ from .devioctl import (
     FILE_WRITE_ACCESS,
     METHOD_BUFFERED,
 )
-from .ntdef import PVOID, UCHAR
+from .ntdef import ANYSIZE_ARRAY, PVOID, UCHAR
 
 IOCTL_SCSI_BASE = FILE_DEVICE_CONTROLLER
 FILE_DEVICE_SCSI = 0x0000001B

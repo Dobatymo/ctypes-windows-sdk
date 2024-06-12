@@ -17,6 +17,7 @@ def main(args: Namespace) -> None:
         "shared/scsi.h",
         "um/wingdi.h",
         "um/winioctl.h",
+        "km/ata.h",
     ]
     header_files = list(map(Path, header_files))
 

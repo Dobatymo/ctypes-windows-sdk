@@ -1,10 +1,9 @@
 from ctypes import POINTER, Structure, Union, sizeof
 from ctypes.wintypes import CHAR, ULONG, USHORT
 
-from cwinsdk import CEnum, make_struct, make_union
-from cwinsdk.shared.guiddef import GUID
-from cwinsdk.shared.ntdef import UCHAR, ULONGLONG
-from cwinsdk.um.winnt import ANYSIZE_ARRAY
+from .. import CEnum, make_struct, make_union
+from .guiddef import GUID
+from .ntdef import ANYSIZE_ARRAY, UCHAR, ULONGLONG
 
 _pack_ = 0
 """++

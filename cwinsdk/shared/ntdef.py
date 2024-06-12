@@ -14,6 +14,8 @@ from ctypes import (
 )
 from ctypes.wintypes import HANDLE, WCHAR
 
+ANYSIZE_ARRAY = 1  # winnt
+
 PWCHAR = POINTER(WCHAR)
 LPWCH = POINTER(WCHAR)
 PWCH = POINTER(WCHAR)
