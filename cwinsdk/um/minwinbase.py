@@ -1,9 +1,10 @@
 from ctypes import POINTER, Structure, Union
-from ctypes.wintypes import BOOL, DWORD, HANDLE, LPVOID, WORD
+from ctypes.wintypes import DWORD, HANDLE, LPVOID, WORD
 
 from .. import CEnum
 from ..shared.basetsd import ULONG_PTR
 from ..shared.ntdef import PVOID
+from ..wintypes import BOOL
 
 
 class SECURITY_ATTRIBUTES(Structure):

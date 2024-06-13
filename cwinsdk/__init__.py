@@ -9,7 +9,7 @@ from typing import Any, Callable, Iterable, Iterator, Tuple, Type
 from .shared.guiddef import GUID
 from .wintypes import BOOL, BOOLEAN
 
-__version__ = "0.0.14"
+__version__ = "0.0.15"
 
 windll = LibraryLoader(WinDLL)
 
@@ -61,7 +61,12 @@ def _value_with_length(values: Iterable) -> Iterator:
 
 
 def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
-    anonymous = getattr(struct, "_anonymous_", ()) + ("DUMMYSTRUCTNAME", "DUMMYUNIONNAME")
+    anonymous = getattr(struct, "_anonymous_", ()) + (
+        "DUMMYSTRUCTNAME",
+        "DUMMYUNIONNAME",
+        "_unnamed_struct",
+        "_unnamed_union",
+    )
     for fieldinfo in struct._fields_:
         if len(fieldinfo) == 2:
             name, _ = fieldinfo
@@ -88,7 +93,7 @@ def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
         elif hasattr(value, "value"):
             value = value.value
         else:
-            assert False, (name, value, type(value))
+            raise TypeError(f"Invalid type {type(value)} for field {name} with value: {value}")
 
         yield name, value
 

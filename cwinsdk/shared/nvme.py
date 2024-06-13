@@ -1,9 +1,9 @@
 from ctypes import POINTER, Structure, Union, sizeof
 from ctypes.wintypes import CHAR, ULONG, USHORT
 
-from .. import CEnum, make_struct, make_union
-from .guiddef import GUID
-from .ntdef import ANYSIZE_ARRAY, UCHAR, ULONGLONG
+from cwinsdk import CEnum, make_struct, make_union
+from cwinsdk.shared.guiddef import GUID
+from cwinsdk.shared.ntdef import ANYSIZE_ARRAY, UCHAR, ULONGLONG
 
 _pack_ = 0
 """++
@@ -1099,7 +1099,8 @@ class NVME_IDENTIFY_CONTROLLER_DATA(Structure):
                     ("MultiPCIePorts", UCHAR, 1),
                     ("MultiControllers", UCHAR, 1),
                     ("SRIOV", UCHAR, 1),
-                    ("Reserved", UCHAR, 5),
+                    ("ANAR", UCHAR, 1),
+                    ("Reserved", UCHAR, 4),
                 ],
                 _pack_,
             ),
@@ -1521,6 +1522,16 @@ class NVME_IDENTIFIER_TYPE_LENGTH(CEnum):
     NVME_IDENTIFIER_TYPE_CSI_LENGTH = 0x1
 
 
+# Output of NVME_IDENTIFY_CNS_ACTIVE_NAMESPACES (0x02)
+
+
+class NVME_ACTIVE_NAMESPACE_ID_LIST(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("NSID", ULONG * 1024),  # List of Namespace ID upto 1024 entries
+    ]
+
+
 # Output of NVME_IDENTIFY_CNS_DESCRIPTOR_NAMESPACE (0x03)
 
 NVME_IDENTIFY_CNS_DESCRIPTOR_NAMESPACE_SIZE = 0x1000
@@ -1706,18 +1717,67 @@ class NVME_LBA_RANGET_TYPE_ENTRY(Structure):
 
 # Vendor defined log pages
 class NVME_VENDOR_LOG_PAGES(CEnum):
-    NVME_LOG_PAGE_WCS_DEVICE_SMART_ATTRIBUTES = 0xC0  # WCS device SMART Attributes log page
-    NVME_LOG_PAGE_WCS_DEVICE_ERROR_RECOVERY = 0xC1  # WCS device Error Recovery log page
+    NVME_LOG_PAGE_OCP_DEVICE_SMART_INFORMATION = 0xC0  # OCP device SMART Information log page
+    NVME_LOG_PAGE_OCP_DEVICE_ERROR_RECOVERY = 0xC1  # OCP device Error Recovery log page
+    NVME_LOG_PAGE_OCP_FIRMWARE_ACTIVATION_HISTORY = 0xC2  # OCP device Firmware Activation History log page
+    NVME_LOG_PAGE_OCP_LATENCY_MONITOR = 0xC3  # OCP device Latency Monitor log page
+    NVME_LOG_PAGE_OCP_DEVICE_CAPABILITIES = 0xC4  # OCP device Device Capabilities log page
+    NVME_LOG_PAGE_OCP_UNSUPPORTED_REQUIREMENTS = 0xC5  # OCP device Unsupported Requirements log page
+    NVME_LOG_PAGE_OCP_TCG_CONFIGURATION = 0xC8  # OCP device TCG Configuration log page
+    NVME_LOG_PAGE_OCP_TCG_HISTORY = 0xC9  # OCP device TCG History log page
 
+
+NVME_LOG_PAGE_WCS_DEVICE_SMART_ATTRIBUTES = NVME_VENDOR_LOG_PAGES.NVME_LOG_PAGE_OCP_DEVICE_SMART_INFORMATION
+NVME_LOG_PAGE_WCS_DEVICE_ERROR_RECOVERY = (
+    NVME_VENDOR_LOG_PAGES.NVME_LOG_PAGE_OCP_DEVICE_ERROR_RECOVERY
+)  # WCS device Error Recovery log page
 
 # SMART Attributes Log Page GUID is defined in spec as byte stream: 0xAFD514C97C6F4F9CA4F2BFEA2810AFC5
 # which is converted to GUID format as: {2810AFC5-BFEA-A4F2-9C4F-6F7CC914D5AF}
+# define GUID_OCP_DEVICE_SMART_INFORMATIONGuid { 0x2810AFC5, 0xBFEA, 0xA4F2, { 0x9C, 0x4F, 0x6F, 0x7C, 0xC9, 0x14, 0xD5, 0xAF} }
+GUID_OCP_DEVICE_SMART_INFORMATION = GUID(0x2810AFC5, 0xBFEA, 0xA4F2, (0x9C, 0x4F, 0x6F, 0x7C, 0xC9, 0x14, 0xD5, 0xAF))
 # define GUID_WCS_DEVICE_SMART_ATTRIBUTESGuid { 0x2810AFC5, 0xBFEA, 0xA4F2, { 0x9C, 0x4F, 0x6F, 0x7C, 0xC9, 0x14, 0xD5, 0xAF} }
 GUID_WCS_DEVICE_SMART_ATTRIBUTES = GUID(0x2810AFC5, 0xBFEA, 0xA4F2, (0x9C, 0x4F, 0x6F, 0x7C, 0xC9, 0x14, 0xD5, 0xAF))
 # Error Recovery Log Page GUID is defined in spec as byte stream: 0x5A1983BA3DFD4DABAE3430FE2131D944
 # which is converted to GUID format as: {2131D944-30FE-AE34-AB4D-FD3DBA83195A}
+# define GUID_OCP_DEVICE_ERROR_RECOVERYGuid { 0x2131D944, 0x30FE, 0xAE34, {0xAB, 0x4D, 0xFD, 0x3D, 0xBA, 0x83, 0x19, 0x5A} }
+GUID_OCP_DEVICE_ERROR_RECOVERY = GUID(0x2131D944, 0x30FE, 0xAE34, (0xAB, 0x4D, 0xFD, 0x3D, 0xBA, 0x83, 0x19, 0x5A))
 # define GUID_WCS_DEVICE_ERROR_RECOVERYGuid { 0x2131D944, 0x30FE, 0xAE34, {0xAB, 0x4D, 0xFD, 0x3D, 0xBA, 0x83, 0x19, 0x5A} }
 GUID_WCS_DEVICE_ERROR_RECOVERY = GUID(0x2131D944, 0x30FE, 0xAE34, (0xAB, 0x4D, 0xFD, 0x3D, 0xBA, 0x83, 0x19, 0x5A))
+# Firmware Activation History Log Page GUID is defined in spec as byte stream: 0xD11CF3AC8AB24DE2A3F6DAB4769A796D
+# which is converted to GUID format as: {769A796D-DAB4-A3F6-E24D-B28AACF31CD1}
+# define GUID_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORYGuid { 0x769A796D, 0xDAB4, 0xA3F6, { 0xE2, 0x4D, 0xB2, 0x8A, 0xAC, 0xF3, 0x1C, 0xD1} }
+GUID_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY = GUID(
+    0x769A796D, 0xDAB4, 0xA3F6, (0xE2, 0x4D, 0xB2, 0x8A, 0xAC, 0xF3, 0x1C, 0xD1)
+)
+# Latency Monitor Log Page GUID is defined in spec as byte stream: 0x85D45E58D4E643709C6C84D08CC07A92
+# which is converted to GUID format as: {8CC07A92-84D0-9C6C-7043-E6D4585ED485}
+# define GUID_OCP_DEVICE_LATENCY_MONITORGuid { 0x8CC07A92, 0x84D0, 0x9C6C, { 0x70, 0x43, 0xE6, 0xD4, 0x58, 0x5E, 0xD4, 0x85} }
+GUID_OCP_DEVICE_LATENCY_MONITOR = GUID(0x8CC07A92, 0x84D0, 0x9C6C, (0x70, 0x43, 0xE6, 0xD4, 0x58, 0x5E, 0xD4, 0x85))
+# Device Capabilities Log Page GUID is defined in spec as byte stream: 0xB7053C914B58495D98C9E1D10D054297
+# which is converted to GUID format as: {0D054297-E1D1-98C9-5D49-584B913C05B7}
+# define GUID_OCP_DEVICE_DEVICE_CAPABILITIESGuid { 0x0D054297, 0xE1D1, 0x98C9, { 0x5D, 0x49, 0x58, 0x4B, 0x91, 0x3C, 0x05, 0xB7} }
+GUID_OCP_DEVICE_DEVICE_CAPABILITIES = GUID(0x0D054297, 0xE1D1, 0x98C9, (0x5D, 0x49, 0x58, 0x4B, 0x91, 0x3C, 0x05, 0xB7))
+# Unsupported Requirements Log Page GUID is defined in spec as byte stream: 0xC7BB98B7D0324863BB2C23990E9C722F
+# which is converted to GUID format as: {0E9C722F-2399-BB2C-6348-32D0B798BBC7}
+# define GUID_OCP_DEVICE_UNSUPPORTED_REQUIREMENTSGuid { 0x0E9C722F, 0x2399, 0xBB2C, { 0x63, 0x48, 0x32, 0xD0, 0xB7, 0x98, 0xBB, 0xC7} }
+GUID_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS = GUID(
+    0x0E9C722F, 0x2399, 0xBB2C, (0x63, 0x48, 0x32, 0xD0, 0xB7, 0x98, 0xBB, 0xC7)
+)
+# TCG Configuration Log Page GUID is defined in spec as byte stream: 0x54E02A9DFA5447C083E6E07EBD244006
+# which is converted to GUID format as: {BD244006-E07E-83E6-C047-54FA9D2AE054}
+# define GUID_OCP_DEVICE_TCG_CONFIGURATIONGuid { 0xBD244006, 0xE07E, 0x83E6, { 0xC0, 0x47, 0x54, 0xFA, 0x9D, 0x2A, 0xE0, 0x54} }
+GUID_OCP_DEVICE_TCG_CONFIGURATION = GUID(0xBD244006, 0xE07E, 0x83E6, (0xC0, 0x47, 0x54, 0xFA, 0x9D, 0x2A, 0xE0, 0x54))
+# TCG History Log Page GUID is defined in spec as byte stream: 0x88D7909696D04E27949009C6704b513E
+# which is converted to GUID format as: {704B513E-09C6-9490-274E-D0969690D788}
+# define GUID_OCP_DEVICE_TCG_HISTORYGuid { 0x704B513E, 0x09C6, 0x9490, { 0x27, 0x4E, 0xD0, 0x96, 0x96, 0x90, 0xD7, 0x88} }
+GUID_OCP_DEVICE_TCG_HISTORY = GUID(0x704B513E, 0x09C6, 0x9490, (0x27, 0x4E, 0xD0, 0x96, 0x96, 0x90, 0xD7, 0x88))
+# MFND child controller event Log Page GUID is defined in spec as byte stream: 0x9C669D257FD944A5BF35A5F098BCCE18
+# which is converted to GUID format as: {98BCCE18-A5F0-BF35-A544-D97F259D669C}
+# define GUID_MFND_CHILD_CONTROLLER_EVENT_LOG_PAGEGuid { 0x98BCCE18, 0xA5F0, 0xBF35, {0xA5, 0x44, 0xD9, 0x7F, 0x25, 0x9D, 0x66, 0x9C} }
+GUID_MFND_CHILD_CONTROLLER_EVENT_LOG_PAGE = GUID(
+    0x98BCCE18, 0xA5F0, 0xBF35, (0xA5, 0x44, 0xD9, 0x7F, 0x25, 0x9D, 0x66, 0x9C)
+)
 
 
 # Notice Status: NVME_ASYNC_EVENT_TYPE_VENDOR_SPECIFIC
@@ -1791,20 +1851,34 @@ PNVME_WCS_DEVICE_CAPABILITIES = POINTER(NVME_WCS_DEVICE_CAPABILITIES)
 
 
 # Device recovery action on device panic
-class NVME_WCS_DEVICE_RECOVERY_ACTION(CEnum):
+class NVME_WCS_DEVICE_RECOVERY_ACTION1(CEnum):
     NVMeDeviceRecoveryNoAction = 0  # Requires no action
     NVMeDeviceRecoveryFormatNVM = 1  # Requires Format NVM
     NVMeDeviceRecoveryVendorSpecificCommand = 2  # Requires Vendor Specific Command
     NVMeDeviceRecoveryVendorAnalysis = 3  # Requires Vendor Analysis
     NVMeDeviceRecoveryDeviceReplacement = 4  # Requires Device Replacement
     NVMeDeviceRecoverySanitize = 5  # Requires Sanitize
-    NVMeDeviceRecoveryMax = 15  # Not an actual action, denotes max action.
+    NVMeDeviceRecovery1Max = 15  # Not an actual action, denotes max action.
 
 
-PNVME_WCS_DEVICE_RECOVERY_ACTION = POINTER(NVME_WCS_DEVICE_RECOVERY_ACTION)
+PNVME_WCS_DEVICE_RECOVERY_ACTION1 = POINTER(NVME_WCS_DEVICE_RECOVERY_ACTION1)
+
+
+class NVME_WCS_DEVICE_RECOVERY_ACTION2(CEnum):
+    NVMeDeviceRecoveryControllerReset = 0  # Requires controller reset
+    NVMeDeviceRecoverySubsystemReset = 1  # Requires NVM subsystem reset
+    NVMeDeviceRecoveryPcieFunctionReset = 2  # Requires PCIe Function Level Reset
+    NVMeDeviceRecoveryPERST = 3  # Requires PERST#
+    NVMeDeviceRecoveryPowerCycle = 4  # Requires Main Power Cycle
+    NVMeDeviceRecoveryPcieHotReset = 5  # Requires PCIe Conventional Hot Reset
+    NVMeDeviceRecovery2Max = 15  # Not an actual action, denotes max action.
+
+
+PNVME_WCS_DEVICE_RECOVERY_ACTION2 = POINTER(NVME_WCS_DEVICE_RECOVERY_ACTION2)
 
 _pack_ += 1
-# Log page defintion of NVME_LOG_PAGE_WCS_DEVICE_SMART_ATTRIBUTES. Size 512 bytes
+
+# Log page definition of NVME_LOG_PAGE_WCS_DEVICE_SMART_ATTRIBUTES/NVME_LOG_PAGE_OCP_DEVICE_SMART_INFORMATION. Size 512 bytes
 
 # Version independent structure to perform basic validation
 
@@ -1814,7 +1888,7 @@ class NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG(Structure):
     _fields_ = [
         ("VersionSpecificData", UCHAR * 494),
         ("LogPageVersionNumber", USHORT),
-        ("LogPageGUID", GUID),  # Shall be set to GUID_WCS_DEVICE_SMART_ATTRIBUTES
+        ("LogPageGUID", GUID),  # Shall be set to GUID_WCS_DEVICE_SMART_ATTRIBUTES / GUID_OCP_DEVICE_SMART_INFORMATION
     ]
 
 
@@ -1900,7 +1974,7 @@ class NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG_V2(Structure):
         ("PLPStartCount", UCHAR * 16),
         ("EnduranceEstimate", UCHAR * 16),
         ("Reserved4", UCHAR * 302),
-        ("LogPageVersionNumber", USHORT),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG_VERSION_2
         ("LogPageGUID", GUID),  # Shall be set to GUID_WCS_DEVICE_SMART_ATTRIBUTES
     ]
 
@@ -1908,9 +1982,102 @@ class NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG_V2(Structure):
 PNVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG_V2 = POINTER(NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG_V2)
 
 assert sizeof(NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG_V2) == sizeof(NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG)
+# Version 3
+
+NVME_OCP_DEVICE_SMART_INFORMATION_LOG_VERSION_3 = 0x0003
 
 
-# Log page definition of NVME_LOG_PAGE_WCS_DEVICE_ERROR_RECOVERY (Version 1)
+class NVME_OCP_DEVICE_SMART_INFORMATION_LOG_V3(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("MediaUnitsWritten", UCHAR * 16),
+        ("MediaUnitsRead", UCHAR * 16),
+        (
+            "BadUserNANDBlockCount",
+            make_struct(
+                [
+                    ("RawCount", UCHAR * 6),
+                    ("Normalized", UCHAR * 2),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "BadSystemNANDBlockCount",
+            make_struct(
+                [
+                    ("RawCount", UCHAR * 6),
+                    ("Normalized", UCHAR * 2),
+                ],
+                _pack_,
+            ),
+        ),
+        ("XORRecoveryCount", ULONGLONG),
+        ("UnrecoverableReadErrorCount", ULONGLONG),
+        ("SoftECCErrorCount", ULONGLONG),
+        (
+            "EndToEndCorrectionCounts",
+            make_struct(
+                [
+                    ("DetectedCounts", ULONG),
+                    ("CorrectedCounts", ULONG),
+                ],
+                _pack_,
+            ),
+        ),
+        ("PercentageSystemDataUsed", UCHAR),
+        ("RefreshCount", UCHAR * 7),
+        (
+            "UserDataEraseCounts",
+            make_struct(
+                [
+                    ("MaximumCount", ULONG),
+                    ("MinimumCount", ULONG),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "ThermalThrottling",
+            make_struct(
+                [
+                    ("EventCount", UCHAR),
+                    ("Status", UCHAR),
+                ],
+                _pack_,
+            ),
+        ),
+        ("DSSDSpecVersion", UCHAR * 6),
+        ("PCIeCorrectableErrorCount", ULONGLONG),
+        ("IncompleteShutdownCount", ULONG),
+        ("Reserved1", ULONG),
+        ("PercentageFreeBlocks", UCHAR),
+        ("Reserved2", UCHAR * 7),
+        ("CapacitorHealth", USHORT),
+        ("NvmeErrata", UCHAR),
+        ("Reserved3", UCHAR * 5),
+        ("UnalignedIOCount", ULONGLONG),
+        ("SecurityVersionNumber", ULONGLONG),
+        ("NUSE", ULONGLONG),
+        ("PLPStartCount", UCHAR * 16),
+        ("EnduranceEstimate", UCHAR * 16),
+        ("PCIeLinkRetrainingCount", ULONGLONG),
+        ("PowerStateChangeCount", ULONGLONG),
+        ("Reserved4", UCHAR * 286),
+        ("LogPageVersionNumber", USHORT),
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_SMART_INFORMATION
+    ]
+
+
+PNVME_OCP_DEVICE_SMART_INFORMATION_LOG_V3 = POINTER(NVME_OCP_DEVICE_SMART_INFORMATION_LOG_V3)
+
+assert sizeof(NVME_OCP_DEVICE_SMART_INFORMATION_LOG_V3) == sizeof(NVME_WCS_DEVICE_SMART_ATTRIBUTES_LOG)
+
+# Log page definition of NVME_LOG_PAGE_WCS_DEVICE_ERROR_RECOVERY. Size 512 bytes
+
+# Version independent structure to perform basic validation
+
+
 class NVME_WCS_DEVICE_ERROR_RECOVERY_LOG(Structure):
     _pack_ = _pack_
     _fields_ = [
@@ -1933,13 +2100,719 @@ class NVME_WCS_DEVICE_ERROR_RECOVERY_LOG(Structure):
         ("VendorSpecificCommandCDW13", ULONG),
         ("Reserved1", UCHAR * 466),
         ("LogPageVersionNumber", USHORT),
-        ("LogPageGUID", GUID),  # Shall be set to GUID_WCS_DEVICE_ERROR_RECOVERY
+        ("LogPageGUID", GUID),  # Shall be set to GUID_WCS_DEVICE_ERROR_RECOVERY / GUID_OCP_DEVICE_ERROR_RECOVERY
     ]
 
 
 PNVME_WCS_DEVICE_ERROR_RECOVERY_LOG = POINTER(NVME_WCS_DEVICE_ERROR_RECOVERY_LOG)
 
 assert sizeof(NVME_WCS_DEVICE_ERROR_RECOVERY_LOG) == 512
+# Version 1
+
+NVME_WCS_DEVICE_ERROR_RECOVERY_LOG_VERSION_1 = 0x0001
+
+NVME_WCS_DEVICE_ERROR_RECOVERY_LOG_V1 = NVME_WCS_DEVICE_ERROR_RECOVERY_LOG
+PNVME_WCS_DEVICE_ERROR_RECOVERY_LOG_V1 = POINTER(NVME_WCS_DEVICE_ERROR_RECOVERY_LOG)
+
+assert sizeof(NVME_WCS_DEVICE_ERROR_RECOVERY_LOG_V1) == sizeof(NVME_WCS_DEVICE_ERROR_RECOVERY_LOG)
+# Version 2
+
+NVME_OCP_DEVICE_ERROR_RECOVERY_LOG_VERSION_2 = 0x0002
+
+
+class NVME_OCP_DEVICE_ERROR_RECOVERY_LOG_V2(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        # Amount of time to wait for device panic workflow to complete in msec. Delay the reset accordingly
+        ("PanicResetWaitTime", USHORT),
+        # Reset actions on firmware assert, multiple options could be set
+        ("PanicResetAction", NVME_WCS_DEVICE_RESET_ACTION),
+        # Recovery action for device panic condition
+        ("DeviceRecoveryAction1", UCHAR),
+        # Id to identify the panic condition
+        ("PanicId", ULONGLONG),
+        # Device capabilities
+        ("DeviceCapabilities", NVME_WCS_DEVICE_CAPABILITIES),
+        # Vendor specific command opcode to recover device from panic condition
+        ("VendorSpecificRecoveryCode", UCHAR),
+        ("Reserved0", UCHAR * 3),
+        # CDW12 value for the Vendor Specific command to recover device from panic condition
+        ("VendorSpecificCommandCDW12", ULONG),
+        # CDW13 value for the Vendor Specific command to recover device from panic condition
+        ("VendorSpecificCommandCDW13", ULONG),
+        ("VendorSpecificCommandTimeout", UCHAR),
+        ("DeviceRecoveryAction2", UCHAR),
+        ("DeviceRecoveryAction2Timeout", UCHAR),
+        ("Reserved1", UCHAR * 463),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_ERROR_RECOVERY_LOG_VERSION_2
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_ERROR_RECOVERY
+    ]
+
+
+PNVME_OCP_DEVICE_ERROR_RECOVERY_LOG_V2 = POINTER(NVME_OCP_DEVICE_ERROR_RECOVERY_LOG_V2)
+
+assert sizeof(NVME_OCP_DEVICE_ERROR_RECOVERY_LOG_V2) == sizeof(NVME_WCS_DEVICE_ERROR_RECOVERY_LOG)
+# Log page definition of NVME_LOG_PAGE_OCP_FIRMWARE_ACTIVATION_HISTORY. Size 4096 bytes
+
+FIRMWARE_ACTIVATION_HISTORY_ENTRY_VERSION_1 = 0x01
+
+
+class FIRMWARE_ACTIVATION_HISTORY_ENTRY(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("VersionNumber", UCHAR),
+        ("Length", UCHAR),
+        ("Reserved0", USHORT),
+        ("ActivationCount", USHORT),
+        ("Timestamp", ULONGLONG),
+        ("Reserved1", ULONGLONG),
+        ("PowerCycleCount", ULONGLONG),
+        ("PreviousFirmware", ULONGLONG),
+        ("NewFirmware", ULONGLONG),
+        ("SlotNumber", UCHAR),
+        ("CommitActionType", UCHAR),
+        ("Result", USHORT),
+        ("Reserved2", UCHAR * 14),
+    ]
+
+
+PFIRMWARE_ACTIVATION_HISTORY_ENTRY = POINTER(FIRMWARE_ACTIVATION_HISTORY_ENTRY)
+
+assert sizeof(FIRMWARE_ACTIVATION_HISTORY_ENTRY) == 64
+NVME_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY_LOG_VERSION_1 = 0x0001
+
+
+class NVME_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY_LOG(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("LID", UCHAR),  # Shall be set to NVME_LOG_PAGE_OCP_FIRMWARE_ACTIVATION_HISTORY
+        ("Reserved0", UCHAR * 3),
+        ("ValidNumberOfEntries", ULONG),
+        ("Entries", FIRMWARE_ACTIVATION_HISTORY_ENTRY * 20),
+        ("Reserved1", UCHAR * 2790),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY_LOG_VERSION_1
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY
+    ]
+
+
+PNVME_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY_LOG = POINTER(NVME_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY_LOG)
+
+assert sizeof(NVME_OCP_DEVICE_FIRMWARE_ACTIVATION_HISTORY_LOG) == 4096
+
+# Log page definition of NVME_LOG_PAGE_OCP_LATENCY_MONITOR. Size 512 bytes
+
+
+class LATENCY_MONITOR_FEATURE_STATUS(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        (
+            "_unnamed_union",
+            make_union(
+                [
+                    (
+                        "_unnamed_struct",
+                        make_struct(
+                            [
+                                ("FeatureEnabled", UCHAR, 1),
+                                ("ActiveLatencyMode", UCHAR, 1),
+                                ("ActiveMeasuredLatency", UCHAR, 1),
+                                ("Reserved", UCHAR, 5),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUchar", UCHAR),
+                ],
+                _pack_,
+            ),
+        ),
+    ]
+
+
+PLATENCY_MONITOR_FEATURE_STATUS = POINTER(LATENCY_MONITOR_FEATURE_STATUS)
+
+
+class ACTIVE_LATENCY_CONFIGURATION(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        (
+            "_unnamed_union",
+            make_union(
+                [
+                    (
+                        "_unnamed_struct",
+                        make_struct(
+                            [
+                                ("Read0", USHORT, 1),
+                                ("Write0", USHORT, 1),
+                                ("Trim0", USHORT, 1),
+                                ("Read1", USHORT, 1),
+                                ("Write1", USHORT, 1),
+                                ("Trim1", USHORT, 1),
+                                ("Read2", USHORT, 1),
+                                ("Write2", USHORT, 1),
+                                ("Trim2", USHORT, 1),
+                                ("Read3", USHORT, 1),
+                                ("Write3", USHORT, 1),
+                                ("Trim3", USHORT, 1),
+                                ("Reserved", USHORT, 4),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+    ]
+
+
+PACTIVE_LATENCY_CONFIGURATION = POINTER(ACTIVE_LATENCY_CONFIGURATION)
+
+
+class BUCKET_COUNTER(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("Reserved", ULONG),
+        ("Trim", ULONG),
+        ("Write", ULONG),
+        ("Read", ULONG),
+    ]
+
+
+PBUCKET_COUNTER = POINTER(BUCKET_COUNTER)
+
+assert sizeof(BUCKET_COUNTER) == 16
+
+
+class LATENCY_STAMP(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("Trim3", ULONGLONG),
+        ("Write3", ULONGLONG),
+        ("Read3", ULONGLONG),
+        ("Trim2", ULONGLONG),
+        ("Write2", ULONGLONG),
+        ("Read2", ULONGLONG),
+        ("Trim1", ULONGLONG),
+        ("Write1", ULONGLONG),
+        ("Read1", ULONGLONG),
+        ("Trim0", ULONGLONG),
+        ("Write0", ULONGLONG),
+        ("Read0", ULONGLONG),
+    ]
+
+
+PLATENCY_STAMP = POINTER(LATENCY_STAMP)
+
+assert sizeof(LATENCY_STAMP) == 96
+
+
+class MEASURED_LATENCY(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("Trim3", USHORT),
+        ("Write3", USHORT),
+        ("Read3", USHORT),
+        ("Trim2", USHORT),
+        ("Write2", USHORT),
+        ("Read2", USHORT),
+        ("Trim1", USHORT),
+        ("Write1", USHORT),
+        ("Read1", USHORT),
+        ("Trim0", USHORT),
+        ("Write0", USHORT),
+        ("Read0", USHORT),
+    ]
+
+
+PMEASURED_LATENCY = POINTER(MEASURED_LATENCY)
+
+assert sizeof(MEASURED_LATENCY) == 24
+
+
+class LATENCY_STAMP_UNITS(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("Read0", USHORT, 1),
+        ("Write0", USHORT, 1),
+        ("Trim0", USHORT, 1),
+        ("Read1", USHORT, 1),
+        ("Write1", USHORT, 1),
+        ("Trim1", USHORT, 1),
+        ("Read2", USHORT, 1),
+        ("Write2", USHORT, 1),
+        ("Trim2", USHORT, 1),
+        ("Read3", USHORT, 1),
+        ("Write3", USHORT, 1),
+        ("Trim3", USHORT, 1),
+        ("Reserved", USHORT, 4),
+    ]
+
+
+PLATENCY_STAMP_UNITS = POINTER(LATENCY_STAMP_UNITS)
+
+assert sizeof(LATENCY_STAMP_UNITS) == 2
+
+
+class DEBUG_BIT_FIELD(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("Read0", USHORT, 1),
+        ("Write0", USHORT, 1),
+        ("Trim0", USHORT, 1),
+        ("Read1", USHORT, 1),
+        ("Write1", USHORT, 1),
+        ("Trim1", USHORT, 1),
+        ("Read2", USHORT, 1),
+        ("Write2", USHORT, 1),
+        ("Trim2", USHORT, 1),
+        ("Read3", USHORT, 1),
+        ("Write3", USHORT, 1),
+        ("Trim3", USHORT, 1),
+        ("Reserved", USHORT, 4),
+    ]
+
+
+PDEBUG_BIT_FIELD = POINTER(DEBUG_BIT_FIELD)
+
+assert sizeof(DEBUG_BIT_FIELD) == 2
+NVME_OCP_DEVICE_LATENCY_MONITOR_LOG_VERSION_1 = 0x0001
+
+
+class NVME_OCP_DEVICE_LATENCY_MONITOR_LOG(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("FeatureStatus", LATENCY_MONITOR_FEATURE_STATUS),
+        ("Reserved0", UCHAR),
+        ("ActiveBucketTimer", USHORT),
+        ("ActiveBucketTimerThreshold", USHORT),
+        ("ActiveThresholdA", UCHAR),
+        ("ActiveThresholdB", UCHAR),
+        ("ActiveThresholdC", UCHAR),
+        ("ActiveThresholdD", UCHAR),
+        ("ActiveLatencyConfig", ACTIVE_LATENCY_CONFIGURATION),
+        ("ActiveLatencyMinimumWindow", UCHAR),
+        ("Reserved1", UCHAR * 19),
+        ("ActiveBucketCounter0", BUCKET_COUNTER),
+        ("ActiveBucketCounter1", BUCKET_COUNTER),
+        ("ActiveBucketCounter2", BUCKET_COUNTER),
+        ("ActiveBucketCounter3", BUCKET_COUNTER),
+        ("ActiveLatencyStamp", LATENCY_STAMP),
+        ("ActiveMeasuredLatency", MEASURED_LATENCY),
+        ("ActiveLatencyStampUnits", LATENCY_STAMP_UNITS),
+        ("Reserved2", UCHAR * 22),
+        ("StaticBucketCounter0", BUCKET_COUNTER),
+        ("StaticBucketCounter1", BUCKET_COUNTER),
+        ("StaticBucketCounter2", BUCKET_COUNTER),
+        ("StaticBucketCounter3", BUCKET_COUNTER),
+        ("StaticLatencyStamp", LATENCY_STAMP),
+        ("StaticMeasuredLatency", MEASURED_LATENCY),
+        ("StaticLatencyStampUnits", LATENCY_STAMP_UNITS),
+        ("Reserved3", UCHAR * 22),
+        ("DebugLogTriggerEnable", DEBUG_BIT_FIELD),
+        ("DebugLogMeasuredLatency", USHORT),
+        ("DebugLogLatencyStamp", ULONGLONG),
+        ("DebugLogPointer", USHORT),
+        ("DebugCounterTriggerSource", DEBUG_BIT_FIELD),
+        (
+            "DebugLogStampUnits",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("BasedOnTimestamp", UCHAR, 1),
+                                ("Reserved", UCHAR, 7),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUchar", UCHAR),
+                ],
+                _pack_,
+            ),
+        ),
+        ("Reserved4", UCHAR * 29),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_LATENCY_MONITOR_LOG_VERSION_1
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_LATENCY_MONITOR
+    ]
+
+
+PNVME_OCP_DEVICE_LATENCY_MONITOR_LOG = POINTER(NVME_OCP_DEVICE_LATENCY_MONITOR_LOG)
+
+assert sizeof(NVME_OCP_DEVICE_LATENCY_MONITOR_LOG) == 512
+
+# Log page definition of NVME_LOG_PAGE_OCP_DEVICE_CAPABILITIES. Size 4096 bytes
+
+
+class DSSD_POWER_STATE_DESCRIPTOR(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("NvmePowerState", UCHAR, 5),
+        ("Reserved", UCHAR, 2),
+        ("ValidDSSDPowerState", UCHAR, 1),
+    ]
+
+
+PDSSD_POWER_STATE_DESCRIPTOR = POINTER(DSSD_POWER_STATE_DESCRIPTOR)
+
+assert sizeof(DSSD_POWER_STATE_DESCRIPTOR) == 1
+NVME_OCP_DEVICE_CAPABILITIES_LOG_VERSION_1 = 0x0001
+
+
+class NVME_OCP_DEVICE_CAPABILITIES_LOG(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("PciePorts", USHORT),
+        (
+            "OobMgmtSupport",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("MctpOverSMBusSupported", USHORT, 1),
+                                ("MctpOverPcieVDMSupported", USHORT, 1),
+                                ("BasicMgmtCommandSupported", USHORT, 1),
+                                ("Reserved", USHORT, 12),
+                                ("CompliesWithSpec", USHORT, 1),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "WriteZeroesCommand",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("Supported", USHORT, 1),
+                                ("DEACBitSupported", USHORT, 1),
+                                ("FUABitSupported", USHORT, 1),
+                                ("NvmeIo5Met", USHORT, 1),
+                                ("NvmeIo6Met", USHORT, 1),
+                                ("Reserved", USHORT, 10),
+                                ("CompliesWithSpec", USHORT, 1),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "SanitizeCommand",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("Supported", USHORT, 1),
+                                ("CryptoEraseSupported", USHORT, 1),
+                                ("BlockEraseSupported", USHORT, 1),
+                                ("OverwriteSupported", USHORT, 1),
+                                ("DeallocateLbaSupported", USHORT, 1),
+                                ("Reserved", USHORT, 10),
+                                ("CompliesWithSpec", USHORT, 1),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "DatasetMgmtCommand",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("Supported", USHORT, 1),
+                                ("AttribDeallocateSupported", USHORT, 1),
+                                ("Reserved", USHORT, 13),
+                                ("CompliesWithSpec", USHORT, 1),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "WriteUncorrectableCommand",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("Supported", USHORT, 1),
+                                ("SingleLBASupported", USHORT, 1),
+                                ("MaxLBASupported", USHORT, 1),
+                                ("NvmeIo14Met", USHORT, 1),
+                                ("Reserved", USHORT, 11),
+                                ("CompliesWithSpec", USHORT, 1),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+        (
+            "FusedCommand",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("CWFusedSupported", USHORT, 1),
+                                ("Reserved", USHORT, 14),
+                                ("CompliesWithSpec", USHORT, 1),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUshort", USHORT),
+                ],
+                _pack_,
+            ),
+        ),
+        ("MinimumValidDSSDPowerState", USHORT),
+        ("Reserved0", UCHAR),
+        ("DssdDescriptors", DSSD_POWER_STATE_DESCRIPTOR * 127),
+        ("Reserved1", UCHAR * 3934),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_CAPABILITIES_LOG_VERSION_1
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_DEVICE_CAPABILITIES
+    ]
+
+
+PNVME_OCP_DEVICE_CAPABILITIES_LOG = POINTER(NVME_OCP_DEVICE_CAPABILITIES_LOG)
+
+assert sizeof(NVME_OCP_DEVICE_CAPABILITIES_LOG) == 4096
+
+# Log page definition of NVME_LOG_PAGE_OCP_UNSUPPORTED_REQUIREMENTS. Size 4096 bytes
+
+
+class UNSUPPORTED_REQUIREMENT(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("ReqId", UCHAR * 16),  # Zero padded ASCII string of the requirement id not supported
+    ]
+
+
+PUNSUPPORTED_REQUIREMENT = POINTER(UNSUPPORTED_REQUIREMENT)
+
+NVME_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS_LOG_VERSION_1 = 0x0001
+
+
+class NVME_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS_LOG(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("UnsupportedCount", USHORT),
+        ("Reserved0", UCHAR * 14),
+        ("UnsupportedReqList", UNSUPPORTED_REQUIREMENT * 253),
+        ("Reserved1", UCHAR * 14),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS_LOG_VERSION_1
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS
+    ]
+
+
+PNVME_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS_LOG = POINTER(NVME_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS_LOG)
+
+assert sizeof(NVME_OCP_DEVICE_UNSUPPORTED_REQUIREMENTS_LOG) == 4096
+# Log page definition of NVME_LOG_PAGE_OCP_TCG_CONFIGURATION. Size 512 bytes
+
+NVME_OCP_DEVICE_TCG_CONFIGURATION_LOG_VERSION_1 = 0x0001
+
+
+class NVME_OCP_DEVICE_TCG_CONFIGURATION_LOG(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        (
+            "State",
+            make_union(
+                [
+                    (
+                        "DUMMYSTRUCTNAME",
+                        make_struct(
+                            [
+                                ("CPINSIDValue", UCHAR, 1),
+                                ("CPINSIDBlocked", UCHAR, 1),
+                                ("LockingEnabled", UCHAR, 1),
+                                ("SUMOwner", UCHAR, 1),
+                                ("Reserved", UCHAR, 4),
+                            ],
+                            _pack_,
+                        ),
+                    ),
+                    ("AsUchar", UCHAR),
+                ],
+                _pack_,
+            ),
+        ),
+        ("Reserved0", UCHAR * 3),
+        # Locking SP Activation count
+        ("LSPActivationCount", UCHAR),
+        # TPer Revert count
+        ("TPRevertCount", UCHAR),
+        # Locking SP Revert count
+        ("LSPRevertCount", UCHAR),
+        # Locking Object Count in Locking Table
+        ("LOCount", UCHAR),
+        # Single User Mode Locking Object count
+        ("SUMLOCount", UCHAR),
+        # Range Provisioned Locking Object count
+        ("RPLOCount", UCHAR),
+        # Namespace Provisioned Locking Object count
+        ("NPLOCount", UCHAR),
+        # Read Locked Locking Object count
+        ("RLLOCount", UCHAR),
+        # Write Locked Locking Object count
+        ("WLLOCount", UCHAR),
+        # Read Unlocked Locking Object count
+        ("RULOCount", UCHAR),
+        # Write Unlocked Locking Object count
+        ("WULOCount", UCHAR),
+        ("Reserved1", UCHAR),
+        # SID Authentication Try (failed) count
+        ("SIDAuthTryCount", ULONG),
+        # SID Authentication Try (failed) limit
+        ("SIDAuthTryLimit", ULONG),
+        # Programmatic TCG Reset count
+        ("ResetCount", ULONG),
+        # Count of Locking Objects transitioned to locked state
+        # due to Programmatic TCG Reset
+        ("ResetLockCount", ULONG),
+        ("Reserved2", UCHAR * 462),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_TCG_CONFIGURATION_LOG_VERSION_1
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_TCG_CONFIGURATION
+    ]
+
+
+PNVME_OCP_DEVICE_TCG_CONFIGURATION_LOG = POINTER(NVME_OCP_DEVICE_TCG_CONFIGURATION_LOG)
+
+assert sizeof(NVME_OCP_DEVICE_TCG_CONFIGURATION_LOG) == 512
+# Log page definition of NVME_LOG_PAGE_OCP_TCG_HISTORY. Size 4096 bytes
+
+TCG_HISTORY_ENTRY_VERSION_1 = 0x01
+
+
+class TCG_HISTORY_ENTRY(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("VersionNumber", UCHAR),
+        ("EntryLength", UCHAR),
+        ("PowerCycleCount", USHORT),
+        ("TcgCommandCount", ULONG),
+        ("TcgCommandCompletionTS", ULONGLONG),
+        ("InvokingId", ULONGLONG),
+        ("MethodId", ULONGLONG),
+        ("ComId", USHORT),
+        ("ProtocolId", UCHAR),
+        ("TcgStatus", UCHAR),
+        ("ProcessTime", USHORT),
+        ("CommandSpecific", UCHAR * 10),
+    ]
+
+
+PTCG_HISTORY_ENTRY = POINTER(TCG_HISTORY_ENTRY)
+
+assert sizeof(TCG_HISTORY_ENTRY) == 48
+
+
+class TCG_AUTH_METHOD_SPECIFIC(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("AuthorityId", ULONGLONG),
+        ("TriesCount", UCHAR),
+    ]
+
+
+PTCG_AUTH_METHOD_SPECIFIC = POINTER(TCG_AUTH_METHOD_SPECIFIC)
+
+
+class TCG_ACTIVATE_METHOD_SPECIFIC(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("RangeStartLengthPolicy", UCHAR),
+    ]
+
+
+PTCG_ACTIVATE_METHOD_SPECIFIC = POINTER(TCG_ACTIVATE_METHOD_SPECIFIC)
+
+
+class TCG_REACTIVATE_METHOD_SPECIFIC(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("RangeStartLengthPolicy", UCHAR),
+    ]
+
+
+PTCG_REACTIVATE_METHOD_SPECIFIC = POINTER(TCG_REACTIVATE_METHOD_SPECIFIC)
+
+
+class TCG_ASSIGN_METHOD_SPECIFIC(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("NamespaceId", ULONG),
+    ]
+
+
+PTCG_ASSIGN_METHOD_SPECIFIC = POINTER(TCG_ASSIGN_METHOD_SPECIFIC)
+
+
+class TCG_BLOCKSID_METHOD_SPECIFIC(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("ClearEvents", UCHAR),
+    ]
+
+
+PTCG_BLOCKSID_METHOD_SPECIFIC = POINTER(TCG_BLOCKSID_METHOD_SPECIFIC)
+
+NVME_OCP_DEVICE_TCG_HISTORY_LOG_VERSION_1 = 0x0001
+
+
+class NVME_OCP_DEVICE_TCG_HISTORY_LOG(Structure):
+    _pack_ = _pack_
+    _fields_ = [
+        ("LID", UCHAR),  # Shall be set to NVME_LOG_PAGE_OCP_TCG_HISTORY
+        ("Reserved0", UCHAR * 3),
+        ("HistoryEntryCount", ULONG),
+        ("HistoryEntries", TCG_HISTORY_ENTRY * 84),
+        ("Reserved1", UCHAR * 38),
+        ("LogPageVersionNumber", USHORT),  # Shall be set to NVME_OCP_DEVICE_TCG_HISTORY_LOG_VERSION_1
+        ("LogPageGUID", GUID),  # Shall be set to GUID_OCP_DEVICE_TCG_HISTORY
+    ]
+
+
+PNVME_OCP_DEVICE_TCG_HISTORY_LOG = POINTER(NVME_OCP_DEVICE_TCG_HISTORY_LOG)
+
+assert sizeof(NVME_OCP_DEVICE_TCG_HISTORY_LOG) == 4096
 _pack_ -= 1
 
 

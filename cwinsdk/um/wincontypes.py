@@ -1,7 +1,8 @@
 from ctypes import POINTER, Structure, Union, c_void_p
-from ctypes.wintypes import BOOL, DWORD, SHORT, UINT, WCHAR, WORD
+from ctypes.wintypes import DWORD, SHORT, UINT, WCHAR, WORD
 
 from ..shared.ntdef import CHAR
+from ..wintypes import BOOL
 
 
 class COORD(Structure):
