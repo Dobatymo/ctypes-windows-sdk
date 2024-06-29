@@ -1,5 +1,19 @@
-from ctypes import POINTER, Structure
-from ctypes.wintypes import BOOL, DWORD, HANDLE, LONG, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR, UINT, ULARGE_INTEGER
+from ctypes import POINTER, Structure, WinError
+from ctypes.wintypes import (
+    BOOL,
+    DWORD,
+    HANDLE,
+    LARGE_INTEGER,
+    LONG,
+    LPCSTR,
+    LPCWSTR,
+    LPDWORD,
+    LPSTR,
+    LPVOID,
+    LPWSTR,
+    UINT,
+    ULARGE_INTEGER,
+)
 
 from .. import CEnum, nonzero, validhandle, windll
 from ..shared.minwindef import FILETIME, PDWORD
@@ -13,8 +27,15 @@ OPEN_ALWAYS = 4
 TRUNCATE_EXISTING = 5
 
 INVALID_FILE_SIZE = 0xFFFFFFFF
-INVALID_SET_FILE_POINTER = DWORD(-1)
-INVALID_FILE_ATTRIBUTES = DWORD(-1)
+INVALID_SET_FILE_POINTER = DWORD(-1).value
+INVALID_FILE_ATTRIBUTES = DWORD(-1).value
+
+
+def _invalid_file_attributes(result, func, arguments):
+    if result == INVALID_FILE_ATTRIBUTES:
+        raise WinError()
+
+    return result
 
 
 class BY_HANDLE_FILE_INFORMATION(Structure):
@@ -117,6 +138,7 @@ GetFileAttributesExW.restype = BOOL
 GetFileAttributesW = windll.kernel32.GetFileAttributesW
 GetFileAttributesW.argtypes = [LPCWSTR]
 GetFileAttributesW.restype = DWORD
+GetFileAttributesW.errcheck = _invalid_file_attributes
 
 GetFileInformationByHandle = windll.kernel32.GetFileInformationByHandle
 GetFileInformationByHandle.argtypes = [HANDLE, POINTER(BY_HANDLE_FILE_INFORMATION)]
@@ -255,3 +277,13 @@ GetVolumePathNamesForVolumeNameW = windll.kernel32.GetVolumePathNamesForVolumeNa
 GetVolumePathNamesForVolumeNameW.argtypes = [LPCWSTR, LPWCH, DWORD, PDWORD]
 GetVolumePathNamesForVolumeNameW.restype = BOOL
 GetVolumePathNamesForVolumeNameW.errcheck = nonzero
+
+GetFileSizeEx = windll.kernel32.GetFileSizeEx
+GetFileSizeEx.argtypes = [HANDLE, POINTER(LARGE_INTEGER)]
+GetFileSizeEx.restype = BOOL
+GetFileSizeEx.errcheck = nonzero
+
+GetVolumeInformationByHandleW = windll.kernel32.GetVolumeInformationByHandleW
+GetVolumeInformationByHandleW.argtypes = [HANDLE, LPWSTR, DWORD, LPDWORD, LPDWORD, LPDWORD, LPWSTR, DWORD]
+GetVolumeInformationByHandleW.restype = BOOL
+GetVolumeInformationByHandleW.errcheck = nonzero

@@ -363,9 +363,21 @@ patterns = [
         re.MULTILINE,
     ),
     (
-        "replace simple struct typedef",  # do struct replaces before others so struct will match as keyword
+        "replace simple struct typedef with pointer",  # do struct replaces before others so struct will match as keyword
         r"^[ ]*typedef\s+(?:struct\s+)?_?([a-zA-Z_][a-zA-Z0-9_]*)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*,\s*\*\s*P\2;",
         r"\2 = \1\nP\2 = POINTER(\1)",
+        re.MULTILINE,
+    ),
+    (
+        "replace simple struct typedef",  # do struct replaces before others so struct will match as keyword
+        r"^[ ]*typedef\s+(?:struct\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*;",
+        r"\2 = \1",
+        re.MULTILINE,
+    ),
+    (
+        "replace simple struct typedef pointer",  # do struct replaces before others so struct will match as keyword
+        r"^[ ]*typedef\s+(?:struct\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s*\*\s*P([a-zA-Z_][a-zA-Z0-9_]*)\s*;",
+        r"\2 = POINTER(\1)",
         re.MULTILINE,
     ),
     (

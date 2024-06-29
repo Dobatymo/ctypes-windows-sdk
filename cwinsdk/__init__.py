@@ -131,8 +131,11 @@ def s_ok(result, func, arguments):
 
 
 def status_success(result, func, arguments):
+    from .km.ntifs import RtlNtStatusToDosError
+
     if result != STATUS_SUCCESS:
-        raise WinError(result)
+        error = RtlNtStatusToDosError(result)
+        raise WinError(error)
 
     return result
 
