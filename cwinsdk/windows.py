@@ -22,6 +22,8 @@ from .shared.srb import *
 from .shared.windef import *
 from .shared.winerror import *
 from .shared.wtypesbase import *
+from .um.accctrl import *
+from .um.aclapi import *
 from .um.audiosessiontypes import *
 from .um.combaseapi import *
 from .um.consoleapi import *
