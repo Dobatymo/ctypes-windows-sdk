@@ -2772,7 +2772,7 @@ typedef struct _SE_ACCESS_REPLY
  PPRIVILEGE_SET* Privileges
 } SE_ACCESS_REPLY, *PSE_ACCESS_REPLY
 """
-SE_CREATE_TOKEN_NAME = "SeCreateTokenPrivilege"
+SE_CREATE_TOKEN_NAME = "SeCreateTokenPrivilege"  # noqa: S105
 SE_ASSIGNPRIMARYTOKEN_NAME = "SeAssignPrimaryTokenPrivilege"
 SE_LOCK_MEMORY_NAME = "SeLockMemoryPrivilege"
 SE_INCREASE_QUOTA_NAME = "SeIncreaseQuotaPrivilege"

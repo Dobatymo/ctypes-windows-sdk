@@ -32,37 +32,38 @@ dynamic = [
   "description",
   "version",
 ]
-
 urls.Homepage = "https://github.com/Dobatymo/ctypes-windows-sdk"
 
 [tool.flit.module]
 name = "cwinsdk"
 
-[tool.black]
-line-length = 120
-
 [tool.ruff]
 line-length = 120
-
 lint.extend-select = [
   "B",
+  "C4",
+  "DTZ",
   "I",
+  "PIE",
+  "RUF",
+  "S",
+  "SIM",
+  "UP",
+]
+lint.ignore = [
+  "E741",
+  "RUF012",
+  "S101",
+]
+lint.per-file-ignores."cwinsdk/__init__.py" = [
+  "RUF005",
 ]
 
 lint.per-file-ignores."cwinsdk/windows.py" = [
   "F403",
 ]
 
-[tool.isort]
-profile = "black"
-line_length = 120
-
 [tool.mypy]
 allow_redefinition = true
 warn_unused_configs = true
 warn_unused_ignores = true
-
-[tool.bandit]
-skips = [
-  "B101",
-]

@@ -14,7 +14,7 @@ class GUID(Structure):
         return f"{self.Data1:08x}-{self.Data2:04x}-{self.Data3:04x}-{bytes(self.Data4)[:2].hex().zfill(4)}-{bytes(self.Data4)[2:].hex().zfill(12)}"
 
     def __repr__(self) -> str:
-        return f"GUID.from_str('{str(self)}')"
+        return f"GUID.from_str('{self!s}')"
 
     def __eq__(self, other) -> bool:
         if isinstance(other, GUID):
