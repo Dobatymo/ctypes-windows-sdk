@@ -116,6 +116,13 @@ def nonnull(result, func, arguments):
     return result
 
 
+def nonfalse(result, func, arguments):
+    if result == 0:
+        raise WinError()
+
+    return result
+
+
 def validhandle(result, func, arguments):
     if result == INVALID_HANDLE_VALUE:
         raise WinError()

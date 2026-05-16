@@ -1,26 +1,28 @@
 from ctypes import POINTER, Structure, Union, c_char
-from ctypes.wintypes import WCHAR  # CHAR not in py2
 from ctypes.wintypes import (
     BOOL,
     BYTE,
+    CHAR,
     DWORD,
     HANDLE,
     LARGE_INTEGER,
     LPCSTR,
     LPCWSTR,
+    LPDWORD,
     LPSTR,
     LPVOID,
     LPWSTR,
     ULONG,
+    WCHAR,
     WORD,
 )
 
-from .. import CEnum, nonzero, validhandle, windll
+from .. import CEnum, nonfalse, nonzero, validhandle, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 from ..shared.basetsd import SIZE_T, ULONG64
 from ..shared.guiddef import GUID
 from ..shared.minwindef import ATOM, PDWORD
-from ..shared.ntdef import CHAR, ULONGLONG
+from ..shared.ntdef import ULONGLONG
 from .minwinbase import FILE_INFO_BY_HANDLE_CLASS, LPSECURITY_ATTRIBUTES
 from .winnt import (
     FILE_CASE_PRESERVED_NAMES,
@@ -34,6 +36,8 @@ from .winnt import (
     LPCH,
     LUID,
     MAXLONG,
+    PSID,
+    SID_NAME_USE,
     STATUS_ABANDONED_WAIT_0,
     STATUS_USER_APC,
     STATUS_WAIT_0,
@@ -782,3 +786,88 @@ GetVolumePathNameA.restype = BOOL
 GetVolumePathNamesForVolumeNameA = windll.kernel32.GetVolumePathNamesForVolumeNameA
 GetVolumePathNamesForVolumeNameA.argtypes = [LPCSTR, LPCH, DWORD, PDWORD]
 GetVolumePathNamesForVolumeNameA.restype = BOOL
+
+
+LookupAccountSidA = windll.advapi32.LookupAccountSidA
+LookupAccountSidA.argtypes = [LPCSTR, PSID, LPSTR, LPDWORD, LPSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountSidA.restype = BOOL
+LookupAccountSidA.errcheck = nonfalse
+
+LookupAccountSidW = windll.advapi32.LookupAccountSidW
+LookupAccountSidW.argtypes = [LPCWSTR, PSID, LPWSTR, LPDWORD, LPWSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountSidW.restype = BOOL
+LookupAccountSidW.errcheck = nonfalse
+
+LookupAccountNameA = windll.advapi32.LookupAccountNameA
+LookupAccountNameA.argtypes = [LPCSTR, LPCSTR, PSID, LPDWORD, LPSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountNameA.restype = BOOL
+LookupAccountNameA.errcheck = nonfalse
+
+LookupAccountNameW = windll.advapi32.LookupAccountNameW
+LookupAccountNameW.argtypes = [LPCWSTR, LPCWSTR, PSID, LPDWORD, LPWSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountNameW.restype = BOOL
+LookupAccountNameW.errcheck = nonfalse
+
+
+def LookupAccountNameLocalA(lpAccountName, Sid, cbSid, ReferencedDomainName, cchReferencedDomainName, peUse):
+    return LookupAccountNameA(None, lpAccountName, Sid, cbSid, ReferencedDomainName, cchReferencedDomainName, peUse)
+
+
+LookupAccountNameLocalA.argtypes = [LPCSTR, PSID, LPDWORD, LPSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountNameLocalA.restype = BOOL
+LookupAccountNameLocalA.errcheck = nonfalse
+
+
+def LookupAccountNameLocalW(lpAccountName, Sid, cbSid, ReferencedDomainName, cchReferencedDomainName, peUse):
+    return LookupAccountNameW(None, lpAccountName, Sid, cbSid, ReferencedDomainName, cchReferencedDomainName, peUse)
+
+
+LookupAccountNameLocalW.argtypes = [LPCWSTR, PSID, LPDWORD, LPWSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountNameLocalW.restype = BOOL
+LookupAccountNameLocalW.errcheck = nonfalse
+
+
+def LookupAccountSidLocalA(Sid, Name, cchName, ReferencedDomainName, cchReferencedDomainName, peUse):
+    return LookupAccountSidA(None, Sid, Name, cchName, ReferencedDomainName, cchReferencedDomainName, peUse)
+
+
+LookupAccountSidLocalA.argtypes = [PSID, LPSTR, LPDWORD, LPSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountSidLocalA.restype = BOOL
+LookupAccountSidLocalA.errcheck = nonfalse
+
+
+def LookupAccountSidLocalW(Sid, Name, cchName, ReferencedDomainName, cchReferencedDomainName, peUse):
+    return LookupAccountSidW(None, Sid, Name, cchName, ReferencedDomainName, cchReferencedDomainName, peUse)
+
+
+LookupAccountSidLocalW.argtypes = [PSID, LPWSTR, LPDWORD, LPWSTR, LPDWORD, POINTER(SID_NAME_USE)]
+LookupAccountSidLocalW.restype = BOOL
+LookupAccountSidLocalW.errcheck = nonfalse
+
+LookupPrivilegeValueA = windll.advapi32.LookupPrivilegeValueA
+LookupPrivilegeValueA.argtypes = [LPCSTR, LPCSTR, POINTER(LUID)]
+LookupPrivilegeValueA.restype = BOOL
+
+LookupPrivilegeValueW = windll.advapi32.LookupPrivilegeValueW
+LookupPrivilegeValueW.argtypes = [LPCWSTR, LPCWSTR, POINTER(LUID)]
+LookupPrivilegeValueW.restype = BOOL
+
+LookupPrivilegeNameA = windll.advapi32.LookupPrivilegeNameA
+LookupPrivilegeNameA.argtypes = [LPCSTR, POINTER(LUID), LPSTR, LPDWORD]
+LookupPrivilegeNameA.restype = BOOL
+LookupPrivilegeNameA.errcheck = nonfalse
+
+LookupPrivilegeNameW = windll.advapi32.LookupPrivilegeNameW
+LookupPrivilegeNameW.argtypes = [LPCWSTR, POINTER(LUID), LPWSTR, LPDWORD]
+LookupPrivilegeNameW.restype = BOOL
+LookupPrivilegeNameW.errcheck = nonfalse
+
+LookupPrivilegeDisplayNameA = windll.advapi32.LookupPrivilegeDisplayNameA
+LookupPrivilegeDisplayNameA.argtypes = [LPCSTR, LPCSTR, LPSTR, LPDWORD, LPDWORD]
+LookupPrivilegeDisplayNameA.restype = BOOL
+LookupPrivilegeDisplayNameA.errcheck = nonfalse
+
+LookupPrivilegeDisplayNameW = windll.advapi32.LookupPrivilegeDisplayNameW
+LookupPrivilegeDisplayNameW.argtypes = [LPCWSTR, LPCWSTR, LPWSTR, LPDWORD, LPDWORD]
+LookupPrivilegeDisplayNameW.restype = BOOL
+LookupPrivilegeDisplayNameW.errcheck = nonfalse
