@@ -65,5 +65,8 @@ lint.per-file-ignores."cwinsdk/windows.py" = [
 
 [tool.mypy]
 allow_redefinition = true
+no_implicit_optional = true
+warn_redundant_casts = true
 warn_unused_configs = true
 warn_unused_ignores = true
+warn_unreachable = true

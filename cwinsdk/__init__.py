@@ -17,6 +17,7 @@ INVALID_HANDLE_VALUE = HANDLE(-1).value  # copied from cwinsdk.um.handleapi to p
 S_OK = 0  # copied from cwinsdk.shared.winerror
 MIDL_PASS = False
 STATUS_SUCCESS = 0  # copied from cwinsdk.shared.ntstatus
+ERROR_SUCCESS = 0  # copied from cwinsdk.shared.winerror
 
 
 class CEnum(c_int):
@@ -100,6 +101,13 @@ def _struct2pairs(struct: Structure) -> Iterator[Tuple[str, Any]]:
 
 def struct2dict(struct: Structure) -> dict:
     return dict(_struct2pairs(struct))
+
+
+def error_success(result, func, arguments):
+    if result != ERROR_SUCCESS:
+        raise WinError()
+
+    return result
 
 
 def nonzero(result, func, arguments):

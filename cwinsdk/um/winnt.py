@@ -1835,20 +1835,20 @@ class SE_SID(Union):
     ]
 
 
-"""
 class SID_NAME_USE(CEnum):
- SidTypeUser = 1,
- SidTypeGroup,
- SidTypeDomain,
- SidTypeAlias,
- SidTypeWellKnownGroup,
- SidTypeDeletedAccount,
- SidTypeInvalid,
- SidTypeUnknown,
- SidTypeComputer,
- SidTypeLabel,
- SidTypeLogonSession
-"""
+    SidTypeUser = 1
+    SidTypeGroup = 2
+    SidTypeDomain = 3
+    SidTypeAlias = 4
+    SidTypeWellKnownGroup = 5
+    SidTypeDeletedAccount = 6
+    SidTypeInvalid = 7
+    SidTypeUnknown = 8
+    SidTypeComputer = 9
+    SidTypeLabel = 10
+    SidTypeLogonSession = 11
+
+
 if MIDL_PASS:
 
     class SID_AND_ATTRIBUTES(Structure):
@@ -9721,17 +9721,3 @@ class ACL(Structure):
 
 
 PACL = POINTER(ACL)
-
-
-class SID_NAME_USE(CEnum):
-    SidTypeUser = 1
-    SidTypeGroup = 2
-    SidTypeDomain = 3
-    SidTypeAlias = 4
-    SidTypeWellKnownGroup = 5
-    SidTypeDeletedAccount = 6
-    SidTypeInvalid = 7
-    SidTypeUnknown = 8
-    SidTypeComputer = 9
-    SidTypeLabel = 10
-    SidTypeLogonSession = 11

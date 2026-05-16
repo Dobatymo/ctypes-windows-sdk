@@ -1,7 +1,7 @@
 from ctypes import POINTER, WINFUNCTYPE
 from ctypes.wintypes import BOOL, DWORD, HANDLE, LPCSTR, LPCWSTR, LPSTR, LPWSTR, PULONG, ULONG, USHORT
 
-from .. import windll
+from .. import error_success, windll
 from ..shared.guiddef import GUID
 from ..shared.ntdef import PVOID
 from .accctrl import (
@@ -77,6 +77,7 @@ GetNamedSecurityInfoA.argtypes = [
     POINTER(POINTER(SECURITY_DESCRIPTOR)),
 ]
 GetNamedSecurityInfoA.restype = DWORD
+GetNamedSecurityInfoA.errcheck = error_success
 
 GetNamedSecurityInfoW = windll.advapi32.GetNamedSecurityInfoW
 GetNamedSecurityInfoW.argtypes = [
@@ -90,6 +91,7 @@ GetNamedSecurityInfoW.argtypes = [
     POINTER(POINTER(SECURITY_DESCRIPTOR)),
 ]
 GetNamedSecurityInfoW.restype = DWORD
+GetNamedSecurityInfoW.errcheck = error_success
 
 GetSecurityInfo = windll.advapi32.GetSecurityInfo
 GetSecurityInfo.argtypes = [
@@ -130,6 +132,7 @@ GetInheritanceSourceA.argtypes = [
     POINTER(INHERITED_FROMA),
 ]
 GetInheritanceSourceA.restype = DWORD
+GetInheritanceSourceA.errcheck = error_success
 
 GetInheritanceSourceW = windll.advapi32.GetInheritanceSourceW
 GetInheritanceSourceW.argtypes = [
@@ -145,6 +148,7 @@ GetInheritanceSourceW.argtypes = [
     POINTER(INHERITED_FROMW),
 ]
 GetInheritanceSourceW.restype = DWORD
+GetInheritanceSourceW.errcheck = error_success
 
 FreeInheritedFromArray = windll.advapi32.FreeInheritedFromArray
 FreeInheritedFromArray.argtypes = [POINTER(INHERITED_FROMW), USHORT, POINTER(FN_OBJECT_MGR_FUNCTS)]
