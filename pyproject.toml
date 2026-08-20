@@ -24,9 +24,10 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development",
   "Topic :: System :: Operating System",
-
 ]
 dynamic = [
   "description",
@@ -34,8 +35,8 @@ dynamic = [
 ]
 urls.Homepage = "https://github.com/Dobatymo/ctypes-windows-sdk"
 
-[tool.flit.module]
-name = "cwinsdk"
+[tool.flit]
+module.name = "cwinsdk"
 
 [tool.ruff]
 line-length = 120
@@ -50,23 +51,19 @@ lint.extend-select = [
   "SIM",
   "UP",
 ]
-lint.ignore = [
-  "E741",
-  "RUF012",
-  "S101",
-]
+lint.ignore = [ "E741", "FA100", "RUF012", "S101" ]
 lint.per-file-ignores."cwinsdk/__init__.py" = [
   "RUF005",
 ]
-
 lint.per-file-ignores."cwinsdk/windows.py" = [
   "F403",
 ]
+lint.pyupgrade.keep-runtime-typing = true
 
 [tool.mypy]
-allow_redefinition = true
-no_implicit_optional = true
 warn_redundant_casts = true
-warn_unused_configs = true
 warn_unused_ignores = true
 warn_unreachable = true
+allow_redefinition = true
+warn_unused_configs = true
+no_implicit_optional = true

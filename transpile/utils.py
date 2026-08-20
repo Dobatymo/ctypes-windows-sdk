@@ -5,6 +5,8 @@ from typing import Dict, Iterator, List, Optional, Set
 
 import libcst as cst
 
+logger = logging.getLogger(__name__)
+
 
 class FixEnumsCST(cst.CSTTransformer):
     def __init__(self):
@@ -33,7 +35,7 @@ class FixEnumsCST(cst.CSTTransformer):
                     i += 1
                     self.fields.append(_field.with_changes(body=[newfield]))
                 else:
-                    raise RuntimeError(f"Unexpected node: {field.body[0]}")
+                    raise TypeError(f"Unexpected node: {field.body[0]}")
             return False
         else:
             return True
@@ -160,7 +162,7 @@ class FixEnumAccessCST(cst.CSTTransformer):
                     msg = f"Variable not found: {var}"
                     raise RuntimeError(msg)
                 else:
-                    logging.error("Variable not found: %s", var)
+                    logger.error("Variable not found: %s", var)
                     return cst.RemoveFromParent()
                     # return cst.Comment(value=f"#Variable not found: {var}")
         return updated_node
@@ -748,7 +750,7 @@ def transpile_header(data: str, yield_steps: bool, verbose: bool = False) -> Ite
             if yield_steps:
                 yield data
         except KeyboardInterrupt:
-            logging.error("Interrupted at %r", name)
+            logger.error("Interrupted at %r", name)
             write_file(Path("_interrupted.py"), "\n", data)
             raise
 

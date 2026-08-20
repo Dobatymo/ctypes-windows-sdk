@@ -7,17 +7,28 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
   "libcst",
 ]
 
-[tool.black]
-line-length = 120
-
 [tool.ruff]
 line-length = 120
-
-[tool.isort]
-profile = "black"
-line_length = 120
+lint.extend-select = [
+  "B",
+  "C4",
+  "DTZ",
+  "I",
+  "PIE",
+  "RUF",
+  "S",
+  "SIM",
+  "UP",
+]
+lint.ignore = [ "E741", "FA100", "RUF012", "S101" ]
+lint.per-file-ignores."transpile.py" = [
+  "S603",
+]
+lint.pyupgrade.keep-runtime-typing = true

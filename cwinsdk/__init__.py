@@ -9,7 +9,7 @@ from typing import Any, Callable, Iterable, Iterator, Tuple, Type
 from .shared.guiddef import GUID
 from .wintypes import BOOL, BOOLEAN
 
-__version__ = "0.0.16"
+__version__ = "0.0.17"
 
 windll = LibraryLoader(WinDLL)
 
