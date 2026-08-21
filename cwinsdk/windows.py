@@ -17,6 +17,7 @@ from .shared.ntdef import *
 from .shared.ntstatus import *
 from .shared.nvme import *
 from .shared.scsi import *
+from .shared.sddl import *
 from .shared.secext import *
 from .shared.srb import *
 from .shared.windef import *

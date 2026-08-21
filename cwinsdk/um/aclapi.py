@@ -105,6 +105,7 @@ GetSecurityInfo.argtypes = [
     POINTER(POINTER(SECURITY_DESCRIPTOR)),
 ]
 GetSecurityInfo.restype = DWORD
+GetSecurityInfo.errcheck = error_success
 
 SetNamedSecurityInfoA = windll.advapi32.SetNamedSecurityInfoA
 SetNamedSecurityInfoA.argtypes = [LPSTR, SE_OBJECT_TYPE, SECURITY_INFORMATION, PSID, PSID, PACL, PACL]

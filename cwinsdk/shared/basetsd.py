@@ -1,4 +1,4 @@
-from ctypes import POINTER, c_byte, c_char, c_int, c_int64, c_long, c_short, c_uint, c_uint64, c_ulong, c_ushort
+from ctypes import POINTER, c_byte, c_int, c_int64, c_long, c_short, c_ubyte, c_uint, c_uint64, c_ulong, c_ushort
 from platform import machine
 
 X64 = machine().endswith("64")
@@ -26,11 +26,11 @@ DWORD64 = c_uint64
 PDWORD64 = POINTER(DWORD64)
 KAFFINITY = ULONG_PTR
 
-INT8 = c_char
+INT8 = c_byte
 INT16 = c_short
 INT32 = c_int
-INT64 = c_uint64
-UINT8 = c_byte
+INT64 = c_int64
+UINT8 = c_ubyte
 UINT16 = c_ushort
 UINT32 = c_uint
 UINT64 = c_uint64

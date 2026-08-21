@@ -13,10 +13,11 @@ from ctypes.wintypes import (
     LPWSTR,
     UINT,
     ULARGE_INTEGER,
+    WCHAR,
 )
 
 from .. import CEnum, nonzero, validhandle, windll
-from ..shared.minwindef import FILETIME, PDWORD
+from ..shared.minwindef import FILETIME, MAX_PATH, PDWORD
 from ..shared.ntdef import LPWCH, PWSTR, ULONGLONG
 from .minwinbase import FILE_INFO_BY_HANDLE_CLASS, GET_FILEEX_INFO_LEVELS, LPOVERLAPPED, LPSECURITY_ATTRIBUTES
 
@@ -74,6 +75,13 @@ class DISK_SPACE_INFORMATION(Structure):
 class STREAM_INFO_LEVELS(CEnum):
     FindStreamInfoStandard = 0
     FindStreamInfoMaxInfoLevel = 1
+
+
+class WIN32_FIND_STREAM_DATA(Structure):
+    _fields_ = [
+        ("StreamSize", LARGE_INTEGER),
+        ("cStreamName", WCHAR * (MAX_PATH + 36)),
+    ]
 
 
 # functions
@@ -139,6 +147,11 @@ GetFileAttributesW = windll.kernel32.GetFileAttributesW
 GetFileAttributesW.argtypes = [LPCWSTR]
 GetFileAttributesW.restype = DWORD
 GetFileAttributesW.errcheck = _invalid_file_attributes
+
+SetFileAttributesW = windll.kernel32.SetFileAttributesW
+SetFileAttributesW.argtypes = [LPCWSTR, DWORD]
+SetFileAttributesW.restype = BOOL
+SetFileAttributesW.errcheck = nonzero
 
 GetFileInformationByHandle = windll.kernel32.GetFileInformationByHandle
 GetFileInformationByHandle.argtypes = [HANDLE, POINTER(BY_HANDLE_FILE_INFORMATION)]
@@ -208,6 +221,11 @@ FindNextStreamW = windll.kernel32.FindNextStreamW
 FindNextStreamW.argtypes = [HANDLE, LPVOID]
 FindNextStreamW.restype = BOOL
 FindNextStreamW.errcheck = nonzero
+
+FindClose = windll.kernel32.FindClose
+FindClose.argtypes = [HANDLE]
+FindClose.restype = BOOL
+FindClose.errcheck = nonzero
 
 GetTempPathA = windll.kernel32.GetTempPathA
 GetTempPathA.argtypes = [DWORD, LPSTR]

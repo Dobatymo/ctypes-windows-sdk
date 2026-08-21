@@ -1,7 +1,7 @@
-from ctypes import POINTER, Structure, Union
-from ctypes.wintypes import ULONG
+from ctypes import Structure, Union
 
 from .. import CEnum
+from ..shared.basetsd import ULONG_PTR
 from ..shared.ntdef import NTSTATUS, PVOID
 
 
@@ -101,7 +101,7 @@ class IO_STATUS_BLOCK_UNION(Union):
 
 class IO_STATUS_BLOCK(Structure):
     _anonymous_ = ("u",)
-    _fields_ = [("u", IO_STATUS_BLOCK_UNION), ("Information", POINTER(ULONG))]
+    _fields_ = [("u", IO_STATUS_BLOCK_UNION), ("Information", ULONG_PTR)]
 
 
 class FS_INFORMATION_CLASS(CEnum):

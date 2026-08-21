@@ -1,6 +1,6 @@
 from ctypes.wintypes import LPCSTR, LPCWSTR, LPSTR, LPWSTR
 
-from .. import CEnum, windll
+from .. import CEnum, nonfalse, windll
 from ..wintypes import BOOLEAN
 from .minwindef import PULONG
 
@@ -23,10 +23,12 @@ class EXTENDED_NAME_FORMAT(CEnum):
 GetUserNameExA = windll.secur32.GetUserNameExA
 GetUserNameExA.argtypes = [EXTENDED_NAME_FORMAT, LPSTR, PULONG]
 GetUserNameExA.restype = BOOLEAN
+GetUserNameExA.errcheck = nonfalse
 
 GetUserNameExW = windll.secur32.GetUserNameExW
 GetUserNameExW.argtypes = [EXTENDED_NAME_FORMAT, LPWSTR, PULONG]
 GetUserNameExW.restype = BOOLEAN
+GetUserNameExW.errcheck = nonfalse
 
 GetComputerObjectNameA = windll.secur32.GetComputerObjectNameA
 GetComputerObjectNameA.argtypes = [EXTENDED_NAME_FORMAT, LPSTR, PULONG]

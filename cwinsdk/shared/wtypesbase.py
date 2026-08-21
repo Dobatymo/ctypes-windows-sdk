@@ -1,6 +1,5 @@
-from ctypes import c_char
-from ctypes.wintypes import LPCSTR, LPSTR
+from ctypes.wintypes import LPCWSTR, LPWSTR, WCHAR
 
-OLECHAR = c_char
-LPOLESTR = LPSTR
-LPCOLESTR = LPCSTR
+OLECHAR = WCHAR
+LPOLESTR = LPWSTR
+LPCOLESTR = LPCWSTR

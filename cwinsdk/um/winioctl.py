@@ -565,6 +565,10 @@ class STORAGE_PROPERTY_ID(CEnum):
     StorageDeviceLedStateProperty = 63
     StorageDeviceSelfEncryptionProperty = 64
     StorageFruIdProperty = 65
+    StorageStackProperty = 66
+    StorageAdapterProtocolSpecificPropertyEx = 67
+    StorageDeviceProtocolSpecificPropertyEx = 68
+    StorageHwCryptoProperty = 69
 
 
 class MEDIA_TYPE(CEnum):

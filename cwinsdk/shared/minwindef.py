@@ -33,7 +33,7 @@ LPLONG = POINTER(c_long)
 PDWORD = POINTER(DWORD)
 LPDWORD = POINTER(DWORD)
 LPVOID = c_void_p
-LPCVOID = CPOINTER(c_long)
+LPCVOID = c_void_p
 
 INT = c_int
 UINT = c_uint

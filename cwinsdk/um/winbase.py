@@ -21,8 +21,9 @@ from .. import CEnum, nonfalse, nonzero, validhandle, windll
 from ..km.wdm import SECURITY_IMPERSONATION_LEVEL
 from ..shared.basetsd import SIZE_T, ULONG64
 from ..shared.guiddef import GUID
-from ..shared.minwindef import ATOM, PDWORD
+from ..shared.minwindef import ATOM, HLOCAL, PDWORD
 from ..shared.ntdef import ULONGLONG
+from ..wintypes import BOOLEAN
 from .minwinbase import FILE_INFO_BY_HANDLE_CLASS, LPSECURITY_ATTRIBUTES
 from .winnt import (
     FILE_CASE_PRESERVED_NAMES,
@@ -621,6 +622,48 @@ class FILE_ALIGNMENT_INFO(Structure):
     ]
 
 
+class FILE_BASIC_INFO(Structure):
+    _fields_ = [
+        ("CreationTime", LARGE_INTEGER),
+        ("LastAccessTime", LARGE_INTEGER),
+        ("LastWriteTime", LARGE_INTEGER),
+        ("ChangeTime", LARGE_INTEGER),
+        ("FileAttributes", DWORD),
+    ]
+
+
+class FILE_STANDARD_INFO(Structure):
+    _fields_ = [
+        ("AllocationSize", LARGE_INTEGER),
+        ("EndOfFile", LARGE_INTEGER),
+        ("NumberOfLinks", DWORD),
+        ("DeletePending", BOOLEAN),
+        ("Directory", BOOLEAN),
+    ]
+
+
+class FILE_CASE_SENSITIVE_INFO(Structure):
+    _fields_ = [("Flags", ULONG)]
+
+
+class FILE_COMPRESSION_INFO(Structure):
+    _fields_ = [
+        ("CompressedFileSize", LARGE_INTEGER),
+        ("CompressionFormat", WORD),
+        ("CompressionUnitShift", BYTE),
+        ("ChunkShift", BYTE),
+        ("ClusterShift", BYTE),
+        ("Reserved", BYTE * 3),
+    ]
+
+
+class FILE_ATTRIBUTE_TAG_INFO(Structure):
+    _fields_ = [
+        ("FileAttributes", DWORD),
+        ("ReparseTag", DWORD),
+    ]
+
+
 STORAGE_INFO_FLAGS_ALIGNED_DEVICE = 0x00000001
 STORAGE_INFO_FLAGS_PARTITION_ALIGNED_ON_DEVICE = 0x00000002
 STORAGE_INFO_OFFSET_UNKNOWN = 0xFFFFFFFF
@@ -707,6 +750,10 @@ LookupPrivilegeValueW.argtypes = [LPCWSTR, LPCWSTR, POINTER(LUID)]
 LookupPrivilegeValueW.restype = BOOL
 
 # kernel32 functions
+
+LocalFree = windll.kernel32.LocalFree
+LocalFree.argtypes = [HLOCAL]
+LocalFree.restype = HLOCAL
 
 GetFileInformationByHandleEx = windll.kernel32.GetFileInformationByHandleEx
 GetFileInformationByHandleEx.argtypes = [HANDLE, FILE_INFO_BY_HANDLE_CLASS, LPVOID, DWORD]

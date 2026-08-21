@@ -9,7 +9,7 @@ from typing import Any, Callable, Iterable, Iterator, Tuple, Type
 from .shared.guiddef import GUID
 from .wintypes import BOOL, BOOLEAN
 
-__version__ = "0.0.17"
+__version__ = "0.0.18"
 
 windll = LibraryLoader(WinDLL)
 
@@ -105,7 +105,7 @@ def struct2dict(struct: Structure) -> dict:
 
 def error_success(result, func, arguments):
     if result != ERROR_SUCCESS:
-        raise WinError()
+        raise WinError(result)
 
     return result
 

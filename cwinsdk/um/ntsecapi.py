@@ -15,7 +15,9 @@ class LSA_FOREST_TRUST_RECORD_TYPE(CEnum):
     ForestTrustTopLevelName = 0
     ForestTrustTopLevelNameEx = 1
     ForestTrustDomainInfo = 2
-    ForestTrustRecordTypeLast = 2  # ForestTrustDomainInfo
+    ForestTrustBinaryInfo = 3
+    ForestTrustScannerInfo = 4
+    ForestTrustRecordTypeLast = 4
 
 
 class TRUSTED_INFORMATION_CLASS(CEnum):
@@ -32,6 +34,8 @@ class TRUSTED_INFORMATION_CLASS(CEnum):
     TrustedDomainInformationEx2Internal = 11
     TrustedDomainFullInformation2Internal = 12
     TrustedDomainSupportedEncryptionTypes = 13
+    TrustedDomainAuthInformationInternalAes = 14
+    TrustedDomainFullInformationInternalAes = 15
 
 
 class LSA_FOREST_TRUST_COLLISION_RECORD_TYPE(CEnum):
@@ -46,6 +50,17 @@ class LSA_FOREST_TRUST_DOMAIN_INFO(Structure):
         ("DnsName", LSA_UNICODE_STRING),
         ("NetbiosName", LSA_UNICODE_STRING),
     ]
+
+
+class LSA_FOREST_TRUST_SCANNER_INFO(Structure):
+    _fields_ = [
+        ("DomainSid", PSID),
+        ("DnsName", LSA_UNICODE_STRING),
+        ("NetbiosName", LSA_UNICODE_STRING),
+    ]
+
+
+PLSA_FOREST_TRUST_SCANNER_INFO = POINTER(LSA_FOREST_TRUST_SCANNER_INFO)
 
 
 class LSA_FOREST_TRUST_BINARY_DATA(Structure):
@@ -72,11 +87,42 @@ class LSA_FOREST_TRUST_RECORD(Structure):
     ]
 
 
+class _ForestTrustData2(Union):
+    _fields_ = [
+        ("TopLevelName", LSA_UNICODE_STRING),
+        ("DomainInfo", LSA_FOREST_TRUST_DOMAIN_INFO),
+        ("BinaryData", LSA_FOREST_TRUST_BINARY_DATA),
+        ("ScannerInfo", LSA_FOREST_TRUST_SCANNER_INFO),
+    ]
+
+
+class LSA_FOREST_TRUST_RECORD2(Structure):
+    _fields_ = [
+        ("Flags", ULONG),
+        ("ForestTrustType", LSA_FOREST_TRUST_RECORD_TYPE),
+        ("Time", LARGE_INTEGER),
+        ("ForestTrustData", _ForestTrustData2),
+    ]
+
+
+PLSA_FOREST_TRUST_RECORD2 = POINTER(LSA_FOREST_TRUST_RECORD2)
+
+
 class LSA_FOREST_TRUST_INFORMATION(Structure):
     _fields_ = [
         ("RecordCount", ULONG),
         ("Entries", POINTER(POINTER(LSA_FOREST_TRUST_RECORD))),
     ]
+
+
+class LSA_FOREST_TRUST_INFORMATION2(Structure):
+    _fields_ = [
+        ("RecordCount", ULONG),
+        ("Entries", POINTER(POINTER(LSA_FOREST_TRUST_RECORD2))),
+    ]
+
+
+PLSA_FOREST_TRUST_INFORMATION2 = POINTER(LSA_FOREST_TRUST_INFORMATION2)
 
 
 class LSA_AUTH_INFORMATION(Structure):
@@ -204,3 +250,23 @@ LsaRetrievePrivateData.restype = NTSTATUS
 LsaNtStatusToWinError = windll.advapi32.LsaNtStatusToWinError
 LsaNtStatusToWinError.argtypes = [NTSTATUS]
 LsaNtStatusToWinError.restype = ULONG
+
+LsaQueryForestTrustInformation2 = windll.advapi32.LsaQueryForestTrustInformation2
+LsaQueryForestTrustInformation2.argtypes = [
+    LSA_HANDLE,
+    POINTER(LSA_UNICODE_STRING),
+    LSA_FOREST_TRUST_RECORD_TYPE,
+    POINTER(PLSA_FOREST_TRUST_INFORMATION2),
+]
+LsaQueryForestTrustInformation2.restype = NTSTATUS
+
+LsaSetForestTrustInformation2 = windll.advapi32.LsaSetForestTrustInformation2
+LsaSetForestTrustInformation2.argtypes = [
+    LSA_HANDLE,
+    POINTER(LSA_UNICODE_STRING),
+    LSA_FOREST_TRUST_RECORD_TYPE,
+    PLSA_FOREST_TRUST_INFORMATION2,
+    BOOLEAN,
+    POINTER(POINTER(LSA_FOREST_TRUST_COLLISION_INFORMATION)),
+]
+LsaSetForestTrustInformation2.restype = NTSTATUS

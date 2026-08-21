@@ -78,7 +78,7 @@ GetConsoleOutputCP = windll.kernel32.GetConsoleOutputCP
 GetConsoleOutputCP.argtypes = []
 GetConsoleOutputCP.restype = UINT
 
-GetConsoleMode = windll.kernel32.GetConsoleOutputCP
+GetConsoleMode = windll.kernel32.GetConsoleMode
 GetConsoleMode.argtypes = [HANDLE, LPDWORD]
 GetConsoleMode.restype = BOOL
 GetConsoleMode.errcheck = nonzero

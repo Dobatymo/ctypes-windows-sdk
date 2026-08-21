@@ -2270,6 +2270,8 @@ class WELL_KNOWN_SID_TYPE(CEnum):
     WinAuthenticationKeyPropertyAttestationSid = (117,)
     WinAuthenticationFreshKeyAuthSid = (118,)
     WinBuiltinDeviceOwnersSid = (119,)
+    WinBuiltinUserModeHardwareOperatorsSid = (120,)
+    WinBuiltinOpenSSHUsersSid = (121,)
 
 
 """
@@ -2920,7 +2922,11 @@ class TOKEN_INFORMATION_CLASS(CEnum):
     TokenBnoIsolation = 44
     TokenChildProcessFlags = 45
     TokenIsLessPrivilegedAppContainer = 46
-    MaxTokenInfoClass = 47
+    TokenIsSandboxed = 47
+    TokenIsAppSilo = 48
+    TokenLoggingInformation = 49
+    TokenLearningMode = 50
+    MaxTokenInfoClass = 51
 
 
 """
@@ -4210,6 +4216,9 @@ class LOGICAL_PROCESSOR_RELATIONSHIP(CEnum):
     RelationCache = 2
     RelationProcessorPackage = 3
     RelationGroup = 4
+    RelationProcessorDie = 5
+    RelationNumaNodeEx = 6
+    RelationProcessorModule = 7
     RelationAll = 0xFFFF
 
 
@@ -4221,6 +4230,7 @@ class PROCESSOR_CACHE_TYPE(CEnum):
     CacheInstruction = 1
     CacheData = 2
     CacheTrace = 3
+    CacheUnknown = 4
 
 
 CACHE_FULLY_ASSOCIATIVE = 0xFF
@@ -4274,6 +4284,7 @@ PSYSTEM_LOGICAL_PROCESSOR_INFORMATION = POINTER(SYSTEM_LOGICAL_PROCESSOR_INFORMA
 
 class PROCESSOR_RELATIONSHIP(Structure):
     _fields_ = [
+        ("Flags", BYTE),
         ("EfficiencyClass", BYTE),
         ("Reserved", BYTE * 20),
         ("GroupCount", WORD),
@@ -4284,26 +4295,44 @@ class PROCESSOR_RELATIONSHIP(Structure):
 PPROCESSOR_RELATIONSHIP = POINTER(PROCESSOR_RELATIONSHIP)
 
 
+class NUMA_NODE_RELATIONSHIP_DUMMYUNIONNAME(Union):
+    _fields_ = [
+        ("GroupMask", GROUP_AFFINITY),
+        ("GroupMasks", GROUP_AFFINITY * ANYSIZE_ARRAY),
+    ]
+
+
 class NUMA_NODE_RELATIONSHIP(Structure):
+    _anonymous_ = ("DUMMYUNIONNAME",)
     _fields_ = [
         ("NodeNumber", DWORD),
-        ("Reserved", BYTE * 20),
-        ("GroupMask", GROUP_AFFINITY),
+        ("Reserved", BYTE * 18),
+        ("GroupCount", WORD),
+        ("DUMMYUNIONNAME", NUMA_NODE_RELATIONSHIP_DUMMYUNIONNAME),
     ]
 
 
 PNUMA_NODE_RELATIONSHIP = POINTER(NUMA_NODE_RELATIONSHIP)
 
 
+class CACHE_RELATIONSHIP_DUMMYUNIONNAME(Union):
+    _fields_ = [
+        ("GroupMask", GROUP_AFFINITY),
+        ("GroupMasks", GROUP_AFFINITY * ANYSIZE_ARRAY),
+    ]
+
+
 class CACHE_RELATIONSHIP(Structure):
+    _anonymous_ = ("DUMMYUNIONNAME",)
     _fields_ = [
         ("Level", BYTE),
         ("Associativity", BYTE),
         ("LineSize", WORD),
         ("CacheSize", DWORD),
         ("Type", PROCESSOR_CACHE_TYPE),
-        ("Reserved", BYTE * 20),
-        ("GroupMask", GROUP_AFFINITY),
+        ("Reserved", BYTE * 18),
+        ("GroupCount", WORD),
+        ("DUMMYUNIONNAME", CACHE_RELATIONSHIP_DUMMYUNIONNAME),
     ]
 
 
@@ -4313,7 +4342,8 @@ PCACHE_RELATIONSHIP = POINTER(CACHE_RELATIONSHIP)
 class PROCESSOR_GROUP_INFO(Structure):
     _fields_ = [
         ("MaximumProcessorCount", BYTE),
-        ("ActiveProcessorCount", BYTE * 38),
+        ("ActiveProcessorCount", BYTE),
+        ("Reserved", BYTE * 38),
         ("ActiveProcessorMask", KAFFINITY),
     ]
 
@@ -9026,6 +9056,7 @@ class HEAP_INFORMATION_CLASS(CEnum):
     HeapCompatibilityInformation = 0
     HeapEnableTerminationOnCorruption = 1
     HeapOptimizeResources = 3
+    HeapTag = 7
 
 
 HEAP_OPTIMIZE_RESOURCES_CURRENT_VERSION = 1
