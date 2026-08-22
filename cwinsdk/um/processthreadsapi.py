@@ -12,6 +12,15 @@ GetCurrentProcess = windll.kernel32.GetCurrentProcess
 GetCurrentProcess.argtypes = []
 GetCurrentProcess.restype = HANDLE
 
+GetCurrentThread = windll.kernel32.GetCurrentThread
+GetCurrentThread.argtypes = []
+GetCurrentThread.restype = HANDLE
+
+OpenThreadToken = windll.advapi32.OpenThreadToken
+OpenThreadToken.argtypes = [HANDLE, DWORD, BOOL, POINTER(HANDLE)]
+OpenThreadToken.restype = BOOL
+OpenThreadToken.errcheck = nonzero
+
 TerminateThread = windll.kernel32.TerminateThread
 TerminateThread.argtypes = [HANDLE, DWORD]
 TerminateThread.restype = BOOL
