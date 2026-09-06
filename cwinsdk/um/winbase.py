@@ -819,7 +819,7 @@ FindNextVolumeMountPointA.errcheck = nonzero
 FindNextVolumeMountPointW = windll.kernel32.FindNextVolumeMountPointW
 FindNextVolumeMountPointW.argtypes = [HANDLE, LPWSTR, DWORD]
 FindNextVolumeMountPointW.restype = BOOL
-FindNextVolumeMountPointA.errcheck = nonzero
+FindNextVolumeMountPointW.errcheck = nonzero
 
 FindVolumeMountPointClose = windll.kernel32.FindVolumeMountPointClose
 FindVolumeMountPointClose.argtypes = [HANDLE]

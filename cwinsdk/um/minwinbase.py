@@ -1,5 +1,5 @@
 from ctypes import POINTER, Structure, Union
-from ctypes.wintypes import DWORD, HANDLE, LPVOID, WORD
+from ctypes.wintypes import BYTE, DWORD, HANDLE, LPVOID, WORD
 
 from .. import CEnum
 from ..shared.basetsd import ULONG_PTR
@@ -82,6 +82,45 @@ class SYSTEMTIME(Structure):
 
 
 LPSYSTEMTIME = POINTER(SYSTEMTIME)
+
+
+class PROCESS_HEAP_ENTRY_BLOCK(Structure):
+    _fields_ = [
+        ("hMem", HANDLE),
+        ("dwReserved", DWORD * 3),
+    ]
+
+
+class PROCESS_HEAP_ENTRY_REGION(Structure):
+    _fields_ = [
+        ("dwCommittedSize", DWORD),
+        ("dwUnCommittedSize", DWORD),
+        ("lpFirstBlock", LPVOID),
+        ("lpLastBlock", LPVOID),
+    ]
+
+
+class PROCESS_HEAP_ENTRY_UNION(Union):
+    _fields_ = [
+        ("Block", PROCESS_HEAP_ENTRY_BLOCK),
+        ("Region", PROCESS_HEAP_ENTRY_REGION),
+    ]
+
+
+class PROCESS_HEAP_ENTRY(Structure):
+    _anonymous_ = ("DUMMYUNIONNAME",)
+    _fields_ = [
+        ("lpData", PVOID),
+        ("cbData", DWORD),
+        ("cbOverhead", BYTE),
+        ("iRegionIndex", BYTE),
+        ("wFlags", WORD),
+        ("DUMMYUNIONNAME", PROCESS_HEAP_ENTRY_UNION),
+    ]
+
+
+LPPROCESS_HEAP_ENTRY = POINTER(PROCESS_HEAP_ENTRY)
+PPROCESS_HEAP_ENTRY = POINTER(PROCESS_HEAP_ENTRY)
 
 
 class FILE_INFO_BY_HANDLE_CLASS(CEnum):

@@ -9,7 +9,7 @@ from typing import Any, Callable, Iterable, Iterator, Tuple, Type
 from .shared.guiddef import GUID
 from .wintypes import BOOL, BOOLEAN
 
-__version__ = "0.0.19"
+__version__ = "0.0.20"
 
 windll = LibraryLoader(WinDLL)
 
@@ -18,6 +18,9 @@ S_OK = 0  # copied from cwinsdk.shared.winerror
 MIDL_PASS = False
 STATUS_SUCCESS = 0  # copied from cwinsdk.shared.ntstatus
 ERROR_SUCCESS = 0  # copied from cwinsdk.shared.winerror
+NO_ERROR = 0  # copied from cwinsdk.shared.winerror
+ERROR_IO_PENDING = 997  # copied from cwinsdk.shared.winerror
+ERROR_NO_DATA = 232  # copied from cwinsdk.shared.winerror
 
 
 class CEnum(c_int):
@@ -105,6 +108,34 @@ def struct2dict(struct: Structure) -> dict:
 
 def error_success(result, func, arguments):
     if result != ERROR_SUCCESS:
+        raise WinError(result)
+
+    return result
+
+
+def no_error(result, func, arguments):
+    if result != NO_ERROR:
+        raise WinError(result)
+
+    return result
+
+
+def no_error_or_no_data(result, func, arguments):
+    if result not in (NO_ERROR, ERROR_NO_DATA):
+        raise WinError(result)
+
+    return result
+
+
+def no_error_or_pending(result, func, arguments):
+    if result not in (NO_ERROR, ERROR_IO_PENDING):
+        raise WinError(result)
+
+    return result
+
+
+def error_io_pending(result, func, arguments):
+    if result != ERROR_IO_PENDING:
         raise WinError(result)
 
     return result

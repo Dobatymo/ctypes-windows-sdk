@@ -3,10 +3,8 @@ from ctypes.wintypes import BOOL, DWORD, LPCSTR, LPCWSTR, LPSTR, LPVOID, LPWSTR,
 
 from .. import windll
 from ..shared.basetsd import LONG_PTR
-from ..shared.minwindef import HGLOBAL, HMODULE, HRSRC
+from ..shared.minwindef import FARPROC, HGLOBAL, HMODULE, HRSRC
 from .winnt import LANGID
-
-FARPROC = LPVOID  # todo: where does this come from?
 
 ENUMRESTYPEPROCW = CFUNCTYPE(BOOL, HMODULE, LPWSTR, LONG_PTR)
 ENUMRESTYPEPROCA = CFUNCTYPE(BOOL, HMODULE, LPSTR, LONG_PTR)

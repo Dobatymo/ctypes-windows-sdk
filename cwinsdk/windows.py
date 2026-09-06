@@ -9,6 +9,9 @@ from .shared.devpropdef import *
 from .shared.diskguid import *
 from .shared.ehstorioctl import *
 from .shared.guiddef import *
+from .shared.in6addr import *
+from .shared.inaddr import *
+from .shared.iprtrmib import *
 from .shared.minwindef import *
 from .shared.ntdddisk import *
 from .shared.ntddscsi import *
@@ -20,8 +23,11 @@ from .shared.scsi import *
 from .shared.sddl import *
 from .shared.secext import *
 from .shared.srb import *
+from .shared.tcpestats import *
 from .shared.windef import *
 from .shared.winerror import *
+from .shared.ws2def import *
+from .shared.ws2ipdef import *
 from .shared.wtypesbase import *
 from .um.accctrl import *
 from .um.aclapi import *
@@ -29,9 +35,12 @@ from .um.audiosessiontypes import *
 from .um.combaseapi import *
 from .um.consoleapi import *
 from .um.consoleapi2 import *
+from .um.errhandlingapi import *
 from .um.fileapi import *
 from .um.handleapi import *
+from .um.heapapi import *
 from .um.ioapiset import *
+from .um.iphlpapi import *
 from .um.knownfolders import *
 from .um.libloaderapi import *
 from .um.lsalookup import *
@@ -40,6 +49,9 @@ from .um.minwinbase import *
 from .um.ntsecapi import *
 from .um.processenv import *
 from .um.processthreadsapi import *
+from .um.processtopologyapi import *
+from .um.profileapi import *
+from .um.psapi import *
 from .um.reason import *
 from .um.securitybaseapi import *
 from .um.setupapi import *
@@ -53,5 +65,6 @@ from .um.wincontypes import *
 from .um.wingdi import *
 from .um.winioctl import *
 from .um.winnt import *
+from .um.winreg import *
 from .um.winternl import *
 from .um.winuser import *

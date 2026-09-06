@@ -1,8 +1,8 @@
-from ctypes import POINTER, Structure, c_float, c_int, c_long, c_ubyte, c_uint, c_ulong, c_ushort, c_void_p
+from ctypes import POINTER, WINFUNCTYPE, Structure, c_float, c_int, c_long, c_ubyte, c_uint, c_ulong, c_ushort, c_void_p
 from ctypes.wintypes import HANDLE
 
 from ..wintypes import BOOL
-from .basetsd import LONG_PTR, UINT_PTR
+from .basetsd import INT_PTR, LONG_PTR, UINT_PTR
 
 CPOINTER = POINTER
 
@@ -34,6 +34,7 @@ PDWORD = POINTER(DWORD)
 LPDWORD = POINTER(DWORD)
 LPVOID = c_void_p
 LPCVOID = c_void_p
+FARPROC = WINFUNCTYPE(INT_PTR)
 
 INT = c_int
 UINT = c_uint

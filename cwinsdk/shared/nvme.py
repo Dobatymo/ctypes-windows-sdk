@@ -856,7 +856,7 @@ class NVME_LBA_FORMAT(Union):
     ]
 
 
-class NVM_RESERVATION_CAPABILITIES(Union):  # fixme: *PNVME_RESERVATION_CAPABILITIES
+class NVM_RESERVATION_CAPABILITIES(Union):
     _anonymous_ = ("DUMMYSTRUCTNAME",)
     _pack_ = _pack_
     _fields_ = [
@@ -878,6 +878,9 @@ class NVM_RESERVATION_CAPABILITIES(Union):  # fixme: *PNVME_RESERVATION_CAPABILI
         ),
         ("AsUchar", UCHAR),
     ]
+
+
+PNVME_RESERVATION_CAPABILITIES = POINTER(NVM_RESERVATION_CAPABILITIES)
 
 
 class NVME_IDENTIFY_NAMESPACE_DATA(Structure):
